@@ -1,0 +1,92 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  name          String?
+  password      String
+  companyName   String?
+  phone         String?
+  plan          Plan      @default(FREE)
+  planExpiresAt DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  employees     Employee[]
+  sessions      Session[]
+
+  @@map("users")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model Employee {
+  id          String   @id @default(cuid())
+  userId      String
+  firstName   String
+  lastName    String
+  position    String
+  email       String?
+  phone       String?
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  deadlines   Deadline[]
+
+  @@map("employees")
+}
+
+model Deadline {
+  id             String       @id @default(cuid())
+  employeeId     String
+  category       String       // np. "medical", "bhp_general", "bhp_position", "udt", "sep", "drivers_license", "custom"
+  name           String       // np. "Badanie lekarskie okresowe", "UDT - wózek widłowy"
+  expiresAt      DateTime
+  notifiedAt30   Boolean      @default(false)
+  notifiedAt14   Boolean      @default(false)
+  notifiedAt7    Boolean      @default(false)
+  notifiedAt0    Boolean      @default(false)
+  notes          String?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  employee       Employee     @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+
+  @@map("deadlines")
+}
+
+model NotificationLog {
+  id          String   @id @default(cuid())
+  deadlineId  String
+  type        String   // "email_owner", "email_employee", "sms_employee"
+  sentAt      DateTime @default(now())
+  daysLeft    Int
+  success     Boolean
+  error       String?
+
+  @@map("notification_logs")
+}
+
+enum Plan {
+  FREE        // do 3 pracownikow
+  STARTER     // do 10 pracownikow - 39 zl/mies
+  STANDARD    // do 30 pracownikow - 69 zl/mies
+  PRO         // nielimitowany - 99 zl/mies
+}
