@@ -1,0 +1,6 @@
+with:
+        server: ${{ secrets.FTP_SERVER }}
+        username: ${{ secrets.FTP_USERNAME }}
+        password: ${{ secrets.FTP_PASSWORD }}
+        local-dir: ./  # Co wysyłasz z Githuba
+        server-dir: ./terminybhp.pl/public_html/  # DOKŁADNA ścieżka na serwerze LH
