@@ -1,4 +1,21 @@
-with:
+name: Deploy do LH.pl BHP
+
+on:
+  push:
+    branches:
+      - main  # Sprawdź, czy Twoja główna gałąź to 'main' czy 'master'
+
+jobs:
+  web-deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    steps:
+    - name: Pobieranie kodu z repo
+      uses: actions/checkout@v3
+
+    - name: Wysyłka przez FTP
+      uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+      with:
         server: ${{ secrets.FTP_SERVER }}
         username: ${{ secrets.FTP_USERNAME }}
         password: ${{ secrets.FTP_PASSWORD }}
