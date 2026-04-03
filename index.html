@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terminarz BHP - Kontrola i Spokój</title>
+    <meta name="description" content="Prosty terminarz BHP dla mikrofirm. Pilnuj terminów badań i szkoleń swoich pracowników.">
+    
+    <!-- PWA -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#ffffff">
+    <link rel="apple-touch-icon" href="icons/icon-192x192.png">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS (via CDN for simplicity in this environment) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0f7ff',
+                            100: '#e0effe',
+                            200: '#bae0fd',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            800: '#1e40af',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        heading: ['Outfit', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Dexie.js for IndexedDB -->
+    <script src="https://unpkg.com/dexie/dist/dexie.js"></script>
+    
+    <!-- PDF-lib for PDF generation -->
+    <script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
+    
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-gray-50 text-gray-900 font-sans min-h-screen flex flex-col">
+
+    <!-- Navigation -->
+    <nav class="bg-white border-b border-gray-200 sticky top-0 z-50">
+        <div class="max-w-md mx-auto px-4 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <div class="w-8 h-8 bg-brand-600 rounded-lg flex items-center justify-center text-white font-bold">B</div>
+                <span class="font-heading font-bold text-lg tracking-tight">Terminarz<span class="text-brand-600">BHP</span></span>
+            </div>
+            <button id="installBtn" class="hidden text-xs bg-brand-50 text-brand-700 px-3 py-1.5 rounded-full font-medium border border-brand-100 italic">
+                Zainstaluj apkę
+            </button>
+        </div>
+    </nav>
+
+    <!-- Main Content Area (Mobile First) -->
+    <main id="app" class="flex-grow max-w-md mx-auto w-full px-4 py-6">
+        
+        <!-- View: Loading -->
+        <div id="view-loading" class="flex flex-col items-center justify-center h-64 text-gray-400">
+            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-600 mb-4"></div>
+            <p>Uruchamianie...</p>
+        </div>
+
+        <!-- View: Onboarding (NIP) -->
+        <div id="view-onboarding" class="hidden animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <h1 class="font-heading text-2xl font-bold mb-2">Witaj w Terminarzu</h1>
+            <p class="text-gray-500 mb-8">Zacznij od podania NIP-u Twojej firmy, abyśmy mogli przygotować formularze.</p>
+            
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <label for="nipInput" class="block text-sm font-medium text-gray-700 mb-2">NIP Firmy</label>
+                <input type="text" id="nipInput" placeholder="0000000000" maxlength="10" 
+                    class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-brand-600 focus:border-brand-600 outline-none transition-all text-lg tracking-[0.2em] font-mono">
+                
+                <button id="startBtn" class="w-full mt-6 bg-brand-600 hover:bg-brand-700 text-white font-semibold py-4 rounded-xl shadow-lg shadow-brand-100 transition-all active:scale-[0.98] flex items-center justify-center gap-2">
+                    Sprawdź i Zacznij
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+                    </svg>
+                </button>
+            </div>
+            
+            <p class="mt-8 text-center text-xs text-gray-400">
+                Dane są przechowywane wyłącznie na Twoim urządzeniu.
+            </p>
+        </div>
+
+        <!-- View: Dashboard -->
+        <div id="view-dashboard" class="hidden space-y-6">
+            <!-- Summary Card -->
+            <div class="bg-gradient-to-br from-brand-600 to-brand-800 p-6 rounded-2xl text-white shadow-xl shadow-brand-100">
+                <div class="flex justify-between items-start mb-4">
+                    <div>
+                        <h2 id="companyName" class="font-heading font-bold text-xl uppercase tracking-wide">Moja Firma</h2>
+                        <p id="companyNip" class="text-brand-100 text-sm font-mono">NIP: 0000000000</p>
+                    </div>
+                    <button id="settingsBtn" class="p-2 bg-white/10 rounded-lg backdrop-blur-sm">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd" />
+                        </svg>
+                    </button>
+                </div>
+                <div class="grid grid-cols-3 gap-2 mt-6">
+                    <div class="bg-white/10 rounded-xl p-3 text-center backdrop-blur-sm">
+                        <span class="block text-2xl font-bold">0</span>
+                        <span class="text-[10px] uppercase font-semibold text-brand-100">Pracowników</span>
+                    </div>
+                    <div class="bg-red-500/30 rounded-xl p-3 text-center border border-red-400/30 backdrop-blur-sm">
+                        <span class="block text-2xl font-bold">0</span>
+                        <span class="text-[10px] uppercase font-semibold text-red-100 italic">Wygaśnięte</span>
+                    </div>
+                    <div class="bg-amber-500/30 rounded-xl p-3 text-center border border-amber-400/30 backdrop-blur-sm">
+                        <span class="block text-2xl font-bold">0</span>
+                        <span class="text-[10px] uppercase font-semibold text-amber-100">Pilne</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="grid grid-cols-2 gap-4">
+                <button class="bg-white p-4 rounded-xl border border-gray-100 shadow-sm flex flex-col items-center gap-2 hover:bg-gray-50 transition-colors">
+                    <div class="w-10 h-10 bg-green-50 text-green-600 rounded-full flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6h0" />
+                        </svg>
+                    </div>
+                    <span class="text-sm font-semibold">Dodaj osobę</span>
+                </button>
+                <button class="bg-white p-4 rounded-xl border border-gray-100 shadow-sm flex flex-col items-center gap-2 hover:bg-gray-50 transition-colors">
+                    <div class="w-10 h-10 bg-brand-50 text-brand-600 rounded-full flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                    </div>
+                    <span class="text-sm font-semibold">Dokumenty</span>
+                </button>
+            </div>
+
+            <!-- Employee List Mock/Header -->
+            <div>
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="font-heading font-bold text-lg">Pracownicy</h3>
+                    <button class="text-brand-600 text-sm font-semibold">Wszystkie</button>
+                </div>
+                
+                <!-- Employee List -->
+                <div id="employeeList" class="space-y-3">
+                    <!-- Employees will be rendered here -->
+                </div>
+                
+                <!-- Empty State (Conditional) -->
+                <div id="emptyState" class="hidden bg-white border-2 border-dashed border-gray-200 rounded-2xl p-10 text-center">
+                    <p class="text-gray-400 text-sm mb-4">Brak dodanych pracowników</p>
+                    <button class="addEmployeeBtn text-brand-600 font-bold px-6 py-2 bg-brand-50 rounded-lg">Dodaj pierwszą osobę</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- View: Employees List -->
+        <div id="view-employees" class="hidden space-y-6">
+            <div class="flex items-center justify-between">
+                <h1 class="font-heading text-2xl font-bold">Pracownicy</h1>
+                <button class="addEmployeeBtn p-2 bg-brand-600 text-white rounded-xl shadow-lg shadow-brand-100">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                    </svg>
+                </button>
+            </div>
+            
+            <div id="fullEmployeeList" class="space-y-3">
+                <!-- Full list rendered here -->
+            </div>
+        </div>
+
+        <!-- Modal: Add Employee -->
+        <div id="modal-add-employee" class="hidden fixed inset-0 z-[60] flex items-end sm:items-center justify-center p-4">
+            <div class="fixed inset-0 bg-gray-900/40 backdrop-blur-sm" id="modal-overlay"></div>
+            <div class="bg-white w-full max-w-md rounded-t-3xl sm:rounded-3xl p-6 relative animate-in fade-in slide-in-from-bottom-8 duration-300">
+                <div class="w-12 h-1.5 bg-gray-200 rounded-full mx-auto mb-6 sm:hidden"></div>
+                <h2 class="font-heading font-bold text-xl mb-6">Nowy Pracownik</h2>
+                
+                <form id="employeeForm" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Imię i Nazwisko</label>
+                        <input type="text" name="name" required class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-brand-600 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Stanowisko</label>
+                        <input type="text" name="position" required class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-brand-600 outline-none">
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-medium text-gray-500 mb-1 uppercase">Ostatnie Badania</label>
+                            <input type="date" name="lastExam" required class="w-full px-3 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-brand-600 outline-none text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-gray-500 mb-1 uppercase">Ważne do</label>
+                            <input type="date" name="nextExam" required class="w-full px-3 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-brand-600 outline-none text-sm">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-medium text-gray-500 mb-1 uppercase">Ostatnie Szkolenie</label>
+                            <input type="date" name="lastTraining" required class="w-full px-3 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-brand-600 outline-none text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-gray-500 mb-1 uppercase">Ważne do</label>
+                            <input type="date" name="nextTraining" required class="w-full px-3 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-brand-600 outline-none text-sm">
+                        </div>
+                    </div>
+                    
+                    <div class="flex gap-3 pt-4">
+                        <button type="button" id="cancelAddBtn" class="flex-1 py-4 font-semibold text-gray-500 bg-gray-100 rounded-xl">Anuluj</button>
+                        <button type="submit" class="flex-[2] py-4 font-bold text-white bg-brand-600 rounded-xl shadow-lg shadow-brand-100 italic">Zapisz Pracownika</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Bottom Navigation -->
+    <nav class="bg-white border-t border-gray-200 sticky bottom-0 z-50">
+        <div class="max-w-md mx-auto grid grid-cols-4 h-16">
+            <button id="nav-start" class="flex flex-col items-center justify-center gap-1 text-brand-600">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
+                    <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011-1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
+                </svg>
+                <span class="text-[10px] font-bold uppercase tracking-widest">Start</span>
+            </button>
+            <button id="nav-employees" class="flex flex-col items-center justify-center gap-1 text-gray-400">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                </svg>
+                <span class="text-[10px] font-bold uppercase tracking-widest">Ludzie</span>
+            </button>
+            <button id="nav-docs" class="flex flex-col items-center justify-center gap-1 text-gray-400">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                <span class="text-[10px] font-bold uppercase tracking-widest">Dokumenty</span>
+            </button>
+            <button id="nav-backup" class="flex flex-col items-center justify-center gap-1 text-gray-400">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                </svg>
+                <span class="text-[10px] font-bold uppercase tracking-widest">Backup</span>
+            </button>
+        </div>
+    </nav>
+
+    <script src="app.js"></script>
+</body>
+</html>
