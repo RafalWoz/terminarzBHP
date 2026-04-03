@@ -19,6 +19,8 @@ const views = {
     onboarding: document.getElementById('view-onboarding'),
     dashboard: document.getElementById('view-dashboard'),
     employees: document.getElementById('view-employees'),
+    import: document.getElementById('view-import'),
+    docs: document.getElementById('view-docs'),
 };
 
 const nipInput = document.getElementById('nipInput');
@@ -31,6 +33,19 @@ const modalAddEmployee = document.getElementById('modal-add-employee');
 const employeeForm = document.getElementById('employeeForm');
 const cancelAddBtn = document.getElementById('cancelAddBtn');
 const modalOverlay = document.getElementById('modal-overlay');
+
+// Import Elements
+const importBtn = document.getElementById('importBtn');
+const selectFileBtn = document.getElementById('selectFileBtn');
+const importFileInput = document.getElementById('importFileInput');
+const importStep1 = document.getElementById('import-step-1');
+const importStep2 = document.getElementById('import-step-2');
+const mappingFields = document.getElementById('mappingFields');
+const executeImportBtn = document.getElementById('executeImportBtn');
+const cancelImportBtn = document.getElementById('cancelImportBtn');
+
+let importData = []; // Temporary storage for parsed rows
+let importHeaders = []; // Temporary storage for file headers
 
 // Lists and Stats
 const employeeList = document.getElementById('employeeList');
@@ -300,7 +315,245 @@ function setupEventListeners() {
     // Nav
     document.getElementById('nav-start').addEventListener('click', () => showView('dashboard'));
     document.getElementById('nav-employees').addEventListener('click', () => showView('employees'));
+    document.getElementById('nav-docs').addEventListener('click', () => showView('docs'));
     document.getElementById('nav-backup').addEventListener('click', () => exportData());
+
+    // Import Flow
+    importBtn.addEventListener('click', () => showView('import'));
+    document.getElementById('importBtn2').addEventListener('click', () => showView('import'));
+    selectFileBtn.addEventListener('click', () => importFileInput.click());
+    
+    importFileInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) handleFileSelect(file);
+    });
+
+    cancelImportBtn.addEventListener('click', () => {
+        showView('employees');
+        importStep1.classList.remove('hidden');
+        importStep2.classList.add('hidden');
+        importFileInput.value = '';
+    });
+
+    executeImportBtn.addEventListener('click', () => executeImport());
+
+    // Documents Flow
+    document.getElementById('generatePackageBtn').addEventListener('click', () => generateInspectionPackage());
+}
+
+async function generateInspectionPackage() {
+    const spinner = document.getElementById('packageSpinner');
+    spinner.classList.remove('hidden');
+
+    try {
+        const { PDFDocument, rgb, StandardFonts } = PDFLib;
+        const pdfDoc = await PDFDocument.create();
+        const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
+        const fontBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+        
+        const { name, nip, address } = state.company;
+        const today = new Date().toLocaleDateString();
+
+        // --- PAGE 1: TITLE ---
+        let page = pdfDoc.addPage([595.28, 841.89]);
+        page.drawText('PAKIET KONTROLNY BHP', { x: 50, y: 700, size: 30, font: fontBold, color: rgb(0.15, 0.39, 0.92) });
+        page.drawText('Dokumentacja zbiorcza wygenerowana automatycznie', { x: 50, y: 670, size: 12, font: font });
+        
+        page.drawText('DANE FIRMY:', { x: 50, y: 580, size: 14, font: fontBold });
+        page.drawText(`Nazwa: ${name}`, { x: 50, y: 555, size: 12, font: font });
+        page.drawText(`NIP: ${nip}`, { x: 50, y: 540, size: 12, font: font });
+        page.drawText(`Adres: ${address}`, { x: 50, y: 525, size: 12, font: font });
+        
+        page.drawText(`Data wygenerowania: ${today}`, { x: 50, y: 100, size: 10, font: font, color: rgb(0.5, 0.5, 0.5) });
+
+        // --- PAGE 2: SUMMARY STATUSES ---
+        page = pdfDoc.addPage([595.28, 841.89]);
+        page.drawText('1. ZBIORCZE ZESTAWIENIE STATUSÓW', { x: 50, y: 800, size: 16, font: fontBold });
+        
+        let y = 760;
+        // Table Headers
+        page.drawText('Pracownik', { x: 50, y, size: 10, font: fontBold });
+        page.drawText('Badania', { x: 250, y, size: 10, font: fontBold });
+        page.drawText('Szkolenie', { x: 400, y, size: 10, font: fontBold });
+        y -= 20;
+
+        state.employees.forEach(emp => {
+            const examStatus = getEmployeeStatus({ nextExam: emp.nextExam, nextTraining: '2099-01-01' });
+            const trainStatus = getEmployeeStatus({ nextExam: '2099-01-01', nextTraining: emp.nextTraining });
+            
+            page.drawText(`${emp.name}`, { x: 50, y, size: 10, font: font });
+            page.drawText(`${examStatus.label}`, { x: 250, y, size: 10, font: font });
+            page.drawText(`${trainStatus.label}`, { x: 400, y, size: 10, font: font });
+            y -= 15;
+            
+            if (y < 100) { page = pdfDoc.addPage([595.28, 841.89]); y = 800; }
+        });
+
+        // --- PAGE 3: MEDICAL EXAMS REGISTER ---
+        page = pdfDoc.addPage([595.28, 841.89]);
+        page.drawText('2. REJESTR BADAŃ LEKARSKICH', { x: 50, y: 800, size: 16, font: fontBold });
+        y = 760;
+        page.drawText('Pracownik', { x: 50, y, size: 10, font: fontBold });
+        page.drawText('Ważne do', { x: 250, y, size: 10, font: fontBold });
+        page.drawText('PODPIS PRACOWNIKA', { x: 400, y, size: 10, font: fontBold });
+        y -= 25;
+
+        state.employees.forEach(emp => {
+            page.drawText(`${emp.name}`, { x: 50, y, size: 10, font: font });
+            page.drawText(`${new Date(emp.nextExam).toLocaleDateString()}`, { x: 250, y, size: 10, font: font });
+            page.drawText('..........................................', { x: 400, y, size: 10 });
+            y -= 30;
+            if (y < 100) { page = pdfDoc.addPage([595.28, 841.89]); y = 800; }
+        });
+
+        // --- PAGE 4: TRAINING REGISTER ---
+        page = pdfDoc.addPage([595.28, 841.89]);
+        page.drawText('3. REJESTR SZKOLEŃ BHP', { x: 50, y: 800, size: 16, font: fontBold });
+        y = 760;
+        page.drawText('Pracownik', { x: 50, y, size: 10, font: fontBold });
+        page.drawText('Ważne do', { x: 250, y, size: 10, font: fontBold });
+        page.drawText('PODPIS PRACOWNIKA', { x: 400, y, size: 10, font: fontBold });
+        y -= 25;
+
+        state.employees.forEach(emp => {
+            page.drawText(`${emp.name}`, { x: 50, y, size: 10, font: font });
+            page.drawText(`${new Date(emp.nextTraining).toLocaleDateString()}`, { x: 250, y, size: 10, font: font });
+            page.drawText('..........................................', { x: 400, y, size: 10 });
+            y -= 30;
+            if (y < 100) { page = pdfDoc.addPage([595.28, 841.89]); y = 800; }
+        });
+
+        const pdfBytes = await pdfDoc.save();
+        const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = `pakiet_bhp_${name.replace(/\s+/g, '_')}_${today.replace(/\./g, '-')}.pdf`;
+        link.click();
+        
+    } catch (error) {
+        console.error(error);
+        alert('Błąd podczas generowania pakietu.');
+    } finally {
+        spinner.classList.add('hidden');
+    }
+}
+
+async function handleFileSelect(file) {
+    const reader = new FileReader();
+    const extension = file.name.split('.').pop().toLowerCase();
+
+    if (extension === 'csv') {
+        Papa.parse(file, {
+            header: true,
+            skipEmptyLines: true,
+            complete: (results) => {
+                importHeaders = results.meta.fields;
+                importData = results.data;
+                showMappingUI();
+            }
+        });
+    } else if (['xlsx', 'xls'].includes(extension)) {
+        reader.onload = (e) => {
+            const data = new Uint8Array(e.target.result);
+            const workbook = XLSX.read(data, { type: 'array' });
+            const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+            const jsonData = XLSX.utils.sheet_to_json(firstSheet);
+            
+            if (jsonData.length > 0) {
+                importHeaders = Object.keys(jsonData[0]);
+                importData = jsonData;
+                showMappingUI();
+            }
+        };
+        reader.readAsArrayBuffer(file);
+    }
+}
+
+function showMappingUI() {
+    importStep1.classList.add('hidden');
+    importStep2.classList.remove('hidden');
+    
+    const fields = [
+        { key: 'name', label: 'Imię i Nazwisko' },
+        { key: 'position', label: 'Stanowisko' },
+        { key: 'lastExam', label: 'Ostatnie Badania' },
+        { key: 'nextExam', label: 'Następne Badania' },
+        { key: 'lastTraining', label: 'Ostatnie Szkolenie' },
+        { key: 'nextTraining', label: 'Następne Szkolenie' }
+    ];
+
+    mappingFields.innerHTML = fields.map(f => `
+        <div class="flex flex-col gap-1">
+            <label class="text-[10px] font-bold text-gray-400 capitalize">${f.label}</label>
+            <select data-field="${f.key}" class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-brand-600 transition-all">
+                <option value="">-- Pomiń / Brak --</option>
+                ${importHeaders.map(h => `<option value="${h}">${h}</option>`).join('')}
+            </select>
+        </div>
+    `).join('');
+}
+
+async function executeImport() {
+    const mappings = {};
+    document.querySelectorAll('#mappingFields select').forEach(select => {
+        if (select.value) mappings[select.dataset.field] = select.value;
+    });
+
+    if (!mappings.name) {
+        alert('Musisz wybrać kolumnę dla pola "Imię i Nazwisko"!');
+        return;
+    }
+
+    executeImportBtn.disabled = true;
+    executeImportBtn.textContent = 'Importowanie...';
+
+    const newEmployees = importData.map(row => {
+        const emp = {
+            name: row[mappings.name] || 'Brak danych',
+            position: row[mappings.position] || 'Brak danych',
+            lastExam: row[mappings.lastExam] ? parseAnyDate(row[mappings.lastExam]) : '',
+            nextExam: row[mappings.nextExam] ? parseAnyDate(row[mappings.nextExam]) : '',
+            lastTraining: row[mappings.lastTraining] ? parseAnyDate(row[mappings.lastTraining]) : '',
+            nextTraining: row[mappings.nextTraining] ? parseAnyDate(row[mappings.nextTraining]) : ''
+        };
+        return emp;
+    });
+
+    for (const emp of newEmployees) {
+        await db.employees.add(emp);
+    }
+
+    state.employees = await db.employees.toArray();
+    alert(`Pomyślnie zaimportowano ${newEmployees.length} pracowników.`);
+    
+    // Reset and Go back
+    executeImportBtn.disabled = false;
+    executeImportBtn.textContent = 'Importuj Dane';
+    importStep1.classList.remove('hidden');
+    importStep2.classList.add('hidden');
+    showView('employees');
+    updateDashboard();
+}
+
+function parseAnyDate(val) {
+    if (!val) return '';
+    // If it's a number (Excel serial date)
+    if (typeof val === 'number') {
+        const d = new Date((val - 25569) * 86400 * 1000);
+        return d.toISOString().split('T')[0];
+    }
+    // Try to parse string
+    const d = new Date(val);
+    if (!isNaN(d.getTime())) {
+        return d.toISOString().split('T')[0];
+    }
+    // Try manual conversion for DD.MM.RRRR
+    const parts = val.toString().split(/[\.-]/);
+    if (parts.length === 3) {
+        if (parts[0].length === 4) return `${parts[0]}-${parts[1]}-${parts[2]}`; // YYYY-MM-DD
+        return `${parts[2]}-${parts[1]}-${parts[0]}`; // DD.MM.YYYY -> YYYY-MM-DD
+    }
+    return val; // Fallback
 }
 
 async function exportData() {
