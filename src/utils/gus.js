@@ -1,15 +1,18 @@
 export async function fetchGusData(nip) {
   try {
-    // Relative path to the proxy. In dev mode (vite), we might need an absolute path 
-    // or proxy config, but for simplicity we assume the same origin on production.
     const url = `./regon_proxy.php?nip=${nip}`;
     
-    // In dev, handle relative path
     const targetUrl = window.location.hostname === 'localhost' 
-      ? `https://terminybhp.pl/regon_proxy.php?nip=${nip}` // Fallback to live proxy during dev
+      ? `https://terminybhp.pl/regon_proxy.php?nip=${nip}` 
       : url;
 
     const response = await fetch(targetUrl);
+    
+    if (!response.ok) {
+      const err = await response.json();
+      throw new Error(err.error || `Błąd serwera (HTTP ${response.status})`);
+    }
+
     const result = await response.json();
     
     if (result.error) {
@@ -19,6 +22,6 @@ export async function fetchGusData(nip) {
     return result.data;
   } catch (error) {
     console.error('GUS Error:', error);
-    throw error;
+    throw new Error(error.message || 'Błąd połączenia z serwerem danych GUS');
   }
 }
