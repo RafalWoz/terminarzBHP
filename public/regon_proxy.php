@@ -13,7 +13,6 @@ $key = 'b8abef9133434c1a90c3';
 $url = 'https://wyszukiwarkaregon.stat.gov.pl/wsBIR/UslugaBIRzewnPubl.svc';
 
 function callGus($url, $action, $body, $sid = null) {
-    // BIR 1.1 Action Header is different from To Header often
     $envelope = <<<XML
 <soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:ns="http://CIS/BIR/PUBL/2014/07">
     <soap:Header xmlns:wsa="http://www.w3.org/2005/08/addressing">
@@ -26,7 +25,8 @@ XML;
 
     $ch = curl_init();
     $headers = [
-        'Content-Type: application/soap+xml; charset=utf-8',
+        // Kluczowe dla SOAP 1.2: Action musi być w Content-Type
+        "Content-Type: application/soap+xml; charset=utf-8; action=\"$action\"",
         'Content-Length: ' . strlen($envelope)
     ];
     if ($sid) {
@@ -39,24 +39,30 @@ XML;
     curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 20);
 
     $response = curl_exec($ch);
+    $error = curl_error($ch);
     curl_close($ch);
-    return $response;
+    
+    return $response ?: "CURL_ERROR: $error";
 }
 
 // 1. Zaloguj
+$loginAction = 'http://CIS/BIR/PUBL/2014/07/IUslugaBIRzewnPubl/Zaloguj';
 $loginBody = "<ns:Zaloguj><ns:pKluczUzytkownika>$key</ns:pKluczUzytkownika></ns:Zaloguj>";
-$loginResp = callGus($url, 'http://CIS/BIR/PUBL/2014/07/IUslugaBIRzewnPubl/Zaloguj', $loginBody);
+$loginResp = callGus($url, $loginAction, $loginBody);
 
 if (preg_match('/<ZalogujResult>(.*)<\/ZalogujResult>/', $loginResp, $matches)) {
     $sid = $matches[1];
 } else {
-    echo json_encode(['error' => 'Błąd logowania do GUS. Serwer zwrócił: ' . strip_tags($loginResp)]);
+    echo json_encode(['error' => 'Błąd logowania do GUS.', 'debug' => strip_tags($loginResp)]);
     exit;
 }
 
-// 2. Szukaj (Zmieniony format dla BIR 1.1)
+// 2. Szukaj
+$searchAction = 'http://CIS/BIR/PUBL/2014/07/IUslugaBIRzewnPubl/DaneSzukajPodmioty';
 $searchBody = <<<XML
 <ns:DaneSzukajPodmioty>
     <ns:pParametryWyszukiwania>
@@ -65,7 +71,7 @@ $searchBody = <<<XML
 </ns:DaneSzukajPodmioty>
 XML;
 
-$searchResp = callGus($url, 'http://CIS/BIR/PUBL/2014/07/IUslugaBIRzewnPubl/DaneSzukajPodmioty', $searchBody, $sid);
+$searchResp = callGus($url, $searchAction, $searchBody, $sid);
 
 // Parsowanie wyniku
 if (preg_match('/<DaneSzukajPodmiotyResult>(.*)<\/DaneSzukajPodmiotyResult>/s', $searchResp, $matches)) {
@@ -75,9 +81,8 @@ if (preg_match('/<DaneSzukajPodmiotyResult>(.*)<\/DaneSzukajPodmiotyResult>/s', 
     if ($xml && $xml->dane) {
         $d = $xml->dane;
         
-        // Sprawdzenie czy nie ma błędu wewnątrz danych (np. brak podmiotu)
         if (isset($d->ErrorCode)) {
-            echo json_encode(['error' => 'Błąd GUS: ' . (string)$d->ErrorMessagePl]);
+            echo json_encode(['error' => 'GUS zwrócił błąd: ' . (string)$d->ErrorMessagePl]);
             exit;
         }
 
@@ -90,18 +95,19 @@ if (preg_match('/<DaneSzukajPodmiotyResult>(.*)<\/DaneSzukajPodmiotyResult>/s', 
             ]
         ]);
     } else {
-        echo json_encode(['error' => 'GUS nie zwrócił danych. Surowa odpowiedź: ' . strip_tags($searchResp)]);
+        echo json_encode(['error' => 'GUS nie zwrócił danych podmiotu.', 'debug' => strip_tags($searchResp)]);
     }
 } else {
-    // Zwracamy więcej info o błędzie jeśli regex zawiedzie
-    $errorMsg = 'Błąd wyszukiwania w GUS.';
+    // Diagnostyka błędu SOAP
+    $debugInfo = strip_tags($searchResp);
     if (strpos($searchResp, 'faultstring') !== false) {
         preg_match('/<faultstring>(.*)<\/faultstring>/', $searchResp, $fMatches);
-        $errorMsg .= ' Powód: ' . ($fMatches[1] ?? 'Nieznany SOAP Fault');
+        $debugInfo = 'SOAP Fault: ' . ($fMatches[1] ?? 'Unknown');
     }
-    echo json_encode(['error' => $errorMsg, 'debug' => strip_tags($searchResp)]);
+    echo json_encode(['error' => 'Błąd wyszukiwania w GUS.', 'debug' => $debugInfo]);
 }
 
 // 3. Wyloguj
+$logoutAction = 'http://CIS/BIR/PUBL/2014/07/IUslugaBIRzewnPubl/Wyloguj';
 $logoutBody = "<ns:Wyloguj><ns:pIdSesji>$sid</ns:pIdSesji></ns:Wyloguj>";
-callGus($url, 'http://CIS/BIR/PUBL/2014/07/IUslugaBIRzewnPubl/Wyloguj', $logoutBody, $sid);
+callGus($url, $logoutAction, $logoutBody, $sid);
