@@ -7,13 +7,12 @@ $nip = $_GET['nip'] ?? '';
 $key = 'b8abef9133434c1a90c3';
 $url = 'https://wyszukiwarkaregon.stat.gov.pl/wsBIR/UslugaBIRzewnPubl.svc';
 
-function callGus($url, $action, $body) {
-    global $sid;
+function callGus($url, $action, $body, $sid = null) {
     $envelope = <<<XML
-<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:a="http://www.w3.org/2005/08/addressing">
-    <soap:Header>
-        <a:Action soap:mustUnderstand="1">$action</a:Action>
-        <a:To soap:mustUnderstand="1">$url</a:To>
+<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:ns="http://CIS/BIR/PUBL/2014/07" xmlns:dat="http://CIS/BIR/PUBL/2014/07/datacontract">
+    <soap:Header xmlns:wsa="http://www.w3.org/2005/08/addressing">
+        <wsa:Action>$action</wsa:Action>
+        <wsa:To>$url</wsa:To>
     </soap:Header>
     <soap:Body>$body</soap:Body>
 </soap:Envelope>
@@ -24,7 +23,7 @@ XML;
         "Content-Type: application/soap+xml; charset=utf-8; action=\"$action\"",
         'Content-Length: ' . strlen($envelope)
     ];
-    if (isset($sid)) {
+    if ($sid) {
         $headers[] = "sid: $sid";
     }
 
@@ -40,43 +39,54 @@ XML;
     return $response;
 }
 
-$log = "--- START LOG " . date('Y-m-d H:i:s') . " ---\n";
-
-// 1. LOGIN
+// 1. Zaloguj
 $loginAction = 'http://CIS/BIR/PUBL/2014/07/IUslugaBIRzewnPubl/Zaloguj';
-$loginBody = '<Zaloguj xmlns="http://CIS/BIR/PUBL/2014/07"><pKluczUzytkownika>' . $key . '</pKluczUzytkownika></Zaloguj>';
+$loginBody = '<ns:Zaloguj><ns:pKluczUzytkownika>' . $key . '</ns:pKluczUzytkownika></ns:Zaloguj>';
 $loginResp = callGus($url, $loginAction, $loginBody);
 
 if (preg_match('/<ZalogujResult[^>]*>(.*)<\/ZalogujResult>/', $loginResp, $matches)) {
     $sid = $matches[1];
     
-    // 2. SEARCH
+    // 2. Szukaj (Precyzyjna struktura dla BIR 1.1)
     $searchAction = 'http://CIS/BIR/PUBL/2014/07/IUslugaBIRzewnPubl/DaneSzukajPodmioty';
-    // Kluczowa zmiana: używamy domyślnego namespace bez prefiksów ns/dat
     $searchBody = <<<XML
-<DaneSzukajPodmioty xmlns="http://CIS/BIR/PUBL/2014/07">
-    <pParametryWyszukiwania>
-        <Nip>$nip</Nip>
-    </pParametryWyszukiwania>
-</DaneSzukajPodmioty>
+<ns:DaneSzukajPodmioty>
+    <ns:pParametryWyszukiwania>
+        <dat:Nip>$nip</dat:Nip>
+    </ns:pParametryWyszukiwania>
+</ns:DaneSzukajPodmioty>
 XML;
 
-    $searchResp = callGus($url, $searchAction, $searchBody);
-    $log .= "SEARCH RESPONSE: $searchResp\n";
+    $searchResp = callGus($url, $searchAction, $searchBody, $sid);
     
-    if (preg_match('/<DaneSzukajPodmiotyResult[^>]*>(.*)<\/DaneSzukajPodmiotyResult>/s', $searchResp, $matches) && !empty($matches[1])) {
+    if (preg_match('/<DaneSzukajPodmiotyResult[^>]*>(.*)<\/DaneSzukajPodmiotyResult>/s', $searchResp, $matches)) {
         $xmlData = html_entity_decode($matches[1]);
         $xml = @simplexml_load_string($xmlData);
         if ($xml && $xml->dane) {
              $d = $xml->dane;
+             
+             // Parsowanie wyniku zależnie od typu (osoba fizyczna vs firma)
+             $name = (string)$d->Nazwa;
+             $street = (string)$d->Ulica;
+             $house = (string)$d->NrNieruchomosci;
+             $flat = (string)$d->NrLokalu;
+             $zip = (string)$d->KodPocztowy;
+             $city = (string)$d->Miejscowosc;
+             
+             $address = "$street $house" . ($flat ? "/$flat" : "") . ", $zip $city";
+
              echo json_encode(['success' => true, 'data' => [
-                 'name' => (string)$d->Nazwa,
-                 'address' => trim((string)$d->Ulica . ' ' . (string)$d->NrNieruchomosci . ((string)$d->NrLokalu ? '/'.(string)$d->NrLokalu : '') . ', ' . (string)$d->KodPocztowy . ' ' . (string)$d->Miejscowosc)
+                 'name' => $name,
+                 'address' => trim($address, ' ,')
              ]]);
+             
+             // Wyloguj
+             $logoutAction = 'http://CIS/BIR/PUBL/2014/07/IUslugaBIRzewnPubl/Wyloguj';
+             $logoutBody = '<ns:Wyloguj><ns:pIdSesji>' . $sid . '</ns:pIdSesji></ns:Wyloguj>';
+             callGus($url, $logoutAction, $logoutBody, $sid);
              exit;
         }
     }
 }
 
-file_put_contents('gus_debug.txt', $log, FILE_APPEND);
-echo json_encode(['error' => 'GUS nie zwrócił danych dla tego NIP.', 'debug_hint' => 'Sprawdź logi na serwerze.']);
+echo json_encode(['error' => 'Nie znaleziono danych w bazie GUS.']);
