@@ -16,8 +16,8 @@ function callGus($url, $action, $body, $sid = null) {
     $envelope = <<<XML
 <soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:ns="http://CIS/BIR/PUBL/2014/07" xmlns:dat="http://CIS/BIR/PUBL/2014/07/datacontract">
     <soap:Header xmlns:wsa="http://www.w3.org/2005/08/addressing">
-        <wsa:Action soap:mustUnderstand="1">$action</wsa:Action>
-        <wsa:To soap:mustUnderstand="1">$url</wsa:To>
+        <wsa:Action>$action</wsa:Action>
+        <wsa:To>$url</wsa:To>
     </soap:Header>
     <soap:Body>$body</soap:Body>
 </soap:Envelope>
@@ -26,11 +26,14 @@ XML;
     $ch = curl_init();
     $headers = [
         "Content-Type: application/soap+xml; charset=utf-8; action=\"$action\"",
+        "SOAPAction: \"$action\"", // Dla kompatybilności hybrydowej
         "Content-Length: " . strlen($envelope),
         "Accept: application/xop+xml"
     ];
     if ($sid) {
         $headers[] = "sid: $sid";
+        $headers[] = "Sid: $sid";
+        $headers[] = "Cookie: sid=$sid"; // Niektóre load-balancery GUS tego wymagają
     }
 
     curl_setopt($ch, CURLOPT_URL, $url);
@@ -51,7 +54,7 @@ $loginBody = '<ns:Zaloguj><ns:pKluczUzytkownika>' . $key . '</ns:pKluczUzytkowni
 $loginResp = callGus($url, $loginAction, $loginBody);
 
 if (preg_match('/<ZalogujResult[^>]*>(.*)<\/ZalogujResult>/', $loginResp, $matches)) {
-    $sid = $matches[1];
+    $sid = trim($matches[1]);
     
     // 2. SEARCH
     $searchAction = 'http://CIS/BIR/PUBL/2014/07/IUslugaBIRzewnPubl/DaneSzukajPodmioty';
@@ -65,21 +68,9 @@ XML;
 
     $searchResp = callGus($url, $searchAction, $searchBody, $sid);
     
-    // Jeśli wynik jest pusty, robimy ostatnią próbę bez prefiksu dla parametru (niektóre wersje BIR 1.1 tak mają)
-    if (strpos($searchResp, '<DaneSzukajPodmiotyResult/>') !== false) {
-        $searchBody = <<<XML
-<ns:DaneSzukajPodmioty>
-    <ns:pParametryWyszukiwania>
-        <Nip xmlns="http://CIS/BIR/PUBL/2014/07/datacontract">$nip</Nip>
-    </ns:pParametryWyszukiwania>
-</ns:DaneSzukajPodmioty>
-XML;
-        $searchResp = callGus($url, $searchAction, $searchBody, $sid);
-    }
-
     if (preg_match('/<DaneSzukajPodmiotyResult[^>]*>(.*)<\/DaneSzukajPodmiotyResult>/s', $searchResp, $matches)) {
         $resultStr = html_entity_decode($matches[1]);
-        if (!empty($resultStr)) {
+        if (!empty($resultStr) && strpos($resultStr, '<dane>') !== false) {
             $xml = @simplexml_load_string($resultStr);
             if ($xml && $xml->dane) {
                 $d = $xml->dane;
@@ -93,4 +84,4 @@ XML;
     }
 }
 
-echo json_encode(['error' => 'GUS nie zwrócił danych (Brak wyników). Upewnij się, że NIP jest poprawny.']);
+echo json_encode(['error' => 'GUS nie zwrócił danych. Możliwa przerwa techniczna lub błędny klucz.']);
