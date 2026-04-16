@@ -1,12 +1,5 @@
 /**
- * db.js — Dexie schema (v3) with encrypted data support
- *
- * Schema design principles:
- * - Personal data is stored ONLY in `encryptedData` blobs (AES-GCM)
- * - Index fields contain NO personal data (only IDs, timestamps, booleans)
- * - `settings` table stores non-sensitive preferences only
- * - `secureSettings` stores OAuth tokens (encrypted)
- * - `auth` stores salt + canary for password verification
+ * db.js — Dexie schema (v4)
  */
 
 import Dexie from 'dexie';
@@ -18,7 +11,7 @@ db.version(1).stores({
   firms: '++id, name, nip, createdAt',
 });
 
-// ─── Version 2 (legacy) with employees/trainings/medicals ───────────────────
+// ─── Version 2 (legacy) ──────────────────────────────────────────────────────
 db.version(2).stores({
   firms: '++id, name, nip, createdAt',
   employees: '++id, firmId, lastName, [firmId+active]',
@@ -26,8 +19,8 @@ db.version(2).stores({
   medicals: '++id, employeeId, firmId, type, expiresAt',
 });
 
-// ─── Version 4 — Sync Settings ──────────────────────────────────────────────
-db.version(4).stores({
+// ─── Version 3 — encrypted schema ───────────────────────────────────────────
+db.version(3).stores({
   firms:          '++id, createdAt, updatedAt',
   employees:      '++id, firmId, createdAt, updatedAt',
   trainings:      '++id, employeeId, firmId, expiresAt, createdAt',
@@ -36,5 +29,9 @@ db.version(4).stores({
   auth:           'id',
   settings:       'key',
   secureSettings: 'key',
+});
+
+// ─── Version 4 — Sync Settings ──────────────────────────────────────────────
+db.version(4).stores({
   sync_settings:  'provider', // Stores: provider ('google'|'local'|'none'), handle, token
 });

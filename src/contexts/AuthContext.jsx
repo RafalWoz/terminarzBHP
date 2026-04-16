@@ -22,11 +22,14 @@ export function AuthProvider({ children }) {
 
   const checkStatus = useCallback(async () => {
     try {
+      // Ensure database is ready and upgraded before accessing tables
+      await db.open();
+
       // 1. Check if storage/sync is configured
-      const sync = await db.sync_settings.toCollection().first();
+      const syncCount = await db.sync_settings.count().catch(() => 0);
       const hasPassword = await hasPasswordSetUp();
 
-      if (!sync || !hasPassword) {
+      if (syncCount === 0 || !hasPassword) {
         setStatus('onboarding');
         return;
       }

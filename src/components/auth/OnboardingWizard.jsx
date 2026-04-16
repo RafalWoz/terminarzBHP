@@ -1,10 +1,8 @@
 import { useState } from 'react';
-import { 
-  setupPassword, 
-  setSyncProvider, 
-  FileSystemDriver, 
-  validatePasswordStrength 
-} from '../../storage';
+import { setupPassword } from '../../storage/auth';
+import { setSyncProvider } from '../../storage/sync/syncManager';
+import { FileSystemDriver } from '../../storage/sync/drivers/FileSystemDriver';
+import { validatePasswordStrength } from '../../storage/crypto';
 
 export default function OnboardingWizard({ onComplete }) {
   const [step, setStep] = useState(1);
