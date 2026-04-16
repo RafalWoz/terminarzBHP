@@ -13,6 +13,7 @@ $key = 'b8abef9133434c1a90c3';
 $url = 'https://wyszukiwarkaregon.stat.gov.pl/wsBIR/UslugaBIRzewnPubl.svc';
 
 function callGus($url, $action, $body, $sid = null) {
+    // BIR 1.1 Action Header is different from To Header often
     $envelope = <<<XML
 <soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:ns="http://CIS/BIR/PUBL/2014/07">
     <soap:Header xmlns:wsa="http://www.w3.org/2005/08/addressing">
@@ -51,50 +52,54 @@ $loginResp = callGus($url, 'http://CIS/BIR/PUBL/2014/07/IUslugaBIRzewnPubl/Zalog
 if (preg_match('/<ZalogujResult>(.*)<\/ZalogujResult>/', $loginResp, $matches)) {
     $sid = $matches[1];
 } else {
-    echo json_encode(['error' => 'Błąd logowania do GUS.']);
+    echo json_encode(['error' => 'Błąd logowania do GUS. Serwer zwrócił: ' . strip_tags($loginResp)]);
     exit;
 }
 
-// 2. Szukaj
+// 2. Szukaj (Zmieniony format dla BIR 1.1)
 $searchBody = <<<XML
 <ns:DaneSzukajPodmioty>
     <ns:pParametryWyszukiwania>
-        <dat:Nip xmlns:dat="http://CIS/BIR/PUBL/2014/07/datacontract">$nip</dat:Nip>
+        <ns:Nip>$nip</ns:Nip>
     </ns:pParametryWyszukiwania>
 </ns:DaneSzukajPodmioty>
 XML;
 
 $searchResp = callGus($url, 'http://CIS/BIR/PUBL/2014/07/IUslugaBIRzewnPubl/DaneSzukajPodmioty', $searchBody, $sid);
 
-// GUS wraps the result XML in HTML-encoded string inside <DaneSzukajPodmiotyResult>
+// Parsowanie wyniku
 if (preg_match('/<DaneSzukajPodmiotyResult>(.*)<\/DaneSzukajPodmiotyResult>/s', $searchResp, $matches)) {
     $xmlData = html_entity_decode($matches[1]);
-    $xml = simplexml_load_string($xmlData);
+    $xml = @simplexml_load_string($xmlData);
     
     if ($xml && $xml->dane) {
         $d = $xml->dane;
+        
+        // Sprawdzenie czy nie ma błędu wewnątrz danych (np. brak podmiotu)
+        if (isset($d->ErrorCode)) {
+            echo json_encode(['error' => 'Błąd GUS: ' . (string)$d->ErrorMessagePl]);
+            exit;
+        }
+
         echo json_encode([
             'success' => true,
             'data' => [
                 'name' => (string)$d->Nazwa,
                 'nip' => (string)$d->Nip,
-                'regon' => (string)$d->Regon,
-                'city' => (string)$d->Miejscowosc,
-                'street' => (string)$d->Ulica,
-                'house' => (string)$d->NrNieruchomosci,
-                'flat' => (string)$d->NrLokalu,
-                'postcode' => (string)$d->KodPocztowy,
-                'province' => (string)$d->Wojewodztwo,
-                'district' => (string)$d->Powiat,
-                'commune' => (string)$d->Gmina,
-                'full_address' => trim((string)$d->Ulica . ' ' . (string)$d->NrNieruchomosci . ((string)$d->NrLokalu ? '/'.(string)$d->NrLokalu : '') . ', ' . (string)$d->KodPocztowy . ' ' . (string)$d->Miejscowosc)
+                'address' => trim((string)$d->Ulica . ' ' . (string)$d->NrNieruchomosci . ((string)$d->NrLokalu ? '/'.(string)$d->NrLokalu : '') . ', ' . (string)$d->KodPocztowy . ' ' . (string)$d->Miejscowosc)
             ]
         ]);
     } else {
-        echo json_encode(['error' => 'Nie znaleziono firmy o podanym NIP.']);
+        echo json_encode(['error' => 'GUS nie zwrócił danych. Surowa odpowiedź: ' . strip_tags($searchResp)]);
     }
 } else {
-    echo json_encode(['error' => 'Błąd wyszukiwania w GUS.']);
+    // Zwracamy więcej info o błędzie jeśli regex zawiedzie
+    $errorMsg = 'Błąd wyszukiwania w GUS.';
+    if (strpos($searchResp, 'faultstring') !== false) {
+        preg_match('/<faultstring>(.*)<\/faultstring>/', $searchResp, $fMatches);
+        $errorMsg .= ' Powód: ' . ($fMatches[1] ?? 'Nieznany SOAP Fault');
+    }
+    echo json_encode(['error' => $errorMsg, 'debug' => strip_tags($searchResp)]);
 }
 
 // 3. Wyloguj
