@@ -17,6 +17,27 @@ import Settings from './pages/Settings';
 function AppRoutes() {
   const { status, onUnlocked, onPasswordSet, onMigrationComplete } = useAuth();
 
+  // Global Security Check (Web Crypto API requires Secure Context)
+  if (!window.isSecureContext || !crypto.subtle) {
+    return (
+      <div className="min-h-screen bg-slate-900 flex items-center justify-center p-6 text-center">
+        <div className="max-w-md">
+          <div className="text-6xl mb-6">🔒</div>
+          <h1 className="text-2xl font-bold text-white mb-4">Wymagane połączenie bezpieczne</h1>
+          <p className="text-slate-400 mb-8 leading-relaxed">
+            Ta aplikacja używa zaawansowanego szyfrowania do ochrony Twoich danych. 
+            Przeglądarki pozwalają na to wyłącznie przez <strong>połączenie HTTPS</strong> lub na <strong>localhost</strong>.
+          </p>
+          <div className="bg-red-500/10 border border-red-500/20 p-4 rounded-xl">
+            <p className="text-red-400 text-sm">
+              Skontaktuj się z administratorem, aby włączyć certyfikat SSL (HTTPS) na tym serwerze.
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   if (status === 'loading') {
     return (
       <div className="min-h-screen bg-slate-900 flex items-center justify-center">

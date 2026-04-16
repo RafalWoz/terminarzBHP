@@ -14,6 +14,10 @@ const KEY_LENGTH = 256;   // bits
  * The returned key is non-extractable (cannot be exported from memory).
  */
 export async function deriveKey(password, salt) {
+  if (!crypto.subtle) {
+    throw new Error('SECURE_CONTEXT_REQUIRED');
+  }
+
   const encoder = new TextEncoder();
   const passwordKey = await crypto.subtle.importKey(
     'raw',
