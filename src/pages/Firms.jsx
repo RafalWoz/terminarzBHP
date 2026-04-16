@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useFirms } from '../hooks/useFirms';
+import { useEmployees } from '../hooks/useEmployees';
+
 
 export default function Firms() {
   const [search, setSearch] = useState('');
@@ -41,7 +43,11 @@ export default function Firms() {
             to={`/firms/${firm.id}`}
             className="block bg-white border border-gray-200 rounded-xl p-4 active:bg-gray-50 transition-shadow hover:shadow-sm"
           >
-            <div className="font-semibold text-lg text-slate-800">{firm.name}</div>
+            <div className="flex justify-between items-start">
+              <div className="font-semibold text-lg text-slate-800">{firm.name}</div>
+              <FirmStatusSummary firmId={firm.id} />
+            </div>
+
             {firm.nip && <div className="text-sm text-slate-500 mt-1 font-mono">NIP: {firm.nip}</div>}
             {firm.contactPerson && <div className="text-sm text-slate-500">Kontakt: {firm.contactPerson}</div>}
           </Link>
@@ -50,3 +56,21 @@ export default function Firms() {
     </div>
   );
 }
+
+function FirmStatusSummary({ firmId }) {
+  const employees = useEmployees(firmId);
+  
+  if (!employees || employees.length === 0) return null;
+  
+  const expiredCount = employees.filter(e => e.status === 'expired').length;
+  const criticalCount = employees.filter(e => e.status === 'critical').length;
+  
+  return (
+    <div className="flex gap-1">
+      {expiredCount > 0 && <span className="bg-red-500 text-white text-[10px] px-1.5 py-0.5 rounded-full font-bold">{expiredCount}</span>}
+      {criticalCount > 0 && <span className="bg-orange-500 text-white text-[10px] px-1.5 py-0.5 rounded-full font-bold">{criticalCount}</span>}
+      {expiredCount === 0 && criticalCount === 0 && <span className="bg-green-500 w-2 h-2 rounded-full mt-1.5 shadow-sm shadow-green-200"></span>}
+    </div>
+  );
+}
+

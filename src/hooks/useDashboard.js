@@ -31,7 +31,7 @@ export function useDashboard() {
         expiresAt: t.expiresAt,
         daysLeft: getDaysUntilExpiration(t.expiresAt),
         status: getExpirationStatus(t.expiresAt),
-        link: `/firms/${firm.id}`, // Uproszczony link w MVP
+        link: `/firms/${firm.id}/employees/${emp.id}`,
       });
     }
 
@@ -50,7 +50,7 @@ export function useDashboard() {
         expiresAt: m.expiresAt,
         daysLeft: getDaysUntilExpiration(m.expiresAt),
         status: getExpirationStatus(m.expiresAt),
-        link: `/firms/${firm.id}`,
+        link: `/firms/${firm.id}/employees/${emp.id}`,
       });
     }
 
