@@ -31,10 +31,40 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 }
 
 // ---------- Configuration ----------------------------------------------------
+//
+// Konfigurację (środowisko + klucz) można podać na trzy sposoby - proxy bierze
+// pierwszą dostępną w tej kolejności:
+//
+//   1. Plik `regon_config.php` obok tego pliku (np. wgrany przez FTP, nie
+//      commituj go do repo!). Przykładowa zawartość:
+//
+//          <?php
+//          return [
+//              'env'     => 'prod',
+//              'api_key' => 'twoj-klucz-z-api.stat.gov.pl',
+//          ];
+//
+//   2. Zmienne środowiskowe GUS_ENV i GUS_API_KEY - panel LH.pl albo
+//      wpis `SetEnv GUS_ENV prod` / `SetEnv GUS_API_KEY ...` w .htaccess.
+//
+//   3. Brak konfiguracji => środowisko testowe GUS z publicznym kluczem
+//      (działa od ręki, ale tylko dla fikcyjnych NIP-ów z bazy testowej).
 
-// Switch env via hosting panel: setenv GUS_ENV=prod + GUS_API_KEY=<your key>
-$env    = getenv('GUS_ENV') ?: 'test';
-$apiKey = getenv('GUS_API_KEY') ?: '';
+$env    = '';
+$apiKey = '';
+
+$configFile = __DIR__ . '/regon_config.php';
+if (is_file($configFile)) {
+    $cfg = @include $configFile;
+    if (is_array($cfg)) {
+        $env    = isset($cfg['env'])     ? (string) $cfg['env']     : '';
+        $apiKey = isset($cfg['api_key']) ? (string) $cfg['api_key'] : '';
+    }
+}
+
+if ($env === '')    { $env    = getenv('GUS_ENV')     ?: ''; }
+if ($apiKey === '') { $apiKey = getenv('GUS_API_KEY') ?: ''; }
+if ($env === '')    { $env    = 'test'; }
 
 if ($env === 'prod') {
     $wsdlUrl    = 'https://wyszukiwarkaregon.stat.gov.pl/wsBIR/wsdl/UslugaBIRzewnPubl-ver11-prod.wsdl';
@@ -42,7 +72,7 @@ if ($env === 'prod') {
     if ($apiKey === '') {
         http_response_code(500);
         echo json_encode([
-            'error' => 'Brak klucza produkcyjnego GUS. Ustaw zmienną środowiskową GUS_API_KEY w panelu hostingu.',
+            'error' => 'Brak klucza produkcyjnego GUS. Utwórz regon_config.php obok proxy lub ustaw zmienną GUS_API_KEY.',
         ]);
         exit;
     }
