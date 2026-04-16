@@ -3,8 +3,14 @@ header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Headers: Content-Type');
 
+if (!class_exists('SoapClient')) {
+    echo json_encode(['error' => 'Serwer nie posiada zainstalowanego modułu SoapClient. Skontaktuj się z administratorem LH.pl.']);
+    exit;
+}
+
 $nip = $_GET['nip'] ?? '';
 $key = 'b8abef9133434c1a90c3';
+$wsdl = 'https://wyszukiwarkaregon.stat.gov.pl/wsBIR/wsdl/UslugaBIRzewnPubl-ver11-prod.wsdl';
 $url = 'https://wyszukiwarkaregon.stat.gov.pl/wsBIR/UslugaBIRzewnPubl.svc';
 
 if (!$nip || strlen($nip) !== 10) {
@@ -12,76 +18,84 @@ if (!$nip || strlen($nip) !== 10) {
     exit;
 }
 
-function callGus($url, $action, $body, $sid = null) {
-    $envelope = <<<XML
-<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:ns="http://CIS/BIR/PUBL/2014/07" xmlns:dat="http://CIS/BIR/PUBL/2014/07/datacontract">
-    <soap:Header xmlns:wsa="http://www.w3.org/2005/08/addressing">
-        <wsa:Action>$action</wsa:Action>
-        <wsa:To>$url</wsa:To>
-    </soap:Header>
-    <soap:Body>$body</soap:Body>
-</soap:Envelope>
-XML;
+try {
+    // Inicjalizacja klienta SOAP
+    $client = new SoapClient($wsdl, [
+        'soap_version' => SOAP_1_2,
+        'trace' => true,
+        'location' => $url,
+        'stream_context' => stream_context_create([
+            'ssl' => ['verify_peer' => false, 'verify_peer_name' => false]
+        ])
+    ]);
 
-    $ch = curl_init();
-    $headers = [
-        "Content-Type: application/soap+xml; charset=utf-8; action=\"$action\"",
-        "SOAPAction: \"$action\"", // Dla kompatybilności hybrydowej
-        "Content-Length: " . strlen($envelope),
-        "Accept: application/xop+xml"
-    ];
-    if ($sid) {
-        $headers[] = "sid: $sid";
-        $headers[] = "Sid: $sid";
-        $headers[] = "Cookie: sid=$sid"; // Niektóre load-balancery GUS tego wymagają
+    // 1. ZALOGUJ
+    $loginResult = $client->Zaloguj(['pKluczUzytkownika' => $key]);
+    $sid = $loginResult->ZalogujResult;
+
+    if (!$sid) {
+        throw new Exception("Błąd autoryzacji w GUS (brak SID).");
     }
 
-    curl_setopt($ch, CURLOPT_URL, $url);
-    curl_setopt($ch, CURLOPT_POST, true);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, $envelope);
-    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+    // Dodanie SID do nagłówków dla kolejnych zapytań
+    $client->__setSoapHeaders([
+        new SoapHeader('http://CIS/BIR/2014/07', 'sid', $sid)
+    ]);
     
-    $response = curl_exec($ch);
-    curl_close($ch);
-    return $response;
-}
-
-// 1. LOGIN
-$loginAction = 'http://CIS/BIR/PUBL/2014/07/IUslugaBIRzewnPubl/Zaloguj';
-$loginBody = '<ns:Zaloguj><ns:pKluczUzytkownika>' . $key . '</ns:pKluczUzytkownika></ns:Zaloguj>';
-$loginResp = callGus($url, $loginAction, $loginBody);
-
-if (preg_match('/<ZalogujResult[^>]*>(.*)<\/ZalogujResult>/', $loginResp, $matches)) {
-    $sid = trim($matches[1]);
+    // PHP SoapClient nie zawsze dodaje sid do HTTP headers automatycznie, 
+    // dla GUS BIR1.1 musimy go dodać ręcznie do kontekstu streamu lub przez __setCookie
+    // Jednak najprostszą metodą dla wielu jest po prostu wysłanie go w __setSoapHeaders (niektóre wersje)
+    // ALE GUS BIR1.1 wymaga go w nagłówku HTTP SID.
     
-    // 2. SEARCH
-    $searchAction = 'http://CIS/BIR/PUBL/2014/07/IUslugaBIRzewnPubl/DaneSzukajPodmioty';
-    $searchBody = <<<XML
-<ns:DaneSzukajPodmioty>
-    <ns:pParametryWyszukiwania>
-        <dat:Nip>$nip</dat:Nip>
-    </ns:pParametryWyszukiwania>
-</ns:DaneSzukajPodmioty>
-XML;
+    // Re-inicjalizacja z nagłówkiem profilu SID
+    $client = new SoapClient($wsdl, [
+        'soap_version' => SOAP_1_2,
+        'trace' => true,
+        'location' => $url,
+        'stream_context' => stream_context_create([
+            'http' => ['header' => "sid: $sid\r\n"],
+            'ssl' => ['verify_peer' => false, 'verify_peer_name' => false]
+        ])
+    ]);
 
-    $searchResp = callGus($url, $searchAction, $searchBody, $sid);
+    // 2. SZUKAJ
+    $params = [
+        'pParametryWyszukiwania' => [
+            'Nip' => $nip
+        ]
+    ];
     
-    if (preg_match('/<DaneSzukajPodmiotyResult[^>]*>(.*)<\/DaneSzukajPodmiotyResult>/s', $searchResp, $matches)) {
-        $resultStr = html_entity_decode($matches[1]);
-        if (!empty($resultStr) && strpos($resultStr, '<dane>') !== false) {
-            $xml = @simplexml_load_string($resultStr);
-            if ($xml && $xml->dane) {
-                $d = $xml->dane;
-                echo json_encode(['success' => true, 'data' => [
-                    'name' => (string)$d->Nazwa,
-                    'address' => trim((string)$d->Ulica . ' ' . (string)$d->NrNieruchomosci . ((string)$d->NrLokalu ? '/'.(string)$d->NrLokalu : '') . ', ' . (string)$d->KodPocztowy . ' ' . (string)$d->Miejscowosc)
-                ]]);
-                exit;
+    $searchResult = $client->DaneSzukajPodmioty($params);
+    $xmlStr = $searchResult->DaneSzukajPodmiotyResult;
+
+    if (empty($xmlStr)) {
+        echo json_encode(['error' => 'GUS nie zwrócił danych dla tego NIP (wynik pusty).']);
+    } else {
+        $xml = simplexml_load_string($xmlStr);
+        if ($xml && $xml->dane) {
+            $d = $xml->dane;
+            
+            if (isset($d->ErrorCode)) {
+                echo json_encode(['error' => 'GUS: ' . (string)$d->ErrorMessagePl]);
+            } else {
+                echo json_encode([
+                    'success' => true,
+                    'data' => [
+                        'name' => (string)$d->Nazwa,
+                        'address' => trim((string)$d->Ulica . ' ' . (string)$d->NrNieruchomosci . ((string)$d->NrLokalu ? '/'.(string)$d->NrLokalu : '') . ', ' . (string)$d->KodPocztowy . ' ' . (string)$d->Miejscowosc)
+                    ]
+                ]);
             }
+        } else {
+            echo json_encode(['error' => 'Błąd parsowania danych z GUS.', 'raw' => $xmlStr]);
         }
     }
-}
 
-echo json_encode(['error' => 'GUS nie zwrócił danych. Możliwa przerwa techniczna lub błędny klucz.']);
+    // 3. WYLOGUJ
+    $client->Wyloguj(['pIdSesji' => $sid]);
+
+} catch (Exception $e) {
+    echo json_encode([
+        'error' => 'Błąd połączenia z GUS (SOAP): ' . $e->getMessage()
+    ]);
+}
