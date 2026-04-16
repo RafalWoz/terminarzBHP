@@ -1,101 +1,129 @@
 <?php
-header('Content-Type: application/json');
-header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Headers: Content-Type');
+/**
+ * TerminyBHP - GUS (REGON) Proxy (Production Version)
+ * Located in public/ so it gets bundled with Vite build.
+ * Uses cURL to avoid SoapClient dependency issues on shared hosting.
+ */
 
-if (!class_exists('SoapClient')) {
-    echo json_encode(['error' => 'Serwer nie posiada zainstalowanego modułu SoapClient. Skontaktuj się z administratorem LH.pl.']);
+header('Content-Type: application/json');
+header('Access-Control-Allow-Origin: *'); 
+header('Access-Control-Allow-Methods: GET');
+
+$nip = filter_input(INPUT_GET, 'nip', FILTER_SANITIZE_STRING);
+
+if (!$nip || strlen($nip) !== 10) {
+    echo json_encode(['error' => 'Podaj 10-cyfrowy NIP']);
     exit;
 }
 
-$nip = $_GET['nip'] ?? '';
-$key = 'b8abef9133434c1a90c3';
-$wsdl = 'https://wyszukiwarkaregon.stat.gov.pl/wsBIR/wsdl/UslugaBIRzewnPubl-ver11-prod.wsdl';
-$url = 'https://wyszukiwarkaregon.stat.gov.pl/wsBIR/UslugaBIRzewnPubl.svc';
+// --- CONFIGURATION ---
+$apiKey = 'abcde12345abcde12345'; 
+$url = 'https://wyszukiwarkaregon.stat.gov.pl/wsBIR/UslugaBIRzewnPubl.svc'; 
 
-if (!$nip || strlen($nip) !== 10) {
-    echo json_encode(['error' => 'Podaj poprawny 10-cyfrowy NIP.']);
-    exit;
+/**
+ * Perform a cURL SOAP request
+ */
+function gus_request($url, $xml, $sid = null) {
+    $ch = curl_init($url);
+    $headers = [
+        'Content-Type: application/soap+xml; charset=utf-8',
+        'SOAPAction: "http://CIS/BIR/PUBL/2014/07/IUslugaBIRzewnPubl/Zaloguj"', 
+    ];
+    
+    if ($sid) {
+        $headers[] = "sid: $sid";
+    }
+
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $xml);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 15);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); 
+
+    $response = curl_exec($ch);
+    $error = curl_error($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+
+    if ($error) throw new Exception("cURL Error: $error");
+    if ($httpCode >= 400) throw new Exception("GUS Server Error (HTTP $httpCode)");
+
+    return $response;
 }
 
 try {
-    // Inicjalizacja klienta SOAP
-    $client = new SoapClient($wsdl, [
-        'soap_version' => SOAP_1_2,
-        'trace' => true,
-        'location' => $url,
-        'stream_context' => stream_context_create([
-            'ssl' => ['verify_peer' => false, 'verify_peer_name' => false]
-        ])
-    ]);
+    // 1. LOGIN
+    $loginXml = '<?xml version="1.0" encoding="utf-8"?>
+    <soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:dat="http://CIS/BIR/PUBL/2014/07">
+       <soap:Header/>
+       <soap:Body>
+          <dat:Zaloguj>
+             <dat:pKluczUzytkownika>' . $apiKey . '</dat:pKluczUzytkownika>
+          </dat:Zaloguj>
+       </soap:Body>
+    </soap:Envelope>';
 
-    // 1. ZALOGUJ
-    $loginResult = $client->Zaloguj(['pKluczUzytkownika' => $key]);
-    $sid = $loginResult->ZalogujResult;
-
-    if (!$sid) {
-        throw new Exception("Błąd autoryzacji w GUS (brak SID).");
-    }
-
-    // Dodanie SID do nagłówków dla kolejnych zapytań
-    $client->__setSoapHeaders([
-        new SoapHeader('http://CIS/BIR/2014/07', 'sid', $sid)
-    ]);
+    $loginRes = gus_request($url, $loginXml);
     
-    // PHP SoapClient nie zawsze dodaje sid do HTTP headers automatycznie, 
-    // dla GUS BIR1.1 musimy go dodać ręcznie do kontekstu streamu lub przez __setCookie
-    // Jednak najprostszą metodą dla wielu jest po prostu wysłanie go w __setSoapHeaders (niektóre wersje)
-    // ALE GUS BIR1.1 wymaga go w nagłówku HTTP SID.
-    
-    // Re-inicjalizacja z nagłówkiem profilu SID
-    $client = new SoapClient($wsdl, [
-        'soap_version' => SOAP_1_2,
-        'trace' => true,
-        'location' => $url,
-        'stream_context' => stream_context_create([
-            'http' => ['header' => "sid: $sid\r\n"],
-            'ssl' => ['verify_peer' => false, 'verify_peer_name' => false]
-        ])
-    ]);
-
-    // 2. SZUKAJ
-    $params = [
-        'pParametryWyszukiwania' => [
-            'Nip' => $nip
-        ]
-    ];
-    
-    $searchResult = $client->DaneSzukajPodmioty($params);
-    $xmlStr = $searchResult->DaneSzukajPodmiotyResult;
-
-    if (empty($xmlStr)) {
-        echo json_encode(['error' => 'GUS nie zwrócił danych dla tego NIP (wynik pusty).']);
+    if (preg_match('/<ZalogujResult>(.*?)<\/ZalogujResult>/', $loginRes, $matches)) {
+        $sid = $matches[1];
     } else {
-        $xml = simplexml_load_string($xmlStr);
-        if ($xml && $xml->dane) {
-            $d = $xml->dane;
-            
-            if (isset($d->ErrorCode)) {
-                echo json_encode(['error' => 'GUS: ' . (string)$d->ErrorMessagePl]);
-            } else {
-                echo json_encode([
-                    'success' => true,
-                    'data' => [
-                        'name' => (string)$d->Nazwa,
-                        'address' => trim((string)$d->Ulica . ' ' . (string)$d->NrNieruchomosci . ((string)$d->NrLokalu ? '/'.(string)$d->NrLokalu : '') . ', ' . (string)$d->KodPocztowy . ' ' . (string)$d->Miejscowosc)
-                    ]
-                ]);
-            }
-        } else {
-            echo json_encode(['error' => 'Błąd parsowania danych z GUS.', 'raw' => $xmlStr]);
-        }
+        throw new Exception("Błąd logowania do GUS (nie znaleziono SID)");
     }
 
-    // 3. WYLOGUJ
-    $client->Wyloguj(['pIdSesji' => $sid]);
+    if (!$sid || strlen($sid) < 4) {
+        throw new Exception("GUS zwrócił pusty identyfikator sesji. Sprawdź poprawność klucza API.");
+    }
+
+    // 2. SEARCH
+    $searchXml = '<?xml version="1.0" encoding="utf-8"?>
+    <soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:dat="http://CIS/BIR/PUBL/2014/07">
+       <soap:Header xmlns:wsa="http://www.w3.org/2005/08/addressing">
+          <wsa:Action>http://CIS/BIR/PUBL/2014/07/IUslugaBIRzewnPubl/DaneSzukajPodmioty</wsa:Action>
+          <wsa:To>' . $url . '</wsa:To>
+       </soap:Header>
+       <soap:Body>
+          <dat:DaneSzukajPodmioty>
+             <dat:pParametryWyszukiwania>
+                <dat:Nip>' . $nip . '</dat:Nip>
+             </dat:pParametryWyszukiwania>
+          </dat:DaneSzukajPodmioty>
+       </soap:Body>
+    </soap:Envelope>';
+
+    $searchRes = gus_request($url, $searchXml, $sid);
+
+    // 3. PARSE RESULT
+    if (preg_match('/<DaneSzukajPodmiotyResult>(.*?)<\/DaneSzukajPodmiotyResult>/', $searchRes, $matches)) {
+        $innerXml = html_entity_decode($matches[1]);
+        
+        if (strpos($innerXml, '<ErrorCode>') !== false) {
+             preg_match('/<ErrorMessagePl>(.*?)<\/ErrorMessagePl>/', $innerXml, $errMatches);
+             throw new Exception("GUS: " . ($errMatches[1] ?? 'Nieznany błąd danych'));
+        }
+
+        // Basic mapping for the UI
+        $name = ''; if (preg_match('/<Nazwa>(.*?)<\/Nazwa>/', $innerXml, $m)) $name = $m[1];
+        $city = ''; if (preg_match('/<Miejscowosc>(.*?)<\/Miejscowosc>/', $innerXml, $m)) $city = $m[1];
+        $street = ''; if (preg_match('/<Ulica>(.*?)<\/Ulica>/', $innerXml, $m)) $street = $m[1];
+        $num = ''; if (preg_match('/<NrNieruchomosci>(.*?)<\/NrNieruchomosci>/', $innerXml, $m)) $num = $m[1];
+        $post = ''; if (preg_match('/<KodPocztowy>(.*?)<\/KodPocztowy>/', $innerXml, $m)) $post = $m[1];
+
+        echo json_encode([
+            'success' => true,
+            'data' => [
+                'name' => htmlspecialchars_decode($name, ENT_QUOTES),
+                'address' => trim(htmlspecialchars_decode("$street $num, $post $city", ENT_QUOTES)),
+            ]
+        ]);
+    } else {
+        throw new Exception("GUS nie zwrócił wyników dla podanego NIP.");
+    }
 
 } catch (Exception $e) {
+    http_response_code(500);
     echo json_encode([
-        'error' => 'Błąd połączenia z GUS (SOAP): ' . $e->getMessage()
+        'error' => 'Błąd Proxy GUS: ' . $e->getMessage()
     ]);
 }
