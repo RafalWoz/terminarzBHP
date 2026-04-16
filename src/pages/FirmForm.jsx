@@ -79,16 +79,14 @@ export default function FirmForm() {
               className="flex-1 px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all"
               placeholder="np. 5250000000"
             />
-            {!isEdit && (
-              <button
-                type="button"
-                onClick={handleGusLookup}
-                disabled={loadingGus}
-                className="bg-slate-800 text-white px-4 rounded-xl text-sm font-bold disabled:opacity-50 whitespace-nowrap"
-              >
-                {loadingGus ? '⏳' : 'Pobierz dane'}
-              </button>
-            )}
+            <button
+              type="button"
+              onClick={handleGusLookup}
+              disabled={loadingGus}
+              className="bg-slate-800 text-white px-4 rounded-xl text-sm font-bold disabled:opacity-50 whitespace-nowrap"
+            >
+              {loadingGus ? '⏳' : 'Pobierz dane'}
+            </button>
           </div>
         </label>
         <Field label="Nazwa firmy *" value={form.name}
