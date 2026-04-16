@@ -17,19 +17,16 @@ const BACKUP_VERSION = 1;
 
 /**
  * Export all data as an AES-GCM encrypted JSON file.
- * The file is encrypted with a key derived from the backup password
- * (can be the same as the master password, or a separate one).
+ * Uses the provided session key for encryption.
  */
-export async function exportEncryptedBackup(backupPassword) {
-  const key = getSessionKey();
-
+export async function exportLocalBackup(sessionKey) {
   // Decrypt all data from IndexedDB
   const [firms, employees, trainings, medicals, permits] = await Promise.all([
-    getAllFirms(key),
-    getAllEmployees(key),
-    getAllTrainings(key),
-    getAllMedicals(key),
-    getAllPermits(key),
+    getAllFirms(sessionKey),
+    getAllEmployees(sessionKey),
+    getAllTrainings(sessionKey),
+    getAllMedicals(sessionKey),
+    getAllPermits(sessionKey),
   ]);
 
   const payload = {
@@ -41,16 +38,21 @@ export async function exportEncryptedBackup(backupPassword) {
     permits,
   };
 
-  // Derive a new key from the backup password
-  const backupSalt = generateSalt();
-  const backupKey = await deriveKey(backupPassword, backupSalt);
-  const encryptedPayload = await encrypt(payload, backupKey);
+  // Derive a random salt for this backup file's encryption
+  // Even if we use the session key, we still want a fresh IV/Salt for the file itself
+  // BUT: if we want the file to be portable (readable by others with the same password), 
+  // we should use a password. 
+  // However, the user's request for "Local Backup" suggests using the current session.
+  // I'll stick to the provided key for encryption.
+  
+  const encryptedPayload = await encrypt(payload, sessionKey);
 
   const backupFile = {
     format: BACKUP_FORMAT,
     version: BACKUP_VERSION,
     createdAt: new Date().toISOString(),
-    salt: Array.from(backupSalt),
+    // For local backup using session key, we don't need a separate salt in the file
+    // as the session key is already derived.
     data: encryptedPayload,
     meta: {
       firms: firms.length,
@@ -63,17 +65,17 @@ export async function exportEncryptedBackup(backupPassword) {
 
   const blob = new Blob([JSON.stringify(backupFile)], { type: 'application/json' });
   const date = new Date().toISOString().slice(0, 10);
-  downloadBlob(blob, `terminybhp-backup-${date}.json.enc`);
+  const filename = `terminybhp-backup-${date}.json.enc`;
+  downloadBlob(blob, filename);
 
-  return backupFile.meta;
+  return { ...backupFile.meta, filename };
 }
 
 /**
  * Import from an encrypted backup file.
- * Throws if password is wrong or file is corrupt.
  * Returns a summary of imported records.
  */
-export async function importBackup(file, backupPassword) {
+export async function importLocalBackup(file, sessionKey) {
   const text = await file.text();
   const backupFile = JSON.parse(text);
 
@@ -81,17 +83,13 @@ export async function importBackup(file, backupPassword) {
     throw new Error('Nieprawidłowy format pliku. Upewnij się, że wybrałeś plik .json.enc z TerminyBHP.');
   }
 
-  const backupSalt = new Uint8Array(backupFile.salt);
-  const backupKey = await deriveKey(backupPassword, backupSalt);
-
   let payload;
   try {
-    payload = await decrypt(backupFile.data, backupKey);
+    payload = await decrypt(backupFile.data, sessionKey);
   } catch {
-    throw new Error('Nieprawidłowe hasło do backupu lub plik jest uszkodzony.');
+    throw new Error('Nieprawidłowy klucz sesji lub plik jest uszkodzony / zaszyfrowany innym hasłem.');
   }
 
-  const sessionKey = getSessionKey();
   const summary = { firms: 0, employees: 0, trainings: 0, medicals: 0, permits: 0 };
 
   // Atomic import transaction

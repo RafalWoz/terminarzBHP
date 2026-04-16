@@ -45,7 +45,7 @@ export {
 } from './repositories/permits';
 
 // Backup
-export { exportEncryptedBackup, importBackup, exportUnencryptedBackup } from './backup/local';
+export { exportLocalBackup, importLocalBackup, exportUnencryptedBackup } from './backup/local';
 
 // RODO
 export { exportUserData } from './rodo/dataExport';

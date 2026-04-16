@@ -34,7 +34,8 @@ export default function Settings() {
     const file = e.target.files[0];
     if (!file) return;
     try {
-      const result = await importLocalBackup(file);
+      const key = getSessionKey();
+      const result = await importLocalBackup(file, key);
       setStatus({
         type: 'success',
         msg: `Wczytano: ${result.firms} firm, ${result.employees} pracowników.`,
