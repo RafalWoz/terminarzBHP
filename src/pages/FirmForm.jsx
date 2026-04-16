@@ -9,6 +9,7 @@ export default function FirmForm() {
   const isEdit = id !== 'new';
 
   const [loadingGus, setLoadingGus] = useState(false);
+  const [error, setError] = useState('');
   const [form, setForm] = useState({
     name: '', nip: '', address: '',
     contactPerson: '', phone: '', email: '', notes: '',
@@ -35,8 +36,9 @@ export default function FirmForm() {
         name: data.name,
         address: data.full_address
       });
+      setError('');
     } catch (e) {
-      alert('Błąd GUS: ' + e.message);
+      setError('Błąd GUS: ' + e.message);
     } finally {
       setLoadingGus(false);
     }
@@ -44,16 +46,23 @@ export default function FirmForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError('');
+
     if (!form.name.trim()) {
-      alert('Nazwa firmy jest wymagana');
+      setError('Nazwa firmy jest wymagana, aby zapisać zmiany.');
       return;
     }
-    if (isEdit) {
-      await updateFirm(parseInt(id), form);
-    } else {
-      await addFirm(form);
+    
+    try {
+      if (isEdit) {
+        await updateFirm(parseInt(id), form);
+      } else {
+        await addFirm(form);
+      }
+      navigate('/firms');
+    } catch (err) {
+      setError('Błąd bazy danych: ' + err.message);
     }
-    navigate('/firms');
   };
 
   const handleDelete = async () => {
@@ -89,11 +98,24 @@ export default function FirmForm() {
             </button>
           </div>
         </label>
-        <Field label="Nazwa firmy *" value={form.name}
-          onChange={(v) => setForm({ ...form, name: v })} />
+        <Field 
+          label="Nazwa firmy *" 
+          value={form.name}
+          onChange={(v) => {
+            setForm({ ...form, name: v });
+            if (v.trim()) setError('');
+          }} 
+          error={!form.name.trim() && error.includes('Nazwa')}
+        />
         <Field label="Adres" value={form.address}
           onChange={(v) => setForm({ ...form, address: v })} multiline />
       </div>
+
+      {error && (
+        <div className="bg-red-50 text-red-600 p-3 rounded-xl text-sm font-medium border border-red-100 animate-pulse">
+           ⚠️ {error}
+        </div>
+      )}
 
       <div className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm space-y-4">
         <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Kontakt</h2>
@@ -130,7 +152,7 @@ export default function FirmForm() {
   );
 }
 
-function Field({ label, value, onChange, type = 'text', multiline = false }) {
+function Field({ label, value, onChange, type = 'text', multiline = false, error = false }) {
   const Component = multiline ? 'textarea' : 'input';
   return (
     <label className="block">
@@ -140,7 +162,9 @@ function Field({ label, value, onChange, type = 'text', multiline = false }) {
         value={value}
         onChange={(e) => onChange(e.target.value)}
         rows={multiline ? 3 : undefined}
-        className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all"
+        className={`w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all ${
+          error ? 'border-red-500 bg-red-50' : 'border-gray-300'
+        }`}
       />
     </label>
   );
