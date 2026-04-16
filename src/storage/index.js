@@ -10,7 +10,7 @@
 // Core
 export { db } from './db';
 export { deriveKey, generateSalt, encrypt, decrypt, validatePasswordStrength } from './crypto';
-export { setSessionKey, getSessionKey, isUnlocked, lockApp, onLock, setLockTimeout, loadLockTimeout } from './session';
+export { setSessionKey, getSessionKey, isUnlocked, lockSession, onLock, setLockTimeout, loadLockTimeout } from './session';
 export {
   hasPasswordSetUp,
   setupPassword,

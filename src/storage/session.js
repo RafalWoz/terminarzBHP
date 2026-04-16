@@ -29,7 +29,7 @@ export function getSessionKey() {
     throw new Error('APP_LOCKED');
   }
   if (Date.now() - lastActivity > lockTimeout) {
-    lockApp();
+    lockSession();
     throw new Error('SESSION_EXPIRED');
   }
   lastActivity = Date.now();
@@ -42,7 +42,7 @@ export function getSessionKey() {
 export function isUnlocked() {
   if (!sessionKey) return false;
   if (Date.now() - lastActivity > lockTimeout) {
-    lockApp();
+    lockSession();
     return false;
   }
   return true;
@@ -52,7 +52,7 @@ export function isUnlocked() {
  * Lock the application. Clears the in-memory key.
  * The user will need to re-enter their password.
  */
-export function lockApp() {
+export function lockSession() {
   sessionKey = null;
   if (typeof onLockCallback === 'function') {
     onLockCallback();
@@ -100,6 +100,6 @@ export function loadLockTimeout() {
 // Check every 60 seconds if session has expired
 setInterval(() => {
   if (sessionKey && lockTimeout !== Infinity && Date.now() - lastActivity > lockTimeout) {
-    lockApp();
+    lockSession();
   }
 }, 60_000);
