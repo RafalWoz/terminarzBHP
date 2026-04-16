@@ -1,12 +1,14 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { addFirm, updateFirm, getFirm, deleteFirm } from '../db/firms';
+import { fetchGusData } from '../utils/gus';
 
 export default function FirmForm() {
   const { id } = useParams();
   const navigate = useNavigate();
   const isEdit = id !== 'new';
 
+  const [loadingGus, setLoadingGus] = useState(false);
   const [form, setForm] = useState({
     name: '', nip: '', address: '',
     contactPerson: '', phone: '', email: '', notes: '',
@@ -19,6 +21,26 @@ export default function FirmForm() {
       });
     }
   }, [id, isEdit]);
+
+  const handleGusLookup = async () => {
+    if (form.nip.length !== 10) {
+      alert('Podaj 10-cyfrowy NIP.');
+      return;
+    }
+    setLoadingGus(true);
+    try {
+      const data = await fetchGusData(form.nip);
+      setForm({
+        ...form,
+        name: data.name,
+        address: data.full_address
+      });
+    } catch (e) {
+      alert('Błąd GUS: ' + e.message);
+    } finally {
+      setLoadingGus(false);
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -47,12 +69,32 @@ export default function FirmForm() {
       </h1>
 
       <div className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm space-y-4">
+        <label className="block">
+          <span className="text-sm font-medium text-gray-700 mb-1 block">NIP</span>
+          <div className="flex gap-2">
+            <input
+              type="text"
+              value={form.nip}
+              onChange={(e) => setForm({ ...form, nip: e.target.value })}
+              className="flex-1 px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all"
+              placeholder="np. 5250000000"
+            />
+            {!isEdit && (
+              <button
+                type="button"
+                onClick={handleGusLookup}
+                disabled={loadingGus}
+                className="bg-slate-800 text-white px-4 rounded-xl text-sm font-bold disabled:opacity-50 whitespace-nowrap"
+              >
+                {loadingGus ? '⏳' : 'Pobierz dane'}
+              </button>
+            )}
+          </div>
+        </label>
         <Field label="Nazwa firmy *" value={form.name}
           onChange={(v) => setForm({ ...form, name: v })} />
-        <Field label="NIP" value={form.nip}
-          onChange={(v) => setForm({ ...form, nip: v })} />
         <Field label="Adres" value={form.address}
-          onChange={(v) => setForm({ ...form, address: v })} />
+          onChange={(v) => setForm({ ...form, address: v })} multiline />
       </div>
 
       <div className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm space-y-4">
