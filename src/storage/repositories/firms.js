@@ -13,6 +13,9 @@ export async function addFirm(firmData, key) {
 }
 
 export async function updateFirm(id, firmData, key) {
+  if (!id || isNaN(id)) {
+    throw new Error('Nieprawidłowy identyfikator firmy (ID jest NaN lub puste).');
+  }
   const { createdAt, ...sensitive } = firmData;
   const encryptedData = await encrypt(sensitive, key);
   return db.firms.update(id, { encryptedData, updatedAt: new Date().toISOString() });

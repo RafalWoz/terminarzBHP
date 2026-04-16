@@ -12,7 +12,7 @@ import { fetchGusData } from '../utils/gus';
 export default function FirmForm() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const isEdit = id !== 'new';
+  const isEdit = id && id !== 'new';
 
   const [loadingGus, setLoadingGus] = useState(false);
   const [error, setError] = useState('');

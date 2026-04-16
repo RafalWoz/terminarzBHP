@@ -13,6 +13,9 @@ export async function addEmployee(data, key) {
 }
 
 export async function updateEmployee(id, data, key) {
+  if (!id || isNaN(id)) {
+    throw new Error('Nieprawidłowy identyfikator pracownika (ID jest NaN lub puste).');
+  }
   const encryptedData = await encrypt(data, key);
   return db.employees.update(id, { encryptedData, updatedAt: new Date().toISOString() });
 }
