@@ -75,9 +75,12 @@ export async function runMigration(key) {
   for (const row of firms) {
     if (row.encryptedData) continue; // already migrated
     const { id, createdAt, updatedAt, ...sensitive } = row;
+    const now = new Date().toISOString();
     const encryptedData = await encrypt(sensitive, key);
     await db.firms.update(id, {
       encryptedData,
+      createdAt: createdAt || now,
+      updatedAt: updatedAt || createdAt || now,
       // Remove old plaintext fields
       name: undefined, nip: undefined, address: undefined,
       contactPerson: undefined, phone: undefined, email: undefined, notes: undefined,
@@ -90,9 +93,12 @@ export async function runMigration(key) {
   for (const row of employees) {
     if (row.encryptedData) continue;
     const { id, firmId, createdAt, updatedAt, ...sensitive } = row;
+    const now = new Date().toISOString();
     const encryptedData = await encrypt(sensitive, key);
     await db.employees.update(id, {
       encryptedData,
+      createdAt: createdAt || now,
+      updatedAt: updatedAt || createdAt || now,
       firstName: undefined, lastName: undefined, position: undefined,
       hireDate: undefined, active: undefined, notes: undefined,
     });
@@ -104,9 +110,12 @@ export async function runMigration(key) {
   for (const row of trainings) {
     if (row.encryptedData) continue;
     const { id, employeeId, firmId, createdAt, expiresAt, ...sensitive } = row;
+    const now = new Date().toISOString();
     const encryptedData = await encrypt(sensitive, key);
     await db.trainings.update(id, {
       encryptedData,
+      createdAt: createdAt || now,
+      expiresAt: expiresAt || null, // Ensure index is never undefined
       type: undefined, subtype: undefined, date: undefined, notes: undefined,
     });
     summary.trainings++;
@@ -117,12 +126,31 @@ export async function runMigration(key) {
   for (const row of medicals) {
     if (row.encryptedData) continue;
     const { id, employeeId, firmId, createdAt, expiresAt, ...sensitive } = row;
+    const now = new Date().toISOString();
     const encryptedData = await encrypt(sensitive, key);
     await db.medicals.update(id, {
       encryptedData,
+      createdAt: createdAt || now,
+      expiresAt: expiresAt || null, // Ensure index is never undefined
       type: undefined, date: undefined, doctorName: undefined, notes: undefined,
     });
     summary.medicals++;
+  }
+
+  // Migrate permits
+  const permits = await db.permits.toArray();
+  for (const row of permits) {
+    if (row.encryptedData) continue;
+    const { id, employeeId, firmId, createdAt, expiresAt, ...sensitive } = row;
+    const now = new Date().toISOString();
+    const encryptedData = await encrypt(sensitive, key);
+    await db.permits.update(id, {
+      encryptedData,
+      createdAt: createdAt || now,
+      expiresAt: expiresAt || null, // Ensure index is never undefined
+      type: undefined, date: undefined,
+    });
+    // Add to summary if you want to track it (optional, permits was added later)
   }
 
   // Clear migration flag

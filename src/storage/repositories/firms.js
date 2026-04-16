@@ -26,7 +26,16 @@ export async function getFirm(id, key) {
 }
 
 export async function getAllFirms(key) {
-  const rows = await db.firms.orderBy('createdAt').toArray();
+  let rows;
+  try {
+    rows = await db.firms.orderBy('createdAt').toArray();
+  } catch (e) {
+    console.error('Błąd sortowania IndexedDB (brakujące klucze?), przełączam na tryb bezpieczny:', e);
+    // Fallback: get all without ordering and sort in memory
+    rows = await db.firms.toArray();
+    rows.sort((a, b) => (a.createdAt || '').localeCompare(b.createdAt || ''));
+  }
+
   return Promise.all(
     rows.map(async (row) => {
       const decrypted = await decrypt(row.encryptedData, key);
