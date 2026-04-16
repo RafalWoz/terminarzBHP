@@ -4,11 +4,6 @@ header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Headers: Content-Type');
 
 $nip = $_GET['nip'] ?? '';
-if (!$nip || !preg_match('/^[0-9]{10}$/', $nip)) {
-    echo json_encode(['error' => 'Niepoprawny numer NIP.']);
-    exit;
-}
-
 $key = 'b8abef9133434c1a90c3';
 $url = 'https://wyszukiwarkaregon.stat.gov.pl/wsBIR/UslugaBIRzewnPubl.svc';
 
@@ -44,27 +39,23 @@ XML;
     return $response;
 }
 
-$debug = [];
+$log = "--- START LOG " . date('Y-m-d H:i:s') . " ---\n";
+$log .= "NIP: $nip\n";
 
-// 1. ZALOGUJ
+// 1. LOGIN
 $loginAction = 'http://CIS/BIR/PUBL/2014/07/IUslugaBIRzewnPubl/Zaloguj';
 $loginBody = "<ns:Zaloguj><ns:pKluczUzytkownika>$key</ns:pKluczUzytkownika></ns:Zaloguj>";
 $loginResp = callGus($url, $loginAction, $loginBody);
 
-$debug['login_raw'] = $loginResp;
+$log .= "LOGIN RESPONSE: $loginResp\n";
 
-// Elastyczny regex dla sid (GUS często dodaje xmlns do taga)
 if (preg_match('/<ZalogujResult[^>]*>(.*)<\/ZalogujResult>/', $loginResp, $matches)) {
     $sid = $matches[1];
-} else {
-    echo json_encode(['error' => 'Błąd logowania (SID).', 'debug' => $debug]);
-    exit;
-}
-
-// 2. SZUKAJ
-$searchAction = 'http://CIS/BIR/PUBL/2014/07/IUslugaBIRzewnPubl/DaneSzukajPodmioty';
-// Używamy precyzyjnego namespace dla parametrów wyszukiwania (datacontract)
-$searchBody = <<<XML
+    $log .= "SID: $sid\n";
+    
+    // 2. SEARCH
+    $searchAction = 'http://CIS/BIR/PUBL/2014/07/IUslugaBIRzewnPubl/DaneSzukajPodmioty';
+    $searchBody = <<<XML
 <ns:DaneSzukajPodmioty>
     <ns:pParametryWyszukiwania>
         <dat:Nip xmlns:dat="http://CIS/BIR/PUBL/2014/07/datacontract">$nip</dat:Nip>
@@ -72,36 +63,25 @@ $searchBody = <<<XML
 </ns:DaneSzukajPodmioty>
 XML;
 
-$searchResp = callGus($url, $searchAction, $searchBody, $sid);
-$debug['search_raw'] = $searchResp;
-
-// Próba odczytu wyniku
-if (preg_match('/<DaneSzukajPodmiotyResult[^>]*>(.*)<\/DaneSzukajPodmiotyResult>/s', $searchResp, $matches)) {
-    $xmlData = html_entity_decode($matches[1]);
-    $xml = @simplexml_load_string($xmlData);
+    $searchResp = callGus($url, $searchAction, $searchBody, $sid);
+    $log .= "SEARCH RESPONSE: $searchResp\n";
     
-    if ($xml && $xml->dane) {
-        $d = $xml->dane;
-        if (isset($d->ErrorCode)) {
-            echo json_encode(['error' => 'GUS ErrorCode: ' . (string)$d->ErrorCode, 'msg' => (string)$d->ErrorMessagePl]);
-            exit;
+    if (preg_match('/<DaneSzukajPodmiotyResult[^>]*>(.*)<\/DaneSzukajPodmiotyResult>/s', $searchResp, $matches)) {
+        $xmlData = html_entity_decode($matches[1]);
+        $xml = @simplexml_load_string($xmlData);
+        if ($xml && $xml->dane) {
+             $d = $xml->dane;
+             echo json_encode(['success' => true, 'data' => ['name' => (string)$d->Nazwa]]);
+        } else {
+             echo json_encode(['error' => 'No data found in XML', 'xml' => $xmlData]);
         }
-        echo json_encode([
-            'success' => true,
-            'data' => [
-                'name' => (string)$d->Nazwa,
-                'address' => trim((string)$d->Ulica . ' ' . (string)$d->NrNieruchomosci . ((string)$d->NrLokalu ? '/'.(string)$d->NrLokalu : '') . ', ' . (string)$d->KodPocztowy . ' ' . (string)$d->Miejscowosc)
-            ]
-        ]);
-        // Wyloguj w tle (nie sprawdzamy wyniku)
-        $logoutBody = "<ns:Wyloguj><ns:pIdSesji>$sid</ns:pIdSesji></ns:Wyloguj>";
-        callGus($url, 'http://CIS/BIR/PUBL/2014/07/IUslugaBIRzewnPubl/Wyloguj', $logoutBody, $sid);
-        exit;
+    } else {
+        echo json_encode(['error' => 'No DaneSzukajPodmiotyResult found']);
     }
+
+} else {
+    echo json_encode(['error' => 'Login failed']);
 }
 
-// Jeśli tu dotarliśmy, coś poszło nie tak - zwracamy pełny debug
-echo json_encode([
-    'error' => 'Błąd wyszukiwania (DEBUG).',
-    'debug' => $debug
-]);
+file_put_contents('gus_debug.txt', $log, FILE_APPEND);
+echo "\n--- LOG SAVED TO gus_debug.txt ---"; 
