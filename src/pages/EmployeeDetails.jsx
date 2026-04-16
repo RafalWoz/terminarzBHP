@@ -1,15 +1,29 @@
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { db } from '../db';
-import { getRecordsByEmployee, deleteRecord } from '../db/records';
+import { useEmployee } from '../hooks/useEmployees';
+import { 
+  getTrainingsByEmployee, 
+  getMedicalsByEmployee, 
+  deleteTraining, 
+  deleteMedical, 
+  getSessionKey, 
+  isUnlocked 
+} from '../storage';
 import { getExpirationStatus, formatDaysMessage, getDaysUntilExpiration } from '../utils/expirations';
 
 export default function EmployeeDetails() {
   const { firmId, id } = useParams();
-  const navigate = useNavigate();
   
-  const employee = useLiveQuery(() => db.employees.get(parseInt(id)), [id]);
-  const records = useLiveQuery(() => getRecordsByEmployee(id), [id]);
+  const employee = useEmployee(id);
+  const records = useLiveQuery(async () => {
+    if (!id || !isUnlocked()) return { trainings: [], medicals: [] };
+    const key = getSessionKey();
+    const [trainings, medicals] = await Promise.all([
+      getTrainingsByEmployee(parseInt(id), key),
+      getMedicalsByEmployee(parseInt(id), key)
+    ]);
+    return { trainings, medicals };
+  }, [id]);
 
   if (!employee) return <div className="p-4 text-center mt-10 text-gray-400">Ładowanie pracownika...</div>;
 
@@ -18,10 +32,17 @@ export default function EmployeeDetails() {
     ...(records?.medicals?.map(r => ({ ...r, kind: 'Badanie' })) || [])
   ].sort((a, b) => new Date(b.date) - new Date(a.date));
 
-  const handleDeleteRecord = async (table, recordId) => {
+  const handleDeleteRecord = async (kind, recordId) => {
     if (!window.confirm('Usunąć ten wpis z historii?')) return;
-    const tableName = table === 'Szkolenie' ? 'trainings' : 'medicals';
-    await deleteRecord(tableName, recordId);
+    try {
+      if (kind === 'Szkolenie') {
+        await deleteTraining(recordId);
+      } else {
+        await deleteMedical(recordId);
+      }
+    } catch (e) {
+      alert('Błąd usuwania: ' + e.message);
+    }
   };
 
   return (
@@ -37,7 +58,9 @@ export default function EmployeeDetails() {
           <h1 className="text-2xl font-bold text-slate-800">{employee.firstName} {employee.lastName}</h1>
           <p className="text-gray-500 font-medium">{employee.position || 'Stanowisko nieokreślone'}</p>
         </div>
-        <Link to={`/firms/${firmId}/employees/${id}/edit`} className="text-xl">✏️</Link>
+        <div className="flex gap-4">
+           <Link to={`/firms/${firmId}/employees/${id}/edit`} className="text-xl">✏️</Link>
+        </div>
       </div>
 
       <div className="flex items-center justify-between mb-4">

@@ -1,18 +1,26 @@
 import { useLiveQuery } from 'dexie-react-hooks';
-import { db } from '../db';
+import { 
+  getEmployeesByFirm, 
+  getEmployee,
+  getTrainingsByEmployee, 
+  getMedicalsByEmployee, 
+  getSessionKey, 
+  isUnlocked 
+} from '../storage';
 import { getExpirationStatus } from '../utils/expirations';
 
 export function useEmployees(firmId) {
   return useLiveQuery(async () => {
-    if (!firmId) return [];
+    if (!firmId || !isUnlocked()) return [];
+    const key = getSessionKey();
     
     // Get employees
-    const employees = await db.employees.where('firmId').equals(parseInt(firmId)).toArray();
+    const employees = await getEmployeesByFirm(parseInt(firmId), key);
     
     // For each employee, get their most critical status
     const enrichedEmployees = await Promise.all(employees.map(async (emp) => {
-      const trainings = await db.trainings.where('employeeId').equals(emp.id).toArray();
-      const medicals = await db.medicals.where('employeeId').equals(emp.id).toArray();
+      const trainings = await getTrainingsByEmployee(emp.id, key);
+      const medicals = await getMedicalsByEmployee(emp.id, key);
       
       const allRecords = [...trainings, ...medicals];
       const statuses = allRecords.map(r => getExpirationStatus(r.expiresAt));
@@ -31,5 +39,9 @@ export function useEmployees(firmId) {
 }
 
 export function useEmployee(id) {
-  return useLiveQuery(() => db.employees.get(parseInt(id)), [id]);
+  return useLiveQuery(async () => {
+    if (!id || !isUnlocked()) return null;
+    const key = getSessionKey();
+    return getEmployee(parseInt(id), key);
+  }, [id]);
 }

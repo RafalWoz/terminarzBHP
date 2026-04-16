@@ -1,14 +1,24 @@
 import { useLiveQuery } from 'dexie-react-hooks';
-import { db } from '../db/index.js';
+import { 
+  getAllTrainings, 
+  getAllMedicals, 
+  getAllFirms, 
+  getAllEmployees, 
+  getSessionKey, 
+  isUnlocked 
+} from '../storage';
 import { getExpirationStatus, getDaysUntilExpiration } from '../utils/expirations.js';
 
 export function useDashboard() {
   return useLiveQuery(async () => {
+    if (!isUnlocked()) return { items: [], stats: { expired: 0, critical: 0, warning: 0, ok: 0 } };
+    const key = getSessionKey();
+
     const [trainings, medicals, firms, employees] = await Promise.all([
-      db.trainings.toArray(),
-      db.medicals.toArray(),
-      db.firms.toArray(),
-      db.employees.toArray(),
+      getAllTrainings(key),
+      getAllMedicals(key),
+      getAllFirms(key),
+      getAllEmployees(key),
     ]);
 
     const firmsMap = new Map(firms.map((f) => [f.id, f]));

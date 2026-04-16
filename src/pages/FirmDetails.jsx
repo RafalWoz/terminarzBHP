@@ -1,12 +1,10 @@
-import { useParams, Link, useNavigate } from 'react-router-dom';
-import { useLiveQuery } from 'dexie-react-hooks';
-import { db } from '../db';
+import { useParams, Link } from 'react-router-dom';
+import { useFirm } from '../hooks/useFirms';
 import { useEmployees } from '../hooks/useEmployees';
 
 export default function FirmDetails() {
   const { id } = useParams();
-  const navigate = useNavigate();
-  const firm = useLiveQuery(() => db.firms.get(parseInt(id)), [id]);
+  const firm = useFirm(id);
   const employees = useEmployees(id);
 
   if (!firm) return <div className="p-4 text-center mt-10 text-gray-500">Ładowanie firmy...</div>;

@@ -1,6 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { addFirm, updateFirm, getFirm, deleteFirm } from '../db/firms';
+import { 
+  addFirm, 
+  updateFirm, 
+  getFirm, 
+  deleteFirm, 
+  getSessionKey 
+} from '../storage';
 import { fetchGusData } from '../utils/gus';
 
 export default function FirmForm() {
@@ -17,7 +23,8 @@ export default function FirmForm() {
 
   useEffect(() => {
     if (isEdit) {
-      getFirm(parseInt(id)).then((firm) => {
+      const key = getSessionKey();
+      getFirm(parseInt(id), key).then((firm) => {
         if (firm) setForm(firm);
       });
     }
@@ -34,7 +41,7 @@ export default function FirmForm() {
       setForm({
         ...form,
         name: data.name,
-        address: data.full_address
+        address: data.address
       });
       setError('');
     } catch (e) {
@@ -54,21 +61,26 @@ export default function FirmForm() {
     }
     
     try {
+      const key = getSessionKey();
       if (isEdit) {
-        await updateFirm(parseInt(id), form);
+        await updateFirm(parseInt(id), form, key);
       } else {
-        await addFirm(form);
+        await addFirm(form, key);
       }
       navigate('/firms');
     } catch (err) {
-      setError('Błąd bazy danych: ' + err.message);
+      setError('Błąd zapisu: ' + err.message);
     }
   };
 
   const handleDelete = async () => {
-    if (!window.confirm('Usunąć tę firmę? Tej akcji nie można cofnąć.')) return;
-    await deleteFirm(parseInt(id));
-    navigate('/firms');
+    if (!window.confirm('Usunąć tę firmę i wszystkie dane jej pracowników? Tej akcji nie można cofnąć.')) return;
+    try {
+      await deleteFirm(parseInt(id));
+      navigate('/firms');
+    } catch (err) {
+      setError('Błąd usuwania: ' + err.message);
+    }
   };
 
   return (

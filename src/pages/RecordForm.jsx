@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { addRecord } from '../db/records';
+import { 
+  addTraining, 
+  addMedical, 
+  getSessionKey 
+} from '../storage';
 import { calculateTrainingExpiration, calculateMedicalExpiration } from '../utils/expirations';
 
 export default function RecordForm() {
-  const { firmId, id, employeeId } = useParams(); // id is employeeId, employeeId is if coming from dashboard link? 
-  // Let's standardise: App.jsx says /firms/:firmId/employees/:employeeId/records/new
   const { firmId: fId, id: eId, employeeId: empId } = useParams();
   const finalEmpId = empId || eId;
   
@@ -37,10 +39,18 @@ export default function RecordForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await addRecord(table, {
+    const key = getSessionKey();
+    const data = {
       ...form,
       expiresAt: form.expiresAt ? new Date(form.expiresAt).toISOString() : null
-    });
+    };
+
+    if (table === 'trainings') {
+      await addTraining(data, key);
+    } else {
+      await addMedical(data, key);
+    }
+    
     navigate(`/firms/${fId}/employees/${finalEmpId}`);
   };
 

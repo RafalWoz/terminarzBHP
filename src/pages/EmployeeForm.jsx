@@ -1,6 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { addEmployee, updateEmployee, getEmployee, deleteEmployee } from '../db/employees';
+import { 
+  addEmployee, 
+  updateEmployee, 
+  getEmployee, 
+  deleteEmployee, 
+  getSessionKey 
+} from '../storage';
 
 export default function EmployeeForm() {
   const { firmId, id } = useParams();
@@ -18,7 +24,8 @@ export default function EmployeeForm() {
 
   useEffect(() => {
     if (isEdit) {
-      getEmployee(parseInt(id)).then((emp) => {
+      const key = getSessionKey();
+      getEmployee(parseInt(id), key).then((emp) => {
         if (emp) setForm(emp);
       });
     }
@@ -31,10 +38,11 @@ export default function EmployeeForm() {
       return;
     }
     
+    const key = getSessionKey();
     if (isEdit) {
-      await updateEmployee(parseInt(id), form);
+      await updateEmployee(parseInt(id), form, key);
     } else {
-      await addEmployee(form);
+      await addEmployee(form, key);
     }
     navigate(`/firms/${firmId}`);
   };
