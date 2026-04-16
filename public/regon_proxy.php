@@ -25,7 +25,6 @@ XML;
 
     $ch = curl_init();
     $headers = [
-        // Kluczowe dla SOAP 1.2: Action musi być w Content-Type
         "Content-Type: application/soap+xml; charset=utf-8; action=\"$action\"",
         'Content-Length: ' . strlen($envelope)
     ];
@@ -39,75 +38,70 @@ XML;
     curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
-    curl_setopt($ch, CURLOPT_TIMEOUT, 20);
-
-    $response = curl_exec($ch);
-    $error = curl_error($ch);
-    curl_close($ch);
     
-    return $response ?: "CURL_ERROR: $error";
+    $response = curl_exec($ch);
+    curl_close($ch);
+    return $response;
 }
 
-// 1. Zaloguj
+$debug = [];
+
+// 1. ZALOGUJ
 $loginAction = 'http://CIS/BIR/PUBL/2014/07/IUslugaBIRzewnPubl/Zaloguj';
 $loginBody = "<ns:Zaloguj><ns:pKluczUzytkownika>$key</ns:pKluczUzytkownika></ns:Zaloguj>";
 $loginResp = callGus($url, $loginAction, $loginBody);
 
-if (preg_match('/<ZalogujResult>(.*)<\/ZalogujResult>/', $loginResp, $matches)) {
+$debug['login_raw'] = $loginResp;
+
+// Elastyczny regex dla sid (GUS często dodaje xmlns do taga)
+if (preg_match('/<ZalogujResult[^>]*>(.*)<\/ZalogujResult>/', $loginResp, $matches)) {
     $sid = $matches[1];
 } else {
-    echo json_encode(['error' => 'Błąd logowania do GUS.', 'debug' => strip_tags($loginResp)]);
+    echo json_encode(['error' => 'Błąd logowania (SID).', 'debug' => $debug]);
     exit;
 }
 
-// 2. Szukaj
+// 2. SZUKAJ
 $searchAction = 'http://CIS/BIR/PUBL/2014/07/IUslugaBIRzewnPubl/DaneSzukajPodmioty';
+// Używamy precyzyjnego namespace dla parametrów wyszukiwania (datacontract)
 $searchBody = <<<XML
 <ns:DaneSzukajPodmioty>
     <ns:pParametryWyszukiwania>
-        <ns:Nip>$nip</ns:Nip>
+        <dat:Nip xmlns:dat="http://CIS/BIR/PUBL/2014/07/datacontract">$nip</dat:Nip>
     </ns:pParametryWyszukiwania>
 </ns:DaneSzukajPodmioty>
 XML;
 
 $searchResp = callGus($url, $searchAction, $searchBody, $sid);
+$debug['search_raw'] = $searchResp;
 
-// Parsowanie wyniku
-if (preg_match('/<DaneSzukajPodmiotyResult>(.*)<\/DaneSzukajPodmiotyResult>/s', $searchResp, $matches)) {
+// Próba odczytu wyniku
+if (preg_match('/<DaneSzukajPodmiotyResult[^>]*>(.*)<\/DaneSzukajPodmiotyResult>/s', $searchResp, $matches)) {
     $xmlData = html_entity_decode($matches[1]);
     $xml = @simplexml_load_string($xmlData);
     
     if ($xml && $xml->dane) {
         $d = $xml->dane;
-        
         if (isset($d->ErrorCode)) {
-            echo json_encode(['error' => 'GUS zwrócił błąd: ' . (string)$d->ErrorMessagePl]);
+            echo json_encode(['error' => 'GUS ErrorCode: ' . (string)$d->ErrorCode, 'msg' => (string)$d->ErrorMessagePl]);
             exit;
         }
-
         echo json_encode([
             'success' => true,
             'data' => [
                 'name' => (string)$d->Nazwa,
-                'nip' => (string)$d->Nip,
                 'address' => trim((string)$d->Ulica . ' ' . (string)$d->NrNieruchomosci . ((string)$d->NrLokalu ? '/'.(string)$d->NrLokalu : '') . ', ' . (string)$d->KodPocztowy . ' ' . (string)$d->Miejscowosc)
             ]
         ]);
-    } else {
-        echo json_encode(['error' => 'GUS nie zwrócił danych podmiotu.', 'debug' => strip_tags($searchResp)]);
+        // Wyloguj w tle (nie sprawdzamy wyniku)
+        $logoutBody = "<ns:Wyloguj><ns:pIdSesji>$sid</ns:pIdSesji></ns:Wyloguj>";
+        callGus($url, 'http://CIS/BIR/PUBL/2014/07/IUslugaBIRzewnPubl/Wyloguj', $logoutBody, $sid);
+        exit;
     }
-} else {
-    // Diagnostyka błędu SOAP
-    $debugInfo = strip_tags($searchResp);
-    if (strpos($searchResp, 'faultstring') !== false) {
-        preg_match('/<faultstring>(.*)<\/faultstring>/', $searchResp, $fMatches);
-        $debugInfo = 'SOAP Fault: ' . ($fMatches[1] ?? 'Unknown');
-    }
-    echo json_encode(['error' => 'Błąd wyszukiwania w GUS.', 'debug' => $debugInfo]);
 }
 
-// 3. Wyloguj
-$logoutAction = 'http://CIS/BIR/PUBL/2014/07/IUslugaBIRzewnPubl/Wyloguj';
-$logoutBody = "<ns:Wyloguj><ns:pIdSesji>$sid</ns:pIdSesji></ns:Wyloguj>";
-callGus($url, $logoutAction, $logoutBody, $sid);
+// Jeśli tu dotarliśmy, coś poszło nie tak - zwracamy pełny debug
+echo json_encode([
+    'error' => 'Błąd wyszukiwania (DEBUG).',
+    'debug' => $debug
+]);
