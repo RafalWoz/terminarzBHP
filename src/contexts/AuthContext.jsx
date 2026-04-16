@@ -10,6 +10,7 @@
  */
 
 import { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import { db } from '../storage/db';
 import { hasPasswordSetUp } from '../storage/auth';
 import { isUnlocked, onLock, loadLockTimeout } from '../storage/session';
 import { checkNeedsMigration } from '../storage/migration';
@@ -21,10 +22,12 @@ export function AuthProvider({ children }) {
 
   const checkStatus = useCallback(async () => {
     try {
+      // 1. Check if storage/sync is configured
+      const sync = await db.sync_settings.toCollection().first();
       const hasPassword = await hasPasswordSetUp();
 
-      if (!hasPassword) {
-        setStatus('no-password');
+      if (!sync || !hasPassword) {
+        setStatus('onboarding');
         return;
       }
 

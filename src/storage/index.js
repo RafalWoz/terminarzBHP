@@ -53,3 +53,12 @@ export { eraseAllData } from './rodo/dataErasure';
 
 // Migration
 export { checkNeedsMigration, runMigration } from './migration';
+
+// Sync & Storage Drivers
+export { 
+  initSyncManager, 
+  setSyncProvider, 
+  pushToRemote, 
+  pullFromRemote 
+} from './sync/syncManager';
+export { FileSystemDriver } from './sync/drivers/FileSystemDriver';

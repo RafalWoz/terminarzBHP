@@ -26,28 +26,15 @@ db.version(2).stores({
   medicals: '++id, employeeId, firmId, type, expiresAt',
 });
 
-// ─── Version 3 — encrypted schema ───────────────────────────────────────────
-db.version(3).stores({
-  // encryptedData: { iv, ciphertext } blob — contains all personal fields
+// ─── Version 4 — Sync Settings ──────────────────────────────────────────────
+db.version(4).stores({
   firms:          '++id, createdAt, updatedAt',
   employees:      '++id, firmId, createdAt, updatedAt',
   trainings:      '++id, employeeId, firmId, expiresAt, createdAt',
   medicals:       '++id, employeeId, firmId, expiresAt, createdAt',
   permits:        '++id, employeeId, firmId, expiresAt, createdAt',
-
-  // Auth — stores salt + canary for password verification (no plaintext password)
   auth:           'id',
-
-  // Settings — non-sensitive preferences (lock timeout, language, etc.)
   settings:       'key',
-
-  // SecureSettings — encrypted blobs (OAuth tokens, etc.)
   secureSettings: 'key',
-}).upgrade(async (tx) => {
-  // Mark existing plaintext records as needing migration
-  // The migration.js module handles the actual re-encryption
-  await tx.table('settings').put({
-    key: 'needsMigration',
-    value: 'v2_to_v3',
-  });
+  sync_settings:  'provider', // Stores: provider ('google'|'local'|'none'), handle, token
 });
