@@ -84,4 +84,4 @@ XML;
 }
 
 file_put_contents('gus_debug.txt', $log, FILE_APPEND);
-echo "\n--- LOG SAVED TO gus_debug.txt ---"; 
+// echo "\n--- LOG SAVED TO gus_debug.txt ---"; 
