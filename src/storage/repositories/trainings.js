@@ -36,18 +36,30 @@ export async function getTraining(id, key) {
 
 export async function getTrainingsByEmployee(employeeId, key) {
   const rows = await db.trainings.where('employeeId').equals(employeeId).toArray();
-  return Promise.all(rows.map(async (row) => {
-    const decrypted = await decrypt(row.encryptedData, key);
-    return { id: row.id, employeeId: row.employeeId, firmId: row.firmId, expiresAt: row.expiresAt, createdAt: row.createdAt, ...decrypted };
+  const results = await Promise.all(rows.map(async (row) => {
+    try {
+      const decrypted = await decrypt(row.encryptedData, key);
+      return { id: row.id, employeeId: row.employeeId, firmId: row.firmId, expiresAt: row.expiresAt, createdAt: row.createdAt, ...decrypted };
+    } catch (e) {
+      console.warn(`[Storage] Skipping training ${row.id} due to decryption failure:`, e);
+      return null;
+    }
   }));
+  return results.filter(Boolean);
 }
 
 export async function getAllTrainings(key) {
   const rows = await db.trainings.toArray();
-  return Promise.all(rows.map(async (row) => {
-    const decrypted = await decrypt(row.encryptedData, key);
-    return { id: row.id, employeeId: row.employeeId, firmId: row.firmId, expiresAt: row.expiresAt, createdAt: row.createdAt, ...decrypted };
+  const results = await Promise.all(rows.map(async (row) => {
+    try {
+      const decrypted = await decrypt(row.encryptedData, key);
+      return { id: row.id, employeeId: row.employeeId, firmId: row.firmId, expiresAt: row.expiresAt, createdAt: row.createdAt, ...decrypted };
+    } catch (e) {
+      console.warn(`[Storage] Skipping training ${row.id} due to decryption failure:`, e);
+      return null;
+    }
   }));
+  return results.filter(Boolean);
 }
 
 export async function getExpiringTrainings(withinDays, key) {
@@ -57,10 +69,16 @@ export async function getExpiringTrainings(withinDays, key) {
     .where('expiresAt')
     .belowOrEqual(cutoff.toISOString())
     .toArray();
-  return Promise.all(rows.map(async (row) => {
-    const decrypted = await decrypt(row.encryptedData, key);
-    return { id: row.id, employeeId: row.employeeId, firmId: row.firmId, expiresAt: row.expiresAt, ...decrypted };
+  const results = await Promise.all(rows.map(async (row) => {
+    try {
+      const decrypted = await decrypt(row.encryptedData, key);
+      return { id: row.id, employeeId: row.employeeId, firmId: row.firmId, expiresAt: row.expiresAt, ...decrypted };
+    } catch (e) {
+      console.warn(`[Storage] Skipping expiring training ${row.id} due to decryption failure:`, e);
+      return null;
+    }
   }));
+  return results.filter(Boolean);
 }
 
 export async function deleteTraining(id) {

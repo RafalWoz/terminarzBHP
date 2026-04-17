@@ -36,18 +36,30 @@ export async function getMedical(id, key) {
 
 export async function getMedicalsByEmployee(employeeId, key) {
   const rows = await db.medicals.where('employeeId').equals(employeeId).toArray();
-  return Promise.all(rows.map(async (row) => {
-    const decrypted = await decrypt(row.encryptedData, key);
-    return { id: row.id, employeeId: row.employeeId, firmId: row.firmId, expiresAt: row.expiresAt, createdAt: row.createdAt, ...decrypted };
+  const results = await Promise.all(rows.map(async (row) => {
+    try {
+      const decrypted = await decrypt(row.encryptedData, key);
+      return { id: row.id, employeeId: row.employeeId, firmId: row.firmId, expiresAt: row.expiresAt, createdAt: row.createdAt, ...decrypted };
+    } catch (e) {
+      console.warn(`[Storage] Skipping medical ${row.id} due to decryption failure:`, e);
+      return null;
+    }
   }));
+  return results.filter(Boolean);
 }
 
 export async function getAllMedicals(key) {
   const rows = await db.medicals.toArray();
-  return Promise.all(rows.map(async (row) => {
-    const decrypted = await decrypt(row.encryptedData, key);
-    return { id: row.id, employeeId: row.employeeId, firmId: row.firmId, expiresAt: row.expiresAt, createdAt: row.createdAt, ...decrypted };
+  const results = await Promise.all(rows.map(async (row) => {
+    try {
+      const decrypted = await decrypt(row.encryptedData, key);
+      return { id: row.id, employeeId: row.employeeId, firmId: row.firmId, expiresAt: row.expiresAt, createdAt: row.createdAt, ...decrypted };
+    } catch (e) {
+      console.warn(`[Storage] Skipping medical ${row.id} due to decryption failure:`, e);
+      return null;
+    }
   }));
+  return results.filter(Boolean);
 }
 
 export async function getExpiringMedicals(withinDays, key) {
@@ -57,10 +69,16 @@ export async function getExpiringMedicals(withinDays, key) {
     .where('expiresAt')
     .belowOrEqual(cutoff.toISOString())
     .toArray();
-  return Promise.all(rows.map(async (row) => {
-    const decrypted = await decrypt(row.encryptedData, key);
-    return { id: row.id, employeeId: row.employeeId, firmId: row.firmId, expiresAt: row.expiresAt, ...decrypted };
+  const results = await Promise.all(rows.map(async (row) => {
+    try {
+      const decrypted = await decrypt(row.encryptedData, key);
+      return { id: row.id, employeeId: row.employeeId, firmId: row.firmId, expiresAt: row.expiresAt, ...decrypted };
+    } catch (e) {
+      console.warn(`[Storage] Skipping expiring medical ${row.id} due to decryption failure:`, e);
+      return null;
+    }
   }));
+  return results.filter(Boolean);
 }
 
 export async function deleteMedical(id) {

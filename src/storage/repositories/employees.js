@@ -29,22 +29,34 @@ export async function getEmployee(id, key) {
 
 export async function getEmployeesByFirm(firmId, key) {
   const rows = await db.employees.where('firmId').equals(firmId).toArray();
-  return Promise.all(
+  const results = await Promise.all(
     rows.map(async (row) => {
-      const decrypted = await decrypt(row.encryptedData, key);
-      return { id: row.id, firmId: row.firmId, createdAt: row.createdAt, ...decrypted };
+      try {
+        const decrypted = await decrypt(row.encryptedData, key);
+        return { id: row.id, firmId: row.firmId, createdAt: row.createdAt, ...decrypted };
+      } catch (e) {
+        console.warn(`[Storage] Skipping employee ${row.id} due to decryption failure:`, e);
+        return null;
+      }
     })
   );
+  return results.filter(Boolean);
 }
 
 export async function getAllEmployees(key) {
   const rows = await db.employees.toArray();
-  return Promise.all(
+  const results = await Promise.all(
     rows.map(async (row) => {
-      const decrypted = await decrypt(row.encryptedData, key);
-      return { id: row.id, firmId: row.firmId, createdAt: row.createdAt, ...decrypted };
+      try {
+        const decrypted = await decrypt(row.encryptedData, key);
+        return { id: row.id, firmId: row.firmId, createdAt: row.createdAt, ...decrypted };
+      } catch (e) {
+        console.warn(`[Storage] Skipping employee ${row.id} due to decryption failure:`, e);
+        return null;
+      }
     })
   );
+  return results.filter(Boolean);
 }
 
 export async function deleteEmployee(id) {

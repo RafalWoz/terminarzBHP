@@ -39,12 +39,19 @@ export async function getAllFirms(key) {
     rows.sort((a, b) => (a.createdAt || '').localeCompare(b.createdAt || ''));
   }
 
-  return Promise.all(
+  const results = await Promise.all(
     rows.map(async (row) => {
-      const decrypted = await decrypt(row.encryptedData, key);
-      return { id: row.id, createdAt: row.createdAt, updatedAt: row.updatedAt, ...decrypted };
+      try {
+        const decrypted = await decrypt(row.encryptedData, key);
+        return { id: row.id, createdAt: row.createdAt, updatedAt: row.updatedAt, ...decrypted };
+      } catch (e) {
+        console.warn(`[Storage] Skipping firm ${row.id} due to decryption failure:`, e);
+        return null;
+      }
     })
   );
+
+  return results.filter(Boolean);
 }
 
 export async function deleteFirm(id) {
