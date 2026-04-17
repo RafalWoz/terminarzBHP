@@ -14,6 +14,7 @@ import { db } from '../storage/db';
 import { hasPasswordSetUp } from '../storage/auth';
 import { isUnlocked, onLock, loadLockTimeout } from '../storage/session';
 import { checkNeedsMigration } from '../storage/migration';
+import { initSyncManager } from '../storage/sync/syncManager';
 
 const AuthContext = createContext(null);
 
@@ -46,6 +47,7 @@ export function AuthProvider({ children }) {
         return;
       }
 
+      await initSyncManager();
       setStatus('unlocked');
     } catch (e) {
       console.error('Auth check failed:', e);

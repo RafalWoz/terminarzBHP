@@ -17,8 +17,15 @@ if (!$nip || strlen($nip) !== 10) {
 }
 
 // --- CONFIGURATION ---
-$apiKey = 'abcde12345abcde12345'; 
-$url = 'https://wyszukiwarkaregon.stat.gov.pl/wsBIR/UslugaBIRzewnPubl.svc'; 
+$configFile = __DIR__ . '/regon_config.php';
+$config = file_exists($configFile) ? require($configFile) : [];
+
+$apiKey = $config['api_key'] ?? 'abcde12345abcde12345';
+$env = $config['env'] ?? 'test';
+
+$url = $env === 'prod' 
+    ? 'https://wyszukiwarkaregon.stat.gov.pl/wsBIR/UslugaBIRzewnPubl.svc' 
+    : 'https://wyszukiwarkaregontest.stat.gov.pl/wsBIR/UslugaBIRzewnPubl.svc';
 
 /**
  * Perform a cURL SOAP request

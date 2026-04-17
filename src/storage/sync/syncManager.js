@@ -5,8 +5,11 @@
 import { db } from '../db';
 import { exportLocalBackup, importLocalBackup } from '../backup/local';
 import { getSessionKey, isUnlocked } from '../session';
+import { FileSystemDriver } from './drivers/FileSystemDriver';
 
 let activeDriver = null;
+let syncTimeout = null;
+let syncHooksRegistered = false;
 
 /**
  * Initialize the sync manager on app startup.
@@ -19,8 +22,19 @@ export async function initSyncManager() {
     return;
   }
 
-  // Future implementation: load specific driver based on syncSettings.provider
-  // For now, we return the settings to the UI
+  if (syncSettings.provider === 'local' && syncSettings.config?.handle) {
+    activeDriver = new FileSystemDriver(syncSettings.config.handle);
+  }
+
+  if (!syncHooksRegistered) {
+    db.tables.forEach(table => {
+      table.hook('creating', triggerAutoSync);
+      table.hook('updating', triggerAutoSync);
+      table.hook('deleting', triggerAutoSync);
+    });
+    syncHooksRegistered = true;
+  }
+
   return syncSettings;
 }
 
@@ -33,12 +47,21 @@ export async function pushToRemote() {
   
   try {
     const key = getSessionKey();
-    const blob = await exportLocalBackup(key, true); // Get blob instead of download
+    const blob = await exportLocalBackup(key, true); 
     await activeDriver.save(blob);
     console.log('[Sync] Push successful');
   } catch (e) {
-    console.error('[Sync] Push failed:', e);
+    console.warn('[Sync] Auto-push failed (often normal if background permission missing):', e.message);
   }
+}
+
+export function triggerAutoSync() {
+  if (!activeDriver || !isUnlocked()) return;
+  if (syncTimeout) clearTimeout(syncTimeout);
+  
+  syncTimeout = setTimeout(() => {
+    pushToRemote();
+  }, 1500); 
 }
 
 /**
@@ -68,10 +91,11 @@ export async function setSyncProvider(provider, config = {}) {
     await db.sync_settings.clear();
     await db.sync_settings.add({
       provider,
-      ...config,
+      config,
       updatedAt: new Date().toISOString()
     });
   });
   
-  // Re-init with new driver (to be implemented)
+  await initSyncManager();
+  await pushToRemote(); // Immediate push to new provider
 }
