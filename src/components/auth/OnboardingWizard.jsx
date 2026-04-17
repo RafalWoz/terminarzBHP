@@ -43,9 +43,9 @@ export default function OnboardingWizard({ onComplete }) {
       return;
     }
 
-    const strength = validatePasswordStrength(data.password);
-    if (strength.score < 2) {
-      setError('Hasło jest zbyt słabe. Użyj co najmniej 8 znaków.');
+    const strengthError = validatePasswordStrength(data.password);
+    if (strengthError) {
+      setError(strengthError);
       return;
     }
 
@@ -199,7 +199,7 @@ export default function OnboardingWizard({ onComplete }) {
                     value={data.password}
                     onChange={e => { setData({...data, password: e.target.value}); setError(''); }}
                     className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-blue-500 outline-none"
-                    placeholder="Min. 8 znaków"
+                    placeholder="Min. 10 znaków (litera, cyfra, znak specjalny)"
                   />
                 </div>
                 <div className="space-y-1.5">
