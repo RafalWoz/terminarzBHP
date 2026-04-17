@@ -4,7 +4,9 @@ import {
   importLocalBackup, 
   getSessionKey, 
   lockSession,
-  changePassword 
+  changePassword,
+  FileSystemDriver,
+  setSyncProvider
 } from '../storage';
 import { exportUserData } from '../storage/rodo/dataExport';
 import { eraseAllData } from '../storage/rodo/dataErasure';
@@ -27,6 +29,18 @@ export default function Settings() {
       setStatus({ type: 'success', msg: `Kopia zapisana: ${result.filename}` });
     } catch (e) {
       setStatus({ type: 'error', msg: 'Błąd kopii: ' + e.message });
+    }
+  };
+
+  const handlePickFolder = async () => {
+    try {
+      const handle = await FileSystemDriver.pickDirectory();
+      await setSyncProvider('local', { handle });
+      setStatus({ type: 'success', msg: 'Zmieniono folder dla automatycznej kopii.' });
+    } catch (e) {
+      if (e.message !== 'BROWSER_UNSUPPORTED' && e.name !== 'AbortError') {
+         setStatus({ type: 'error', msg: 'Błąd wyboru folderu: ' + e.message });
+      }
     }
   };
 
@@ -138,7 +152,25 @@ export default function Settings() {
         />
       </section>
 
-      {/* 1b. Zmiana Hasła */}
+      {/* 1b. Folder domyślny konfiguracji */}
+      <section className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm space-y-4">
+        <div>
+          <h2 className="text-lg font-bold text-slate-800 flex items-center gap-2">
+            <span>📂</span> Folder roboczy
+          </h2>
+          <p className="text-xs text-gray-500 mt-1">
+            Zmień lokalny folder na dysku, w którym zapisywana jest bieżąca kopia plików.
+          </p>
+        </div>
+        <button
+          onClick={handlePickFolder}
+          className="w-full border border-blue-200 text-blue-700 py-3 rounded-lg font-bold bg-blue-50/50 hover:bg-blue-50 transition-colors"
+        >
+          Wybierz nowy folder...
+        </button>
+      </section>
+
+      {/* 1c. Zmiana Hasła */}
       <section className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm space-y-3">
         <div className="flex justify-between items-center">
           <h2 className="text-lg font-bold text-slate-800">Hasło główne</h2>
