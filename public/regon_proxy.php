@@ -30,11 +30,11 @@ $url = $env === 'prod'
 /**
  * Perform a cURL SOAP request
  */
-function gus_request($url, $xml, $sid = null) {
+function gus_request($url, $xml, $action, $sid = null) {
     $ch = curl_init($url);
     $headers = [
         'Content-Type: application/soap+xml; charset=utf-8',
-        'SOAPAction: "http://CIS/BIR/PUBL/2014/07/IUslugaBIRzewnPubl/Zaloguj"', 
+        'SOAPAction: "http://CIS/BIR/PUBL/2014/07/IUslugaBIRzewnPubl/' . $action . '"', 
     ];
     
     if ($sid) {
@@ -71,12 +71,12 @@ try {
        </soap:Body>
     </soap:Envelope>';
 
-    $loginRes = gus_request($url, $loginXml);
+    $loginRes = gus_request($url, $loginXml, 'Zaloguj');
     
     if (preg_match('/<ZalogujResult>(.*?)<\/ZalogujResult>/', $loginRes, $matches)) {
         $sid = $matches[1];
     } else {
-        throw new Exception("Błąd logowania do GUS (nie znaleziono SID)");
+        throw new Exception("Błąd logowania do GUS (nie znaleziono SID). Info: " . substr(strip_tags($loginRes), 0, 200));
     }
 
     if (!$sid || strlen($sid) < 4) {
@@ -99,7 +99,7 @@ try {
        </soap:Body>
     </soap:Envelope>';
 
-    $searchRes = gus_request($url, $searchXml, $sid);
+    $searchRes = gus_request($url, $searchXml, 'DaneSzukajPodmioty', $sid);
 
     // 3. PARSE RESULT
     if (preg_match('/<DaneSzukajPodmiotyResult>(.*?)<\/DaneSzukajPodmiotyResult>/', $searchRes, $matches)) {
