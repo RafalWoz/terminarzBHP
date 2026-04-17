@@ -19,7 +19,7 @@ const BACKUP_VERSION = 1;
  * Export all data as an AES-GCM encrypted JSON file.
  * Uses the provided session key for encryption.
  */
-export async function exportLocalBackup(sessionKey) {
+export async function exportLocalBackup(sessionKey, returnBlobOnly = false) {
   // Decrypt all data from IndexedDB
   const [firms, employees, trainings, medicals, permits] = await Promise.all([
     getAllFirms(sessionKey),
@@ -38,21 +38,12 @@ export async function exportLocalBackup(sessionKey) {
     permits,
   };
 
-  // Derive a random salt for this backup file's encryption
-  // Even if we use the session key, we still want a fresh IV/Salt for the file itself
-  // BUT: if we want the file to be portable (readable by others with the same password), 
-  // we should use a password. 
-  // However, the user's request for "Local Backup" suggests using the current session.
-  // I'll stick to the provided key for encryption.
-  
   const encryptedPayload = await encrypt(payload, sessionKey);
 
   const backupFile = {
     format: BACKUP_FORMAT,
     version: BACKUP_VERSION,
     createdAt: new Date().toISOString(),
-    // For local backup using session key, we don't need a separate salt in the file
-    // as the session key is already derived.
     data: encryptedPayload,
     meta: {
       firms: firms.length,
@@ -66,6 +57,11 @@ export async function exportLocalBackup(sessionKey) {
   const blob = new Blob([JSON.stringify(backupFile)], { type: 'application/json' });
   const date = new Date().toISOString().slice(0, 10);
   const filename = `terminybhp-backup-${date}.json.enc`;
+
+  if (returnBlobOnly) {
+    return blob;
+  }
+
   downloadBlob(blob, filename);
 
   return { ...backupFile.meta, filename };
