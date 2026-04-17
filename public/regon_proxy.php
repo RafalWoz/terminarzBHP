@@ -54,7 +54,10 @@ function gus_request($url, $xml, $action, $sid = null) {
     curl_close($ch);
 
     if ($error) throw new Exception("cURL Error: $error");
-    if ($httpCode >= 400) throw new Exception("GUS Server Error (HTTP $httpCode)");
+    if ($httpCode >= 400) {
+        $fault = strip_tags($response);
+        throw new Exception("GUS Server Error (HTTP $httpCode): " . substr($fault, 0, 500));
+    }
 
     return $response;
 }
