@@ -13,6 +13,7 @@ export default function EmployeeForm() {
   const navigate = useNavigate();
   const isEdit = !!id;
 
+  const [error, setError] = useState('');
   const [form, setForm] = useState({
     firstName: '',
     lastName: '',
@@ -33,24 +34,33 @@ export default function EmployeeForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError('');
     if (!form.lastName.trim()) {
-      alert('Nazwisko jest wymagane');
+      setError('Nazwisko jest wymagane.');
       return;
     }
-    
-    const key = getSessionKey();
-    if (isEdit) {
-      await updateEmployee(parseInt(id), form, key);
-    } else {
-      await addEmployee(form, key);
+
+    try {
+      const key = getSessionKey();
+      if (isEdit) {
+        await updateEmployee(parseInt(id), form, key);
+      } else {
+        await addEmployee(form, key);
+      }
+      navigate(`/firms/${firmId}`);
+    } catch (err) {
+      setError('Błąd zapisu: ' + err.message);
     }
-    navigate(`/firms/${firmId}`);
   };
 
   const handleDelete = async () => {
     if (!window.confirm('Usunąć tego pracownika i całą historię jego szkoleń?')) return;
-    await deleteEmployee(parseInt(id));
-    navigate(`/firms/${firmId}`);
+    try {
+      await deleteEmployee(parseInt(id));
+      navigate(`/firms/${firmId}`);
+    } catch (err) {
+      setError('Błąd usuwania: ' + err.message);
+    }
   };
 
   return (
@@ -94,6 +104,12 @@ export default function EmployeeForm() {
           />
         </label>
       </div>
+
+      {error && (
+        <div className="bg-red-50 text-red-600 p-3 rounded-xl text-sm font-medium border border-red-100">
+          {error}
+        </div>
+      )}
 
       <div className="flex gap-3 pt-6">
         <button type="submit" className="flex-1 bg-primary text-white py-4 rounded-2xl font-bold shadow-lg shadow-blue-100 hover:bg-blue-900 transition-all">

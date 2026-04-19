@@ -168,6 +168,7 @@ export async function changePassword(oldPassword, newPassword) {
  */
 async function reEncryptTable(table, oldKey, newKey, fieldName = 'encryptedData') {
   const rows = await table.toArray();
+  const failures = [];
   for (const row of rows) {
     if (!row[fieldName]) continue;
     try {
@@ -175,7 +176,11 @@ async function reEncryptTable(table, oldKey, newKey, fieldName = 'encryptedData'
       const reEncrypted = await encrypt(plainData, newKey);
       await table.update(row.id, { [fieldName]: reEncrypted });
     } catch (e) {
-      console.error(`Failed to re-encrypt row ${row.id} in ${table.name}:`, e);
+      failures.push(row.id);
+      console.error(`Re-encrypt failed for row ${row.id} in ${table.name}:`, e);
     }
+  }
+  if (failures.length > 0) {
+    throw new Error(`Nie udało się przeszyfrować ${failures.length} rekordów w tabeli ${table.name}.`);
   }
 }

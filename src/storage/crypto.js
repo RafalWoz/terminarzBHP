@@ -83,6 +83,9 @@ export async function encrypt(data, key) {
  * @returns {any} — deserialized JSON
  */
 export async function decrypt(encryptedData, key) {
+  if (!encryptedData || !encryptedData.iv || !encryptedData.ciphertext) {
+    throw new Error('Nieprawidłowe dane zaszyfrowane (brak iv lub ciphertext).');
+  }
   const iv = new Uint8Array(encryptedData.iv);
   const ciphertext = new Uint8Array(encryptedData.ciphertext);
 
