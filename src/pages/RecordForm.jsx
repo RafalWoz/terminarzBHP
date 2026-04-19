@@ -8,15 +8,15 @@ import {
 import { calculateTrainingExpiration, calculateMedicalExpiration } from '../utils/expirations';
 
 export default function RecordForm() {
-  const { firmId: fId, id: eId, employeeId: empId } = useParams();
-  const finalEmpId = empId || eId;
-  
+  const { firmId, employeeId } = useParams();
+
   const navigate = useNavigate();
   const [table, setTable] = useState('trainings');
-  
+  const [error, setError] = useState('');
+
   const [form, setForm] = useState({
-    employeeId: parseInt(finalEmpId),
-    firmId: parseInt(fId),
+    employeeId: parseInt(employeeId),
+    firmId: parseInt(firmId),
     type: 'okresowe',
     subtype: 'robotniczy',
     date: new Date().toISOString().split('T')[0],
@@ -39,19 +39,25 @@ export default function RecordForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const key = getSessionKey();
-    const data = {
-      ...form,
-      expiresAt: form.expiresAt ? new Date(form.expiresAt).toISOString() : null
-    };
+    setError('');
 
-    if (table === 'trainings') {
-      await addTraining(data, key);
-    } else {
-      await addMedical(data, key);
+    try {
+      const key = getSessionKey();
+      const data = {
+        ...form,
+        expiresAt: form.expiresAt ? new Date(form.expiresAt).toISOString() : null
+      };
+
+      if (table === 'trainings') {
+        await addTraining(data, key);
+      } else {
+        await addMedical(data, key);
+      }
+
+      navigate(`/firms/${firmId}/employees/${employeeId}`);
+    } catch (err) {
+      setError('Błąd zapisu: ' + err.message);
     }
-    
-    navigate(`/firms/${fId}/employees/${finalEmpId}`);
   };
 
   return (
@@ -149,6 +155,12 @@ export default function RecordForm() {
           />
         </label>
       </div>
+
+      {error && (
+        <div className="bg-red-50 text-red-600 p-3 rounded-xl text-sm font-medium border border-red-100">
+          {error}
+        </div>
+      )}
 
       <div className="flex gap-3 pt-6">
         <button type="submit" className="flex-1 bg-primary text-white py-4 rounded-2xl font-bold shadow-lg shadow-blue-100">
