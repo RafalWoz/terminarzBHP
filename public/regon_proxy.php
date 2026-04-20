@@ -58,6 +58,22 @@ function gus_request($url, $xml, $action, $sid = null) {
         throw new Exception("GUS Server Error (HTTP $httpCode): " . substr($fault, 0, 500));
     }
 
+    // GUS may return MTOM/XOP multipart response — extract the SOAP XML part
+    if (strpos($response, '--uuid:') === 0 || strpos($response, "\r\n--uuid:") !== false) {
+        // Find the XML body between MIME headers and boundary
+        $parts = preg_split('/\r?\n\r?\n/', $response, 3);
+        if (isset($parts[1])) {
+            $xmlPart = $parts[1];
+            // Remove trailing MIME boundary
+            $boundaryPos = strrpos($xmlPart, "\r\n--uuid:");
+            if ($boundaryPos === false) $boundaryPos = strrpos($xmlPart, "\n--uuid:");
+            if ($boundaryPos !== false) {
+                $xmlPart = substr($xmlPart, 0, $boundaryPos);
+            }
+            $response = trim($xmlPart);
+        }
+    }
+
     return $response;
 }
 
