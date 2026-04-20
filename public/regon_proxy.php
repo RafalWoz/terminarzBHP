@@ -79,11 +79,11 @@ try {
     </soap:Envelope>';
 
     $loginRes = gus_request($url, $loginXml, 'Zaloguj');
-    
-    if (preg_match('/<ZalogujResult>(.*?)<\/ZalogujResult>/', $loginRes, $matches)) {
+
+    if (preg_match('/<(?:[a-z0-9]+:)?ZalogujResult[^>]*>(.*?)<\/(?:[a-z0-9]+:)?ZalogujResult>/si', $loginRes, $matches)) {
         $sid = $matches[1];
     } else {
-        throw new Exception("Błąd logowania do GUS (nie znaleziono SID). Info: " . substr(strip_tags($loginRes), 0, 200));
+        throw new Exception("Błąd logowania do GUS (nie znaleziono SID). Info: " . substr(strip_tags($loginRes), 0, 300));
     }
 
     if (!$sid || strlen($sid) < 4) {
@@ -109,20 +109,23 @@ try {
     $searchRes = gus_request($url, $searchXml, 'DaneSzukajPodmioty', $sid);
 
     // 3. PARSE RESULT
-    if (preg_match('/<DaneSzukajPodmiotyResult>(.*?)<\/DaneSzukajPodmiotyResult>/', $searchRes, $matches)) {
-        $innerXml = html_entity_decode($matches[1]);
-        
+    if (preg_match('/<(?:[a-z0-9]+:)?DaneSzukajPodmiotyResult[^>]*>(.*?)<\/(?:[a-z0-9]+:)?DaneSzukajPodmiotyResult>/si', $searchRes, $matches)) {
+        $innerXml = html_entity_decode($matches[1], ENT_QUOTES | ENT_XML1, 'UTF-8');
+
         if (strpos($innerXml, '<ErrorCode>') !== false) {
-             preg_match('/<ErrorMessagePl>(.*?)<\/ErrorMessagePl>/', $innerXml, $errMatches);
+             preg_match('/<ErrorMessagePl>(.*?)<\/ErrorMessagePl>/s', $innerXml, $errMatches);
              throw new Exception("GUS: " . ($errMatches[1] ?? 'Nieznany błąd danych'));
         }
 
-        // Basic mapping for the UI
-        $name = ''; if (preg_match('/<Nazwa>(.*?)<\/Nazwa>/', $innerXml, $m)) $name = $m[1];
-        $city = ''; if (preg_match('/<Miejscowosc>(.*?)<\/Miejscowosc>/', $innerXml, $m)) $city = $m[1];
-        $street = ''; if (preg_match('/<Ulica>(.*?)<\/Ulica>/', $innerXml, $m)) $street = $m[1];
-        $num = ''; if (preg_match('/<NrNieruchomosci>(.*?)<\/NrNieruchomosci>/', $innerXml, $m)) $num = $m[1];
-        $post = ''; if (preg_match('/<KodPocztowy>(.*?)<\/KodPocztowy>/', $innerXml, $m)) $post = $m[1];
+        if (trim($innerXml) === '') {
+            throw new Exception("GUS nie znalazł firmy o podanym NIP (wynik pusty).");
+        }
+
+        $name = ''; if (preg_match('/<Nazwa>(.*?)<\/Nazwa>/s', $innerXml, $m)) $name = $m[1];
+        $city = ''; if (preg_match('/<Miejscowosc>(.*?)<\/Miejscowosc>/s', $innerXml, $m)) $city = $m[1];
+        $street = ''; if (preg_match('/<Ulica>(.*?)<\/Ulica>/s', $innerXml, $m)) $street = $m[1];
+        $num = ''; if (preg_match('/<NrNieruchomosci>(.*?)<\/NrNieruchomosci>/s', $innerXml, $m)) $num = $m[1];
+        $post = ''; if (preg_match('/<KodPocztowy>(.*?)<\/KodPocztowy>/s', $innerXml, $m)) $post = $m[1];
 
         echo json_encode([
             'success' => true,
@@ -130,9 +133,9 @@ try {
                 'name' => htmlspecialchars_decode($name, ENT_QUOTES),
                 'address' => trim(htmlspecialchars_decode("$street $num, $post $city", ENT_QUOTES)),
             ]
-        ]);
+        ], JSON_UNESCAPED_UNICODE);
     } else {
-        throw new Exception("GUS nie zwrócił wyników dla podanego NIP.");
+        throw new Exception("GUS nie zwrócił wyników. Odpowiedź: " . substr(strip_tags($searchRes), 0, 300));
     }
 
 } catch (Exception $e) {
