@@ -78,13 +78,10 @@ function soapCall($endpoint, $action, $body, $sid = null) {
 
     if ($err) throw new Exception("cURL: $err");
 
-    // Strip MTOM wrapper if present (GUS sometimes returns multipart)
-    if (strpos($response, '--') === 0) {
-        if (preg_match('/<soap:Envelope[\s\S]*<\/soap:Envelope>/i', $response, $m)) {
-            $response = $m[0];
-        } elseif (preg_match('/<s:Envelope[\s\S]*<\/s:Envelope>/i', $response, $m)) {
-            $response = $m[0];
-        }
+    // GUS production ALWAYS returns MTOM multipart despite Accept header.
+    // Extract the SOAP Envelope regardless of response format.
+    if (preg_match('/<\w*:?Envelope[^>]*>[\s\S]*<\/\w*:?Envelope>/i', $response, $m)) {
+        $response = $m[0];
     }
 
     if ($code >= 400) {
