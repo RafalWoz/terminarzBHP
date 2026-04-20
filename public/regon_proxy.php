@@ -33,10 +33,9 @@ $url = $env === 'prod'
 function gus_request($url, $xml, $action, $sid = null) {
     $ch = curl_init($url);
     $headers = [
-        'Content-Type: application/soap+xml; charset=utf-8',
-        'SOAPAction: "http://CIS/BIR/PUBL/2014/07/IUslugaBIRzewnPubl/' . $action . '"', 
+        'Content-Type: application/soap+xml; charset=utf-8; action="http://CIS/BIR/PUBL/2014/07/IUslugaBIRzewnPubl/' . $action . '"',
     ];
-    
+
     if ($sid) {
         $headers[] = "sid: $sid";
     }
@@ -65,8 +64,13 @@ function gus_request($url, $xml, $action, $sid = null) {
 try {
     // 1. LOGIN
     $loginXml = '<?xml version="1.0" encoding="utf-8"?>
-    <soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:dat="http://CIS/BIR/PUBL/2014/07">
-       <soap:Header/>
+    <soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope"
+                   xmlns:wsa="http://www.w3.org/2005/08/addressing"
+                   xmlns:dat="http://CIS/BIR/PUBL/2014/07">
+       <soap:Header>
+          <wsa:To>' . $url . '</wsa:To>
+          <wsa:Action>http://CIS/BIR/PUBL/2014/07/IUslugaBIRzewnPubl/Zaloguj</wsa:Action>
+       </soap:Header>
        <soap:Body>
           <dat:Zaloguj>
              <dat:pKluczUzytkownika>' . $apiKey . '</dat:pKluczUzytkownika>
