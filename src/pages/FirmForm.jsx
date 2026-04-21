@@ -31,7 +31,8 @@ export default function FirmForm() {
   }, [id, isEdit]);
 
   const handleGusLookup = async () => {
-    if (form.nip.length !== 10) {
+    const cleanedNip = String(form.nip || '').replace(/\D+/g, '');
+    if (cleanedNip.length !== 10) {
       alert('Podaj 10-cyfrowy NIP.');
       return;
     }
