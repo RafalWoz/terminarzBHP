@@ -116,7 +116,7 @@ export default function AuditForm() {
   const failCount = results.filter(r => r.result === 'fail').length;
 
   return (
-    <div className={`p-4 max-w-lg mx-auto pb-32 ${isReportMode ? 'print:p-0 print:max-w-none bg-white' : ''}`}>
+    <div className={`p-4 max-w-lg mx-auto pb-48 ${isReportMode ? 'print:p-0 print:max-w-none bg-white min-h-screen' : ''}`}>
       
       {/* Nawigacja */}
       <div className="flex justify-between items-center mb-6 print:hidden">
@@ -199,7 +199,7 @@ export default function AuditForm() {
       </div>
 
       {/* Panele Akcji */}
-      <div className="fixed bottom-6 left-1/2 -translate-x-1/2 w-full max-w-lg px-4 print:hidden">
+      <div className="fixed bottom-20 left-1/2 -translate-x-1/2 w-full max-w-lg px-4 print:hidden z-40">
         {isReportMode ? (
           <button 
             onClick={handlePrint}
