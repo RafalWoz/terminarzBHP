@@ -118,9 +118,10 @@ export default function AuditForm() {
   };
 
   if (loading) return <div className="p-10 text-center text-slate-400">Ładowanie systemu audytowego...</div>;
+  if (!audit && auditId !== 'new') return <div className="p-10 text-center text-red-500">Błąd: Nie znaleziono audytu.</div>;
 
-  // --- Krok 1: Wybór / Start ---
-  if (!auditId || auditId === 'new') {
+  // --- KROK 0: START (jeśli nowy) ---
+  if (!auditId || auditId === 'new' || !audit) {
     return (
       <div className="p-6 max-w-lg mx-auto space-y-6">
         <div className="text-center">
@@ -130,7 +131,7 @@ export default function AuditForm() {
         <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
             <h3 className="font-bold mb-4">Ustawienia wstępne</h3>
             <p className="text-sm text-slate-500 mb-6">System załaduje domyślne obszary kontrolne dla firmy <strong>{firm?.name}</strong>.</p>
-            <button onClick={handleStartAudit} className="w-full bg-primary text-white py-4 rounded-2xl font-black shadow-lg shadow-primary/20">
+            <button onClick={handleStartAudit} className="w-full bg-primary text-white py-4 rounded-2xl font-black shadow-lg shadow-primary/20 hover:scale-[1.02] transition-transform active:scale-95">
               URUCHOM FORMULARZ AUDYTU
             </button>
         </div>
@@ -142,35 +143,44 @@ export default function AuditForm() {
   if (step === 1) {
     return (
       <div className="p-4 max-w-lg mx-auto space-y-6 pb-24">
+        <div className="flex items-center gap-2 mb-2">
+            <div className="h-2 w-full bg-primary/20 rounded-full overflow-hidden">
+                <div className="h-full bg-primary w-1/3 transition-all" />
+            </div>
+            <span className="text-[10px] font-black text-primary">DANE</span>
+        </div>
         <h2 className="text-xl font-black text-slate-800">Krok 1: Dane audytu</h2>
         <div className="bg-white p-5 rounded-2xl border border-slate-200 space-y-4">
             <label className="block">
-                <span className="text-[10px] font-bold text-slate-400 uppercase">Nazwa audytu / Numer</span>
-                <input type="text" value={audit.title} onChange={e => updateAuditData({title: e.target.value})} className="w-full font-bold border-b py-2 focus:border-primary outline-none" />
+                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Nazwa audytu / Numer / Obiekt</span>
+                <input type="text" value={audit.title || ''} onChange={e => updateAuditData({title: e.target.value})} className="w-full font-bold border-b py-2 focus:border-primary outline-none" placeholder="np. Audyt warsztatu" />
             </label>
             <div className="grid grid-cols-2 gap-4">
                 <label className="block">
-                    <span className="text-[10px] font-bold text-slate-400 uppercase">Typ audytu</span>
-                    <select value={audit.type} onChange={e => updateAuditData({type: e.target.value})} className="w-full bg-slate-50 p-2 rounded-lg text-sm mt-1">
+                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Typ audytu</span>
+                    <select value={audit.type || 'okresowy'} onChange={e => updateAuditData({type: e.target.value})} className="w-full bg-slate-50 p-2 rounded-lg text-sm mt-1">
                         {AUDIT_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
                     </select>
                 </label>
                 <label className="block">
-                    <span className="text-[10px] font-bold text-slate-400 uppercase">Audytor</span>
-                    <input type="text" value={audit.auditor} onChange={e => updateAuditData({auditor: e.target.value})} className="w-full bg-slate-50 p-2 rounded-lg text-sm mt-1" />
+                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Audytor</span>
+                    <input type="text" value={audit.auditor || ''} onChange={e => updateAuditData({auditor: e.target.value})} className="w-full bg-slate-50 p-2 rounded-lg text-sm mt-1" />
                 </label>
             </div>
             <label className="block">
-                <span className="text-[10px] font-bold text-slate-400 uppercase">Lokalizacja / Adres zakładu</span>
-                <input type="text" value={audit.location} onChange={e => updateAuditData({location: e.target.value})} className="w-full bg-slate-50 p-2 rounded-lg text-sm mt-1" />
+                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Lokalizacja / Adres zakładu</span>
+                <input type="text" value={audit.location || ''} onChange={e => updateAuditData({location: e.target.value})} className="w-full bg-slate-50 p-2 rounded-lg text-sm mt-1" />
             </label>
         </div>
-        <button onClick={() => setStep(2)} className="w-full bg-primary text-white py-4 rounded-2xl font-bold">Dalej: Realizacja audytu →</button>
+        <button onClick={() => setStep(2)} className="w-full bg-primary text-white py-4 rounded-2xl font-black shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all">
+            DALEJ: REALIZACJA AUDYTU
+        </button>
       </div>
     );
   }
 
-  // --- KROK 2: REALIZACJA ---
+  // Fallback dla zakresu audytu
+  const currentScope = audit.scope || DEFAULT_AREAS;
   const failCount = Object.values(items).filter(i => i.result === 'fail').length;
 
   return (
@@ -188,7 +198,7 @@ export default function AuditForm() {
       {step === 2 ? (
         <div className="space-y-8">
            <h2 className="text-xl font-black text-slate-800">Krok 2: Obszary Kontrolne</h2>
-           {audit.scope.map((area, idx) => (
+           {currentScope.map((area, idx) => (
              <div key={idx} className="space-y-4">
                 <h3 className="text-sm font-black text-slate-400 uppercase border-l-4 border-primary pl-3">{area}</h3>
                 <div className="bg-white border rounded-3xl p-5 shadow-sm space-y-4">
@@ -281,7 +291,7 @@ export default function AuditForm() {
            {/* Statystyki */}
            <div className="grid grid-cols-3 gap-3">
               <div className="bg-slate-900 text-white p-3 rounded-2xl text-center">
-                 <div className="text-2xl font-black">{audit.scope.length}</div>
+                 <div className="text-2xl font-black">{currentScope.length}</div>
                  <div className="text-[8px] uppercase tracking-widest font-bold">Obszary</div>
               </div>
               <div className="bg-red-500 text-white p-3 rounded-2xl text-center">
@@ -289,7 +299,7 @@ export default function AuditForm() {
                  <div className="text-[8px] uppercase tracking-widest font-bold">Uchybienia</div>
               </div>
               <div className="bg-green-500 text-white p-3 rounded-2xl text-center">
-                 <div className="text-2xl font-black">{Math.round(((audit.scope.length - failCount) / audit.scope.length) * 100)}%</div>
+                 <div className="text-2xl font-black">{currentScope.length > 0 ? Math.round(((currentScope.length - failCount) / currentScope.length) * 100) : 0}%</div>
                  <div className="text-[8px] uppercase tracking-widest font-bold">Zgodność</div>
               </div>
            </div>
