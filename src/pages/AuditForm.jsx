@@ -9,7 +9,9 @@ import {
   getAuditPhotos, 
   getSessionKey, 
   AUDIT_TEMPLATES,
-  getFirm
+  getFirm,
+  encrypt,
+  db
 } from '../storage';
 
 export default function AuditForm() {
@@ -38,7 +40,7 @@ export default function AuditForm() {
         setAudit(a);
         const itemsMap = {};
         it.forEach(i => {
-          itemsMap[i.pointId] = { result: i.result, notes: i.notes };
+          itemsMap[i.pointId] = { result: i.result, notes: i.notes || '' };
         });
         setItems(itemsMap);
         setPhotos(ph);
@@ -54,24 +56,46 @@ export default function AuditForm() {
       firmId: parseInt(firmId),
       title: template.title,
       templateId: template.id,
-      status: 'draft'
+      status: 'draft',
+      customPoints: {}
     };
     const id = await addAudit(newAudit, key);
     navigate(`/firms/${firmId}/audits/${id}`);
   };
 
-  const handleUpdateItem = async (pointId, result) => {
+  const handleUpdateItem = async (pointId, field, value) => {
     const key = getSessionKey();
-    const current = items[pointId] || {};
-    const updated = { ...current, result };
+    const current = items[pointId] || { result: null, notes: '' };
+    const updated = { ...current, [field]: value };
     setItems(prev => ({ ...prev, [pointId]: updated }));
     
     await addAuditItem({
       auditId: parseInt(auditId),
       pointId,
-      result,
-      notes: updated.notes || ''
+      ...updated
     }, key);
+  };
+
+  const handleUpdateAudit = async (field, value) => {
+    const key = getSessionKey();
+    const updatedAudit = { ...audit, [field]: value };
+    setAudit(updatedAudit);
+    
+    const { id, firmId, status, createdAt, updatedAt, ...sensitive } = updatedAudit;
+    const encryptedData = await encrypt(sensitive, key);
+    await db.audits.update(id, { encryptedData, updatedAt: new Date().toISOString() });
+  };
+
+  const handleAddCustomPoint = async (categoryName) => {
+    const customPoint = prompt("Wpisz treść nowego punktu:");
+    if (!customPoint) return;
+    
+    const updatedAudit = { ...audit };
+    const cps = updatedAudit.customPoints || {};
+    if (!cps[categoryName]) cps[categoryName] = [];
+    cps[categoryName].push(customPoint);
+    
+    await handleUpdateAudit('customPoints', cps);
   };
 
   const handleAddPhoto = async (e) => {
@@ -111,7 +135,6 @@ export default function AuditForm() {
   }
 
   const template = AUDIT_TEMPLATES.find(t => t.id === audit.templateId) || AUDIT_TEMPLATES[0];
-  const allPoints = template.categories.flatMap(c => c.items);
   const results = Object.values(items);
   const failCount = results.filter(r => r.result === 'fail').length;
 
@@ -132,8 +155,18 @@ export default function AuditForm() {
       <div className={`${isReportMode ? 'space-y-6' : 'space-y-8'}`}>
         
         {/* Naglowek Raportu */}
-        <div className="border-b-2 border-slate-800 pb-4 mb-6">
-          <h1 className="text-2xl font-black text-slate-900 uppercase">{audit.title}</h1>
+        <div className="border-b-2 border-slate-800 pb-4 mb-6 relative">
+          {isReportMode ? (
+            <h1 className="text-2xl font-black text-slate-900 uppercase">{audit.title}</h1>
+          ) : (
+            <input 
+              type="text"
+              value={audit.title}
+              onChange={(e) => handleUpdateAudit('title', e.target.value)}
+              className="text-2xl font-black text-slate-900 uppercase w-full bg-transparent border-b border-dashed border-gray-300 focus:border-primary outline-none"
+              placeholder="Tytuł audytu..."
+            />
+          )}
           <div className="flex justify-between mt-2 text-sm">
             <div>
               <p className="font-bold">Klient: {firm?.name}</p>
@@ -150,38 +183,65 @@ export default function AuditForm() {
         </div>
 
         {/* Kategorie i items */}
-        {template.categories.map((cat, catIdx) => (
-          <div key={catIdx} className="space-y-3 break-inside-avoid">
-            <h2 className="text-sm font-black uppercase tracking-widest text-slate-500 border-l-4 border-primary pl-2">{cat.name}</h2>
-            {cat.items.map((item) => {
-              const pointId = `${catIdx}-${item}`;
-              const state = items[pointId] || {};
+        {template.categories.map((cat, catIdx) => {
+          const catItems = [...cat.items, ...(audit.customPoints?.[cat.name] || [])];
+          
+          return (
+            <div key={catIdx} className="space-y-3 break-inside-avoid">
+              <div className="flex justify-between items-center">
+                <h2 className="text-sm font-black uppercase tracking-widest text-slate-500 border-l-4 border-primary pl-2">{cat.name}</h2>
+                {!isReportMode && (
+                   <button onClick={() => handleAddCustomPoint(cat.name)} className="text-[10px] font-bold text-primary">+ DODAJ PUNKT</button>
+                )}
+              </div>
               
-              if (isReportMode && !state.result) return null; 
+              {catItems.map((item) => {
+                const pointId = `${catIdx}-${item}`;
+                const state = items[pointId] || { result: null, notes: '' };
+                
+                if (isReportMode && !state.result && !state.notes) return null; 
 
-              return (
-                <div key={item} className={`bg-white p-4 rounded-xl border ${state.result === 'fail' ? 'border-red-200 bg-red-50/10' : 'border-gray-100'} shadow-sm`}>
-                  <div className="flex justify-between items-start gap-4">
-                    <div className="font-semibold text-slate-700 text-sm leading-snug">{item}</div>
-                    {isReportMode ? (
-                      <div className={`text-[10px] font-black px-2 py-1 rounded ${
-                        state.result === 'ok' ? 'text-green-600' : state.result === 'fail' ? 'text-red-600 bg-red-100' : 'text-gray-400'
-                      }`}>
-                        {state.result === 'ok' ? 'OK' : state.result === 'fail' ? 'UCHYBIENIE' : 'N/D'}
-                      </div>
+                return (
+                  <div key={item} className={`bg-white p-4 rounded-xl border ${state.result === 'fail' ? 'border-red-200 bg-red-50/10' : 'border-gray-100'} shadow-sm`}>
+                    <div className="flex justify-between items-start gap-4 mb-2">
+                      <div className="font-semibold text-slate-700 text-sm leading-snug">{item}</div>
+                      {isReportMode ? (
+                        <div className={`text-[10px] font-black px-2 py-1 rounded ${
+                          state.result === 'ok' ? 'text-green-600' : state.result === 'fail' ? 'text-red-600 bg-red-100' : 'text-gray-400'
+                        }`}>
+                          {state.result === 'ok' ? 'OK' : state.result === 'fail' ? 'UCHYBIENIE' : 'N/D'}
+                        </div>
+                      ) : (
+                        <div className="flex gap-1 shrink-0">
+                          <StatusBtn label="OK" active={state.result === 'ok'} color="green" onClick={() => handleUpdateItem(pointId, 'result', 'ok')} />
+                          <StatusBtn label="NIE" active={state.result === 'fail'} color="red" onClick={() => handleUpdateItem(pointId, 'result', 'fail')} />
+                          <StatusBtn label="N/D" active={state.result === 'na'} color="gray" onClick={() => handleUpdateItem(pointId, 'result', 'na')} />
+                        </div>
+                      )}
+                    </div>
+                    
+                    {!isReportMode ? (
+                      <textarea 
+                        placeholder="Dodaj uwagi lub zalecenia..."
+                        value={state.notes}
+                        onChange={(e) => handleUpdateItem(pointId, 'notes', e.target.value)}
+                        className="w-full text-xs p-2 bg-gray-50 rounded-lg border border-transparent focus:border-gray-200 outline-none resize-none mt-1"
+                        rows={1}
+                      />
                     ) : (
-                      <div className="flex gap-1 shrink-0">
-                        <StatusBtn label="OK" active={state.result === 'ok'} color="green" onClick={() => handleUpdateItem(pointId, 'ok')} />
-                        <StatusBtn label="NIE" active={state.result === 'fail'} color="red" onClick={() => handleUpdateItem(pointId, 'fail')} />
-                        <StatusBtn label="N/D" active={state.result === 'na'} color="gray" onClick={() => handleUpdateItem(pointId, 'na')} />
-                      </div>
+                      state.notes && (
+                        <div className="mt-2 text-xs text-slate-500 bg-slate-50 p-2 rounded italic">
+                          <span className="font-bold not-italic text-[10px] text-slate-400 uppercase block mb-1">Uwagi:</span>
+                          {state.notes}
+                        </div>
+                      )
                     )}
                   </div>
-                </div>
-              );
-            })}
-          </div>
-        ))}
+                );
+              })}
+            </div>
+          );
+        })}
 
         {/* Zdjecia */}
         {photos.length > 0 && (
@@ -201,22 +261,16 @@ export default function AuditForm() {
       {/* Panele Akcji */}
       <div className="fixed bottom-20 left-1/2 -translate-x-1/2 w-full max-w-lg px-4 print:hidden z-40">
         {isReportMode ? (
-          <button 
-            onClick={handlePrint}
-            className="w-full bg-slate-900 text-white py-4 rounded-2xl font-bold shadow-2xl flex items-center justify-center gap-2 hover:bg-black transition-all active:scale-95"
-          >
+          <button onClick={handlePrint} className="w-full bg-slate-900 text-white py-4 rounded-2xl font-bold shadow-2xl flex items-center justify-center gap-2 hover:bg-black transition-all">
             <span>🖨️</span> Drukuj / Zapisz jako PDF
           </button>
         ) : (
           <div className="flex gap-2">
-            <label className="flex-1 bg-white border-2 border-primary text-primary py-4 rounded-2xl font-bold text-center cursor-pointer shadow-xl active:scale-95 transition-transform">
+            <label className="flex-1 bg-white border-2 border-primary text-primary py-4 rounded-2xl font-bold text-center cursor-pointer shadow-xl">
               <span>📸 Dodaj Zdjęcie</span>
               <input type="file" accept="image/*" capture="environment" className="hidden" onChange={handleAddPhoto} />
             </label>
-            <button 
-              onClick={() => setIsReportMode(true)}
-              className="flex-1 bg-primary text-white py-4 rounded-2xl font-bold shadow-xl shadow-primary/20 active:scale-95 transition-transform"
-            >
+            <button onClick={() => setIsReportMode(true)} className="flex-1 bg-primary text-white py-4 rounded-2xl font-bold shadow-xl shadow-primary/20">
               🏁 Gotowe
             </button>
           </div>
@@ -228,15 +282,12 @@ export default function AuditForm() {
 
 function StatusBtn({ label, active, color, onClick }) {
   const styles = {
-    green: active ? 'bg-green-500 text-white border-green-500' : 'bg-white text-green-600 border-gray-100',
-    red: active ? 'bg-red-500 text-white border-red-500' : 'bg-white text-red-600 border-gray-100',
-    gray: active ? 'bg-slate-500 text-white border-slate-500' : 'bg-white text-slate-400 border-gray-100',
+    green: active ? 'bg-green-500 text-white' : 'bg-white text-green-600',
+    red: active ? 'bg-red-500 text-white' : 'bg-white text-red-600',
+    gray: active ? 'bg-slate-500 text-white' : 'bg-white text-slate-400',
   };
   return (
-    <button 
-      onClick={onClick} 
-      className={`w-10 h-8 rounded-lg border text-[10px] font-bold transition-all ${styles[color]}`}
-    >
+    <button onClick={onClick} className={`w-10 h-8 rounded-lg border border-gray-100 text-[10px] font-bold transition-all ${styles[color]}`}>
       {label}
     </button>
   );
