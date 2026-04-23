@@ -44,6 +44,10 @@ export {
   getExpiringPermits, deletePermit,
 } from './repositories/permits';
 
+export {
+  addAudit, getAudit, getAuditsByFirm, addAuditItem, getAuditItems, addAuditPhoto, getAuditPhotos, AUDIT_TEMPLATES,
+} from './repositories/audits';
+
 // Backup
 export { exportLocalBackup, importLocalBackup, exportUnencryptedBackup } from './backup/local';
 

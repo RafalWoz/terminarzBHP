@@ -31,6 +31,20 @@ export default function FirmDetails() {
         )}
       </div>
 
+      <div className="grid grid-cols-2 gap-3 mb-6">
+        <Link 
+          to={`/firms/${id}/audits`}
+          className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm flex flex-col items-center justify-center hover:border-primary/30 transition-all"
+        >
+          <span className="text-2xl mb-1">📋</span>
+          <span className="text-xs font-bold text-slate-700">Audyty</span>
+        </Link>
+        <div className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm flex flex-col items-center justify-center opacity-50 grayscale cursor-not-allowed">
+          <span className="text-2xl mb-1">📊</span>
+          <span className="text-xs font-bold text-slate-700">Raporty</span>
+        </div>
+      </div>
+
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-lg font-bold text-slate-800">Pracownicy</h2>
         <Link

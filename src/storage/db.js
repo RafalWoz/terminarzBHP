@@ -35,3 +35,10 @@ db.version(3).stores({
 db.version(4).stores({
   sync_settings:  'provider', // Stores: provider ('google'|'local'|'none'), handle, token
 });
+
+// ─── Version 5 — Audits & Checklists ─────────────────────────────────────────
+db.version(5).stores({
+  audits:        '++id, firmId, status, createdAt',
+  audit_items:   '++id, auditId',
+  audit_photos:  '++id, auditId',
+});
