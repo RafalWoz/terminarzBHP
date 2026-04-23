@@ -7,44 +7,51 @@ export default function FirmDetails() {
   const firm = useFirm(id);
   const employees = useEmployees(id);
 
-  if (!firm) return <div className="p-4 text-center mt-10 text-gray-500">Ładowanie firmy...</div>;
+  if (!firm) return <div className="p-4 text-center mt-10 text-gray-500">Ladowanie firmy...</div>;
 
   return (
     <div className="p-4 max-w-lg mx-auto pb-24">
+      {/* Breadcrumb */}
       <div className="flex items-center gap-2 text-sm text-gray-500 mb-4">
         <Link to="/firms" className="hover:text-primary transition-colors">Firmy</Link>
         <span>/</span>
         <span className="font-medium text-gray-800 truncate">{firm.name}</span>
       </div>
 
+      {/* Firm Card */}
       <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 mb-6 relative overflow-hidden">
         <div className="absolute top-0 right-0 p-4">
-           <Link to={`/firms/${id}/edit`} className="text-gray-400 hover:text-primary text-xl">⚙️</Link>
+           <Link to={`/firms/${id}/edit`} className="text-gray-400 hover:text-primary text-xl" title="Edytuj">⚙️</Link>
         </div>
         <h1 className="text-2xl font-bold text-slate-800 mb-2">{firm.name}</h1>
         {firm.nip && <div className="text-sm font-mono text-gray-500 mb-1">NIP: {firm.nip}</div>}
         {firm.contactPerson && (
           <div className="text-sm text-gray-600 mt-3 pt-3 border-t border-gray-50">
             <span className="font-semibold">Osoba kontaktowa:</span> {firm.contactPerson}
-            {firm.phone && <div className="mt-1">📞 {firm.phone}</div>}
+            {firm.phone && <div className="mt-1">tel. {firm.phone}</div>}
           </div>
         )}
       </div>
 
-      <div className="grid grid-cols-2 gap-3 mb-6">
+      {/* MODULES (NEW BUTTONS) */}
+      <div className="grid grid-cols-2 gap-3 mb-8">
         <Link 
           to={`/firms/${id}/audits`}
-          className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm flex flex-col items-center justify-center hover:border-primary/30 transition-all"
+          className="bg-white p-5 rounded-2xl border-2 border-transparent shadow-sm flex flex-col items-center justify-center hover:border-primary/20 transition-all active:scale-95"
         >
-          <span className="text-2xl mb-1">📋</span>
-          <span className="text-xs font-bold text-slate-700">Audyty</span>
+          <div className="text-3xl mb-2">📋</div>
+          <div className="text-xs font-black text-slate-800 uppercase tracking-widest">Audyty</div>
+          <div className="text-[10px] text-slate-400 mt-1">Checklisty</div>
         </Link>
-        <div className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm flex flex-col items-center justify-center opacity-50 grayscale cursor-not-allowed">
-          <span className="text-2xl mb-1">📊</span>
-          <span className="text-xs font-bold text-slate-700">Raporty</span>
+        
+        <div className="bg-white p-5 rounded-2xl border-2 border-transparent shadow-sm flex flex-col items-center justify-center opacity-40 grayscale cursor-not-allowed">
+          <div className="text-3xl mb-2">📊</div>
+          <div className="text-xs font-black text-slate-800 uppercase tracking-widest">Raporty</div>
+          <div className="text-[10px] text-slate-400 mt-1">Wkrótce</div>
         </div>
       </div>
 
+      {/* Employees Section */}
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-lg font-bold text-slate-800">Pracownicy</h2>
         <Link
@@ -55,7 +62,7 @@ export default function FirmDetails() {
         </Link>
       </div>
 
-      {!employees && <div className="text-center py-10 text-gray-400">Ładowanie listy...</div>}
+      {!employees && <div className="text-center py-10 text-gray-400">Pobieranie listy...</div>}
       {employees && employees.length === 0 && (
         <div className="text-center py-12 bg-white rounded-2xl border border-dashed border-gray-300">
           <div className="text-4xl mb-3 opacity-30">👷</div>
