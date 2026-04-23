@@ -273,6 +273,22 @@ export default function AuditForm() {
                 </div>
              </div>
            ))}
+
+           {/* Dodatkowy duży przycisk na końcu listy */}
+           <div className="pt-10">
+              <button 
+                onClick={() => {
+                  setStep(3);
+                  window.scrollTo(0,0);
+                }} 
+                className="w-full bg-slate-900 text-white py-5 rounded-3xl font-black shadow-2xl shadow-slate-200 hover:scale-[1.02] active:scale-95 transition-all text-lg"
+              >
+                🏁 ZAKOŃCZ I GENERUJ RAPORT
+              </button>
+              <p className="text-center text-[10px] text-slate-400 mt-4 uppercase font-bold tracking-widest leading-relaxed">
+                Wszystkie dane są zapisywane automatycznie.<br/>Po kliknięciu przejdziesz do podglądu wydruku PDF.
+              </p>
+           </div>
         </div>
       ) : (
         /* --- KROK 3: RAPORT --- */
