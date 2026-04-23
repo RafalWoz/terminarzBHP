@@ -36,18 +36,30 @@ export async function getPermit(id, key) {
 
 export async function getPermitsByEmployee(employeeId, key) {
   const rows = await db.permits.where('employeeId').equals(employeeId).toArray();
-  return Promise.all(rows.map(async (row) => {
-    const decrypted = await decrypt(row.encryptedData, key);
-    return { id: row.id, employeeId: row.employeeId, firmId: row.firmId, expiresAt: row.expiresAt, createdAt: row.createdAt, ...decrypted };
+  const results = await Promise.all(rows.map(async (row) => {
+    try {
+      const decrypted = await decrypt(row.encryptedData, key);
+      return { id: row.id, employeeId: row.employeeId, firmId: row.firmId, expiresAt: row.expiresAt, createdAt: row.createdAt, ...decrypted };
+    } catch (e) {
+      console.error(`Pominięto uszkodzony rekord uprawnienia ${row.id}:`, e);
+      return null;
+    }
   }));
+  return results.filter(Boolean);
 }
 
 export async function getAllPermits(key) {
   const rows = await db.permits.toArray();
-  return Promise.all(rows.map(async (row) => {
-    const decrypted = await decrypt(row.encryptedData, key);
-    return { id: row.id, employeeId: row.employeeId, firmId: row.firmId, expiresAt: row.expiresAt, createdAt: row.createdAt, ...decrypted };
+  const results = await Promise.all(rows.map(async (row) => {
+    try {
+      const decrypted = await decrypt(row.encryptedData, key);
+      return { id: row.id, employeeId: row.employeeId, firmId: row.firmId, expiresAt: row.expiresAt, createdAt: row.createdAt, ...decrypted };
+    } catch (e) {
+      console.error(`Pominięto uszkodzony rekord uprawnienia ${row.id}:`, e);
+      return null;
+    }
   }));
+  return results.filter(Boolean);
 }
 
 export async function getExpiringPermits(withinDays, key) {
@@ -57,10 +69,16 @@ export async function getExpiringPermits(withinDays, key) {
     .where('expiresAt')
     .belowOrEqual(cutoff.toISOString())
     .toArray();
-  return Promise.all(rows.map(async (row) => {
-    const decrypted = await decrypt(row.encryptedData, key);
-    return { id: row.id, employeeId: row.employeeId, firmId: row.firmId, expiresAt: row.expiresAt, ...decrypted };
+  const results = await Promise.all(rows.map(async (row) => {
+    try {
+      const decrypted = await decrypt(row.encryptedData, key);
+      return { id: row.id, employeeId: row.employeeId, firmId: row.firmId, expiresAt: row.expiresAt, ...decrypted };
+    } catch (e) {
+      console.error(`Pominięto uszkodzony rekord uprawnienia ${row.id}:`, e);
+      return null;
+    }
   }));
+  return results.filter(Boolean);
 }
 
 export async function deletePermit(id) {

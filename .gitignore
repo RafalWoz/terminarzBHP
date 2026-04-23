@@ -13,6 +13,7 @@
 
 # production
 /build
+/dist
 
 # misc
 .DS_Store
@@ -26,6 +27,11 @@ yarn-error.log*
 # local env files
 .env
 .env*.local
+
+# GUS / REGON API config (trzymany lokalnie na hostingu, poza repo)
+regon_config.php
+public/regon_config.php
+dist/regon_config.php
 
 # vercel
 .vercel
