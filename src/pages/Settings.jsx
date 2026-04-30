@@ -10,6 +10,7 @@ import {
 } from '../storage';
 import { exportUserData } from '../storage/rodo/dataExport';
 import { eraseAllData } from '../storage/rodo/dataErasure';
+import { Link } from 'react-router-dom';
 
 export default function Settings() {
   const fileInputRef = useRef();
@@ -109,6 +110,23 @@ export default function Settings() {
           {status.msg}
         </div>
       )}
+
+      {/* 0. Szablony Audytów */}
+      <section className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm space-y-4">
+        <div className="flex justify-between items-center">
+          <div>
+            <h2 className="text-lg font-bold text-slate-800 flex items-center gap-2">
+              <span>📋</span> Moje Szablony Audytów
+            </h2>
+            <p className="text-xs text-gray-500 mt-1">
+              Zarządzaj własnymi listami kontrolnymi do szybkiego tworzenia audytów.
+            </p>
+          </div>
+          <Link to="/templates" className="bg-primary text-white px-4 py-2 rounded-xl text-sm font-bold shadow-sm hover:bg-blue-900 transition-colors">
+            Zarządzaj
+          </Link>
+        </div>
+      </section>
 
       {/* 1. Kopia Zapasowa (Zaszyfrowana) */}
       <section className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm space-y-4">

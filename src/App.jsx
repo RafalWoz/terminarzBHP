@@ -15,6 +15,7 @@ import Documents from './pages/Documents';
 import Audits from './pages/Audits';
 import AuditForm from './pages/AuditForm';
 import Settings from './pages/Settings';
+import Templates from './pages/Templates';
 
 function AppRoutes() {
   const { status, onUnlocked, onPasswordSet, onMigrationComplete } = useAuth();
@@ -81,6 +82,7 @@ function AppRoutes() {
           <Route path="firms/:firmId/audits/:id" element={<AuditForm />} />
           <Route path="documents" element={<Documents />} />
           <Route path="settings" element={<Settings />} />
+          <Route path="templates" element={<Templates />} />
         </Route>
       </Routes>
     </HashRouter>

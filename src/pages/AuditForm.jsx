@@ -10,7 +10,8 @@ import {
   getSessionKey, 
   getFirm,
   encrypt,
-  db
+  db,
+  getCustomTemplates
 } from '../storage';
 import AuditReport from '../components/AuditReport';
 
@@ -46,12 +47,17 @@ export default function AuditForm() {
   const [photos, setPhotos] = useState([]);
   const [firm, setFirm] = useState(null);
   const [newArea, setNewArea] = useState('');
+  
+  const [availableTemplates, setAvailableTemplates] = useState([]);
+  const [selectedTemplate, setSelectedTemplate] = useState('default');
 
   useEffect(() => {
     async function load() {
       const key = getSessionKey();
       const f = await getFirm(parseInt(firmId), key);
+      const tpl = await getCustomTemplates(key);
       setFirm(f);
+      setAvailableTemplates(tpl);
 
       if (auditId && auditId !== 'new') {
         const a = await getAudit(parseInt(auditId), key);
@@ -73,13 +79,20 @@ export default function AuditForm() {
 
   const handleStartAudit = async () => {
     const key = getSessionKey();
+    
+    let scope = DEFAULT_AREAS;
+    if (selectedTemplate !== 'default') {
+      const t = availableTemplates.find(x => x.id === selectedTemplate);
+      if (t) scope = t.points;
+    }
+
     const newAudit = {
       firmId: parseInt(firmId),
       title: `Audyt BHP - ${new Date().toLocaleDateString('pl-PL')}`,
       type: 'okresowy',
       auditor: 'Główny Specjalista BHP',
       location: firm?.address || '',
-      scope: DEFAULT_AREAS,
+      scope: scope,
       status: 'draft',
       createdAt: new Date().toISOString()
     };
@@ -141,7 +154,22 @@ export default function AuditForm() {
         </div>
         <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
             <h3 className="font-bold mb-4">Ustawienia wstępne</h3>
-            <p className="text-sm text-slate-500 mb-6">System załaduje domyślne obszary kontrolne dla firmy <strong>{firm?.name}</strong>.</p>
+            
+            <div className="mb-6 space-y-2 text-left">
+              <label className="block text-xs font-bold text-slate-500 uppercase">Wybierz szablon audytu</label>
+              <select 
+                value={selectedTemplate}
+                onChange={e => setSelectedTemplate(e.target.value)}
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 outline-none focus:border-primary font-medium text-slate-700"
+              >
+                <option value="default">Szablon Domyślny (Podstawowy)</option>
+                {availableTemplates.map(t => (
+                  <option key={t.id} value={t.id}>{t.name} ({t.points.length} pkt)</option>
+                ))}
+              </select>
+              <p className="text-[10px] text-slate-400">Możesz stworzyć własne szablony w zakładce Ustawienia → Szablony Audytów.</p>
+            </div>
+
             <button onClick={handleStartAudit} className="w-full bg-primary text-white py-4 rounded-2xl font-black shadow-lg shadow-primary/20 hover:scale-[1.02] transition-transform active:scale-95">
               URUCHOM FORMULARZ AUDYTU
             </button>

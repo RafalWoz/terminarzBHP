@@ -185,6 +185,25 @@ export async function getAllAuditPhotos(key) {
 }
 
 /**
+ * Manage custom audit templates
+ */
+export async function getCustomTemplates(key) {
+  const row = await db.secureSettings.get('audit_templates');
+  if (!row) return [];
+  try {
+    const decrypted = await decrypt(row.encryptedData, key);
+    return decrypted.templates || [];
+  } catch (e) {
+    return [];
+  }
+}
+
+export async function saveCustomTemplates(templates, key) {
+  const encryptedData = await encrypt({ templates }, key);
+  await db.secureSettings.put({ key: 'audit_templates', encryptedData });
+}
+
+/**
  * Simple default templates
  */
 export const AUDIT_TEMPLATES = [
