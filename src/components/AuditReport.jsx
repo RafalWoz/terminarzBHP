@@ -18,7 +18,7 @@ export default function AuditReport({ audit, firm, items, photos, currentScope, 
   const passedItems = Object.values(items).filter(i => i.result === 'ok');
 
   return (
-    <div className="bg-white min-h-screen">
+    <div className="bg-white">
       {/* Opcje wydruku (ukryte podczas drukowania) */}
       <div className="print:hidden bg-slate-100 p-4 rounded-xl mb-8 flex justify-between items-center border border-slate-200">
         <div>
@@ -100,19 +100,19 @@ export default function AuditReport({ audit, firm, items, photos, currentScope, 
         </section>
 
         {/* REJESTR NIEZGODNOŚCI */}
-        <section>
-          <h2 className="text-xs font-black uppercase mb-2 border-b pb-1">Rejestr Niezgodności i Zalecenia</h2>
+        <section className="print:mt-0">
+          <h2 className="text-xs font-black uppercase mb-1 border-b pb-0.5 print:break-after-avoid">Rejestr Niezgodności i Zalecenia</h2>
           
           {failedItems.length === 0 ? (
              <p className="text-slate-500 italic text-xs">Nie stwierdzono niezgodności w badanych obszarach.</p>
           ) : (
-            <div className="space-y-2">
+            <div className="space-y-1">
               {failedItems.map((item, idx) => {
                 const riskLevel = RISK_LEVELS.find(r => r.val === item.risk) || RISK_LEVELS[1];
                 const itemPhotos = photos.filter(p => p.pointId === item.pointId);
 
                 return (
-                  <div key={idx} className={`inline-block w-full print:page-break-inside-avoid border rounded-lg overflow-hidden mb-1 ${template === 'classic' ? 'border-black' : 'border-slate-300'}`}>
+                  <div key={idx} className={`block w-full print:break-inside-avoid border rounded-lg overflow-hidden mb-1 ${template === 'classic' ? 'border-black' : 'border-slate-300'}`}>
                     
                     {/* Header uchybienia */}
                     <div className={`flex items-center justify-between p-1 px-2 border-b ${template === 'classic' ? 'border-black bg-gray-100' : 'bg-slate-100 border-slate-300'}`}>
@@ -165,11 +165,11 @@ export default function AuditReport({ audit, firm, items, photos, currentScope, 
 
         {/* ZGODNE OBSZARY */}
         {passedItems.length > 0 && (
-          <section className="mt-4 print:page-break-inside-avoid">
-            <h2 className="text-xs font-black uppercase mb-2 border-b pb-1 text-slate-700">Obszary bez zastrzeżeń (Zgodne)</h2>
-            <div className="flex flex-wrap gap-2">
+          <section className="mt-2 print:mt-1 print:break-inside-avoid">
+            <h2 className="text-[10px] font-black uppercase mb-1 border-b pb-0.5 text-slate-700 print:break-after-avoid">Obszary bez zastrzeżeń (Zgodne)</h2>
+            <div className="flex flex-wrap gap-1">
               {passedItems.map((item, idx) => (
-                <span key={idx} className={`text-[9px] px-2 py-1 rounded border font-bold uppercase ${template === 'classic' ? 'border-black text-black' : 'bg-green-50 text-green-800 border-green-200'} print:exact-colors`}>
+                <span key={idx} className={`text-[8px] px-1.5 py-0.5 rounded border font-bold uppercase ${template === 'classic' ? 'border-black text-black' : 'bg-green-50 text-green-800 border-green-200'} print:exact-colors`}>
                   ✓ {item.pointId}
                 </span>
               ))}
@@ -178,7 +178,7 @@ export default function AuditReport({ audit, firm, items, photos, currentScope, 
         )}
 
         {/* STOPKA PODPISY */}
-        <section className="mt-8 pt-8 print:page-break-inside-avoid">
+        <section className="mt-4 pt-4 print:mt-2 print:pt-2 print:break-inside-avoid">
           <div className="grid grid-cols-2 gap-8 text-center">
             <div>
               <div className="border-b border-black w-32 mx-auto mb-1"></div>
