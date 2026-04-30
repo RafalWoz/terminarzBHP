@@ -121,6 +121,12 @@ try {
     $resultRaw  = xmlValue($searchRes, 'DaneSzukajPodmiotyResult');
 
     if ($resultRaw === '') {
+        // GUS returns a self-closing nil tag when NIP is not in the registry
+        if (stripos($searchRes, 'nil="true"') !== false || stripos($searchRes, "nil='true'") !== false) {
+            http_response_code(404);
+            echo json_encode(['error' => 'Nie znaleziono podmiotu o NIP ' . $nip . ' w rejestrze GUS.'], JSON_UNESCAPED_UNICODE);
+            exit;
+        }
         throw new Exception('Brak danych dla NIP ' . $nip . '. Odpowiedź: ' . mb_substr(strip_tags($searchRes), 0, 300));
     }
 
