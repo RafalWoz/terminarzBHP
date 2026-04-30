@@ -47,8 +47,8 @@ export default function AuditReport({ audit, firm, items, photos, currentScope, 
       <div className={`print:exact-colors print:m-0 print:p-0 ${template === 'classic' ? 'font-serif' : 'font-sans'}`}>
         
         {/* NAGŁÓWEK DOKUMENTU */}
-        <header className={`border-b-2 mb-4 pb-2 ${template === 'classic' ? 'border-black' : 'border-slate-800'}`}>
-          <div className="flex justify-between items-start mb-2">
+        <header className={`border-b mb-2 pb-1 ${template === 'classic' ? 'border-black' : 'border-slate-800'}`}>
+          <div className="flex justify-between items-start mb-1">
             <div>
               <h1 className={`text-xl font-black uppercase tracking-tight ${template === 'classic' ? 'text-black' : 'text-slate-900'}`}>
                 {audit.title || 'Raport z Audytu BHP'}
@@ -61,19 +61,19 @@ export default function AuditReport({ audit, firm, items, photos, currentScope, 
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4 text-xs">
+          <div className="grid grid-cols-2 gap-2 text-[10px]">
             <div>
-              <p className="text-xs text-slate-400 font-bold uppercase mb-1">Obiekt audytowany</p>
-              <p className="font-bold text-lg">{firm?.name || 'Brak danych firmy'}</p>
+              <p className="text-[8px] text-slate-400 font-bold uppercase">Obiekt audytowany</p>
+              <p className="font-bold text-sm leading-tight">{firm?.name || 'Brak danych firmy'}</p>
               <p className="text-slate-600">{audit.location}</p>
               <p className="text-slate-600">NIP: {firm?.nip}</p>
             </div>
             <div>
-              <p className="text-xs text-slate-400 font-bold uppercase mb-1">Informacje o audycie</p>
+              <p className="text-[8px] text-slate-400 font-bold uppercase">Informacje o audycie</p>
               <table className="w-full text-left">
                 <tbody>
-                  <tr><th className="py-1 pr-4 font-normal text-slate-500">Typ przeglądu:</th><td className="font-bold capitalize">{audit.type}</td></tr>
-                  <tr><th className="py-1 pr-4 font-normal text-slate-500">Przeprowadził:</th><td className="font-bold">{audit.auditor}</td></tr>
+                  <tr><th className="py-0 pr-2 font-normal text-slate-500">Typ:</th><td className="font-bold capitalize">{audit.type}</td></tr>
+                  <tr><th className="py-0 pr-2 font-normal text-slate-500">Audytor:</th><td className="font-bold">{audit.auditor}</td></tr>
                 </tbody>
               </table>
             </div>
@@ -81,20 +81,20 @@ export default function AuditReport({ audit, firm, items, photos, currentScope, 
         </header>
 
         {/* STATYSTYKI */}
-        <section className="mb-4 print:page-break-inside-avoid">
-          <h2 className="text-xs font-black uppercase mb-2 border-b pb-1">Podsumowanie Wyników</h2>
+        <section className="mb-2 print:page-break-inside-avoid">
+          <h2 className="text-[10px] font-black uppercase mb-1 border-b pb-0.5">Podsumowanie Wyników</h2>
           <div className="grid grid-cols-3 gap-2">
-             <div className={`p-2 rounded-xl border text-center ${template === 'classic' ? 'border-black' : 'bg-slate-50 border-slate-300'}`}>
-                <div className="text-lg font-black text-slate-900">{currentScope.length}</div>
-                <div className="text-[8px] uppercase tracking-widest font-bold text-slate-700">Obszary</div>
+             <div className={`p-1 rounded-lg border text-center ${template === 'classic' ? 'border-black' : 'bg-slate-50 border-slate-300'}`}>
+                <div className="text-sm font-black text-slate-900">{currentScope.length}</div>
+                <div className="text-[7px] uppercase tracking-widest font-bold text-slate-700">Obszary</div>
              </div>
-             <div className={`p-2 rounded-xl border text-center ${template === 'classic' ? 'border-black' : 'bg-red-50 border-red-300 text-red-800'}`}>
-                <div className="text-lg font-black">{failCount}</div>
-                <div className="text-[8px] uppercase tracking-widest font-bold">Uchybienia</div>
+             <div className={`p-1 rounded-lg border text-center ${template === 'classic' ? 'border-black' : 'bg-red-50 border-red-300 text-red-800'}`}>
+                <div className="text-sm font-black">{failCount}</div>
+                <div className="text-[7px] uppercase tracking-widest font-bold">Uchybienia</div>
              </div>
-             <div className={`p-2 rounded-xl border text-center ${template === 'classic' ? 'border-black' : 'bg-green-50 border-green-300 text-green-800'}`}>
-                <div className="text-lg font-black">{complianceRate}%</div>
-                <div className="text-[8px] uppercase tracking-widest font-bold">Zgodność</div>
+             <div className={`p-1 rounded-lg border text-center ${template === 'classic' ? 'border-black' : 'bg-green-50 border-green-300 text-green-800'}`}>
+                <div className="text-sm font-black">{complianceRate}%</div>
+                <div className="text-[7px] uppercase tracking-widest font-bold">Zgodność</div>
              </div>
           </div>
         </section>
@@ -128,11 +128,11 @@ export default function AuditReport({ audit, firm, items, photos, currentScope, 
                     </div>
 
                     {/* Treść uchybienia */}
-                    <div className={`p-1.5 flex ${itemPhotos.length > 0 ? 'flex-row' : 'flex-col'} gap-2`}>
-                      <div className={`space-y-1 ${itemPhotos.length > 0 ? 'w-1/2' : 'w-full'}`}>
+                    <div className={`p-1.5 flex ${itemPhotos.length > 0 ? 'flex-row' : 'flex-col'} items-start gap-3`}>
+                      <div className={`${itemPhotos.length > 0 ? 'w-3/5' : 'w-full'} space-y-1`}>
                         <div>
                           <p className="text-[8px] font-bold text-slate-600 uppercase mb-0">Stan faktyczny (Niezgodność)</p>
-                          <p className="text-xs text-slate-900 font-medium leading-tight">{item.description || 'Brak opisu.'}</p>
+                          <p className="text-xs text-slate-900 leading-tight">{item.description || 'Brak opisu.'}</p>
                         </div>
                         <div className={`p-1 rounded bg-red-50 border-l-2 ${template === 'classic' ? 'border-black bg-gray-50' : 'border-red-500'}`}>
                           <p className={`text-[8px] font-bold uppercase mb-0 ${template === 'classic' ? 'text-black' : 'text-red-800'}`}>Zalecenie Naprawcze</p>
@@ -147,9 +147,9 @@ export default function AuditReport({ audit, firm, items, photos, currentScope, 
 
                       {/* Zdjęcia */}
                       {itemPhotos.length > 0 && (
-                        <div className="w-1/2 grid grid-cols-2 gap-1">
+                        <div className="w-2/5 grid grid-cols-2 gap-1">
                           {itemPhotos.map((p, pIdx) => (
-                            <div key={pIdx} className="border border-slate-200 rounded overflow-hidden bg-slate-50 aspect-[4/3]">
+                            <div key={pIdx} className="border border-slate-200 rounded overflow-hidden bg-slate-50 aspect-square">
                               <img src={URL.createObjectURL(p.blob)} alt="Usterka" className="w-full h-full object-cover" />
                             </div>
                           ))}
