@@ -45,6 +45,7 @@ export default function AuditForm() {
   const [items, setItems] = useState({}); 
   const [photos, setPhotos] = useState([]);
   const [firm, setFirm] = useState(null);
+  const [newArea, setNewArea] = useState('');
 
   useEffect(() => {
     async function load() {
@@ -116,6 +117,15 @@ export default function AuditForm() {
     const meta = { pointId, description: 'Zdjecie uchybienia' };
     const photoId = await addAuditPhoto(parseInt(auditId), file, meta, key);
     setPhotos(prev => [...prev, { id: photoId, blob: file, ...meta }]);
+  };
+
+  const handleAddArea = () => {
+    if (!newArea.trim()) return;
+    const currentScope = audit.scope || DEFAULT_AREAS;
+    if (!currentScope.includes(newArea.trim())) {
+      updateAuditData({ scope: [...currentScope, newArea.trim()] });
+    }
+    setNewArea('');
   };
 
   if (loading) return <div className="p-10 text-center text-slate-400">Ładowanie systemu audytowego...</div>;
@@ -274,6 +284,28 @@ export default function AuditForm() {
                 </div>
              </div>
            ))}
+
+           {/* Dodawanie własnego punktu */}
+           <div className="bg-slate-50 p-4 rounded-2xl border border-dashed border-slate-300 mt-4">
+              <h4 className="text-sm font-bold text-slate-700 mb-2">Brakuje punktu kontrolnego?</h4>
+              <div className="flex gap-2">
+                 <input 
+                   type="text" 
+                   value={newArea}
+                   onChange={e => setNewArea(e.target.value)}
+                   placeholder="Wpisz własny obszar kontrolny..."
+                   className="flex-1 bg-white p-3 rounded-xl text-sm border focus:border-primary outline-none"
+                   onKeyDown={e => e.key === 'Enter' && handleAddArea()}
+                 />
+                 <button 
+                   onClick={handleAddArea}
+                   disabled={!newArea.trim()}
+                   className="bg-slate-800 text-white px-4 py-3 rounded-xl font-bold text-sm disabled:opacity-50"
+                 >
+                   DODAJ
+                 </button>
+              </div>
+           </div>
 
            {/* Dodatkowy duży przycisk na końcu listy */}
            <div className="pt-10">
