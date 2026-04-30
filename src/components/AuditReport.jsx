@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 
 const RISK_LEVELS = [
-  { val: 'low', label: 'Niskie', color: 'bg-blue-100 text-blue-700 border-blue-200' },
-  { val: 'medium', label: 'Średnie', color: 'bg-yellow-100 text-yellow-700 border-yellow-200' },
-  { val: 'high', label: 'Wysokie', color: 'bg-orange-100 text-orange-700 border-orange-200' },
+  { val: 'low', label: 'Niskie', color: 'bg-blue-100 text-blue-800 border-blue-300' },
+  { val: 'medium', label: 'Średnie', color: 'bg-yellow-100 text-yellow-800 border-yellow-300' },
+  { val: 'high', label: 'Wysokie', color: 'bg-orange-100 text-orange-800 border-orange-300' },
   { val: 'critical', label: 'Krytyczne', color: 'bg-red-600 text-white border-red-700' }
 ];
 
@@ -83,17 +83,17 @@ export default function AuditReport({ audit, firm, items, photos, currentScope, 
         <section className="mb-10 print:page-break-inside-avoid">
           <h2 className="text-lg font-black uppercase mb-4 border-b pb-2">Podsumowanie Wyników</h2>
           <div className="grid grid-cols-3 gap-4">
-             <div className={`p-4 rounded-xl border-2 text-center ${template === 'classic' ? 'border-black' : 'bg-slate-50 border-slate-200'}`}>
-                <div className="text-3xl font-black">{currentScope.length}</div>
-                <div className="text-[10px] uppercase tracking-widest font-bold text-slate-500 mt-1">Obszary</div>
+             <div className={`p-4 rounded-xl border-2 text-center ${template === 'classic' ? 'border-black' : 'bg-slate-50 border-slate-300'}`}>
+                <div className="text-3xl font-black text-slate-900">{currentScope.length}</div>
+                <div className="text-xs uppercase tracking-widest font-bold text-slate-700 mt-1">Obszary</div>
              </div>
-             <div className={`p-4 rounded-xl border-2 text-center ${template === 'classic' ? 'border-black' : 'bg-red-50 border-red-200 text-red-700'}`}>
+             <div className={`p-4 rounded-xl border-2 text-center ${template === 'classic' ? 'border-black' : 'bg-red-50 border-red-300 text-red-800'}`}>
                 <div className="text-3xl font-black">{failCount}</div>
-                <div className="text-[10px] uppercase tracking-widest font-bold mt-1">Stwierdzone Uchybienia</div>
+                <div className="text-xs uppercase tracking-widest font-bold mt-1">Stwierdzone Uchybienia</div>
              </div>
-             <div className={`p-4 rounded-xl border-2 text-center ${template === 'classic' ? 'border-black' : 'bg-green-50 border-green-200 text-green-700'}`}>
+             <div className={`p-4 rounded-xl border-2 text-center ${template === 'classic' ? 'border-black' : 'bg-green-50 border-green-300 text-green-800'}`}>
                 <div className="text-3xl font-black">{complianceRate}%</div>
-                <div className="text-[10px] uppercase tracking-widest font-bold mt-1">Zgodność</div>
+                <div className="text-xs uppercase tracking-widest font-bold mt-1">Zgodność</div>
              </div>
           </div>
         </section>
@@ -111,33 +111,33 @@ export default function AuditReport({ audit, firm, items, photos, currentScope, 
                 const itemPhotos = photos.filter(p => p.pointId === item.pointId);
 
                 return (
-                  <div key={idx} className={`print:page-break-inside-avoid border rounded-xl overflow-hidden ${template === 'classic' ? 'border-black' : 'border-slate-200'}`}>
+                  <div key={idx} className={`inline-block w-full print:page-break-inside-avoid border rounded-xl overflow-hidden mb-8 ${template === 'classic' ? 'border-black' : 'border-slate-300'}`}>
                     
                     {/* Header uchybienia */}
-                    <div className={`flex items-center justify-between p-3 border-b ${template === 'classic' ? 'border-black bg-gray-100' : 'bg-slate-50 border-slate-200'}`}>
+                    <div className={`flex items-center justify-between p-3 border-b ${template === 'classic' ? 'border-black bg-gray-100' : 'bg-slate-100 border-slate-300'}`}>
                       <div className="flex items-center gap-3">
-                        <span className={`w-6 h-6 rounded-full flex items-center justify-center font-bold text-xs ${template === 'classic' ? 'bg-black text-white' : 'bg-slate-800 text-white'}`}>
+                        <span className={`w-8 h-8 rounded-full flex items-center justify-center font-black text-sm ${template === 'classic' ? 'bg-black text-white' : 'bg-slate-800 text-white'}`}>
                           {idx + 1}
                         </span>
-                        <h4 className="font-black uppercase text-sm">{item.pointId}</h4>
+                        <h4 className="font-black uppercase text-base text-slate-900">{item.pointId}</h4>
                       </div>
-                      <span className={`text-[10px] font-black px-2 py-1 rounded border uppercase print:exact-colors ${template === 'classic' ? 'border-black' : riskLevel.color}`}>
+                      <span className={`text-xs font-black px-3 py-1.5 rounded border uppercase print:exact-colors ${template === 'classic' ? 'border-black text-black' : riskLevel.color}`}>
                         Ryzyko: {riskLevel.label}
                       </span>
                     </div>
 
                     {/* Treść uchybienia */}
-                    <div className="p-4 grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <div className="space-y-4">
+                    <div className="p-5 grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="space-y-5">
                         <div>
-                          <p className="text-[10px] font-bold text-slate-500 uppercase mb-1">Stan faktyczny (Niezgodność)</p>
-                          <p className="text-sm font-medium">{item.description || 'Brak opisu.'}</p>
+                          <p className="text-xs font-bold text-slate-600 uppercase mb-2">Stan faktyczny (Niezgodność)</p>
+                          <p className="text-base text-slate-900 font-medium">{item.description || 'Brak opisu.'}</p>
                         </div>
-                        <div className={`p-3 rounded-lg border-l-4 ${template === 'classic' ? 'border-black bg-gray-50' : 'border-red-500 bg-red-50'}`}>
-                          <p className={`text-[10px] font-bold uppercase mb-1 ${template === 'classic' ? 'text-black' : 'text-red-700'}`}>Zalecenie Naprawcze</p>
-                          <p className="text-sm font-bold">{item.recommendation || 'Brak zaleceń.'}</p>
+                        <div className={`p-4 rounded-lg border-l-4 ${template === 'classic' ? 'border-black bg-gray-50' : 'border-red-600 bg-red-50'}`}>
+                          <p className={`text-xs font-bold uppercase mb-2 ${template === 'classic' ? 'text-black' : 'text-red-800'}`}>Zalecenie Naprawcze</p>
+                          <p className="text-base text-slate-900 font-bold">{item.recommendation || 'Brak zaleceń.'}</p>
                           {item.deadline && (
-                            <p className="text-[10px] mt-2 font-black">
+                            <p className="text-xs mt-3 font-black text-slate-800">
                               TERMIN REALIZACJI: <span className="underline">{item.deadline}</span>
                             </p>
                           )}

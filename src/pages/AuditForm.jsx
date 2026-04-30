@@ -185,7 +185,7 @@ export default function AuditForm() {
   const failCount = Object.values(items).filter(i => i.result === 'fail').length;
 
   return (
-    <div className={`p-4 max-w-lg mx-auto pb-48 ${step === 3 ? 'print:p-0 bg-white' : ''}`}>
+    <div className={`p-4 mx-auto pb-48 ${step === 3 ? 'print:p-0 bg-white max-w-4xl print:max-w-none print:w-full' : 'max-w-lg'}`}>
       
       {/* Dynamicznie zmieniający się Header */}
       <div className="flex justify-between items-center mb-6 print:hidden">

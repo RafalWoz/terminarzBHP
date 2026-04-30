@@ -9,12 +9,20 @@ html, body, #root {
 }
 
 @media print {
+  @page { margin: 0; }
+
   html, body, #root {
     height: auto !important;
     overflow: visible !important;
     background: white !important;
     color: black !important;
+    margin: 0 !important;
   }
+  
+  body {
+    padding: 1.5cm !important;
+  }
+
   
   main, .overflow-y-auto {
     overflow: visible !important;
