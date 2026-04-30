@@ -64,6 +64,31 @@ export async function getAuditsByFirm(firmId, key) {
 }
 
 /**
+ * Get all audits (for backup)
+ */
+export async function getAllAudits(key) {
+  const rows = await db.audits.toArray();
+  const results = await Promise.all(
+    rows.map(async (row) => {
+      try {
+        const decrypted = await decrypt(row.encryptedData, key);
+        return { 
+          id: row.id, 
+          firmId: row.firmId,
+          status: row.status,
+          createdAt: row.createdAt, 
+          updatedAt: row.updatedAt, 
+          ...decrypted 
+        };
+      } catch (e) {
+        return null;
+      }
+    })
+  );
+  return results.filter(Boolean);
+}
+
+/**
  * Add an item to an audit (e.g., a checklist point result)
  */
 export async function addAuditItem(itemData, key) {
@@ -80,6 +105,24 @@ export async function addAuditItem(itemData, key) {
  */
 export async function getAuditItems(auditId, key) {
   const rows = await db.audit_items.where('auditId').equals(parseInt(auditId)).toArray();
+  const results = await Promise.all(
+    rows.map(async (row) => {
+      try {
+        const decrypted = await decrypt(row.encryptedData, key);
+        return { id: row.id, auditId: row.auditId, ...decrypted };
+      } catch (e) {
+        return null;
+      }
+    })
+  );
+  return results.filter(Boolean);
+}
+
+/**
+ * Get all audit items (for backup)
+ */
+export async function getAllAuditItems(key) {
+  const rows = await db.audit_items.toArray();
   const results = await Promise.all(
     rows.map(async (row) => {
       try {
@@ -119,6 +162,26 @@ export async function getAuditPhotos(auditId, key) {
       ...decryptedMeta
     };
   }));
+}
+
+/**
+ * Get all audit photos (for backup)
+ */
+export async function getAllAuditPhotos(key) {
+  const rows = await db.audit_photos.toArray();
+  return Promise.all(rows.map(async row => {
+    try {
+      const decryptedMeta = await decrypt(row.encryptedMeta, key);
+      return {
+        id: row.id,
+        auditId: row.auditId,
+        blob: row.photoBlob,
+        ...decryptedMeta
+      };
+    } catch (e) {
+      return null;
+    }
+  })).then(res => res.filter(Boolean));
 }
 
 /**

@@ -45,7 +45,7 @@ export {
 } from './repositories/permits';
 
 export {
-  addAudit, getAudit, getAuditsByFirm, addAuditItem, getAuditItems, addAuditPhoto, getAuditPhotos, AUDIT_TEMPLATES,
+  addAudit, getAudit, getAuditsByFirm, getAllAudits, addAuditItem, getAuditItems, getAllAuditItems, addAuditPhoto, getAuditPhotos, getAllAuditPhotos, AUDIT_TEMPLATES,
 } from './repositories/audits';
 
 // Backup
