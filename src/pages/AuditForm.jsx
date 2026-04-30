@@ -25,15 +25,18 @@ const RISK_LEVELS = [
 ];
 
 const DEFAULT_AREAS = [
-  "Dokumentacja BHP",
-  "Ocena ryzyka zawodowego",
-  "Szkolenia BHP",
-  "Stan techniczny stanowisk",
-  "Maszyny i urządzenia",
-  "Środki ochrony indywidualnej (ŚOI)",
-  "Ewakuacja i PPOŻ",
-  "Badania lekarskie",
-  "Czynniki szkodliwe"
+  "Dokumentacja i instrukcje BHP",
+  "Ocena Ryzyka Zawodowego (ORZ)",
+  "Szkolenia i uprawnienia pracowników",
+  "Badania profilaktyczne pracowników",
+  "Stanowiska pracy i ergonomia",
+  "Maszyny i urządzenia techniczne",
+  "Środki Ochrony Indywidualnej (ŚOI)",
+  "Ochrona przeciwpożarowa (PPOŻ)",
+  "Drogi ewakuacyjne i oznakowanie",
+  "Pierwsza pomoc i apteczki",
+  "Zaplecze higieniczno-sanitarne",
+  "Oświetlenie i warunki środowiskowe"
 ];
 
 export default function AuditForm() {

@@ -209,29 +209,42 @@ export async function saveCustomTemplates(templates, key) {
 export const AUDIT_TEMPLATES = [
   {
     id: 'bhp_general',
-    title: 'Ogólny Przegląd BHP',
+    title: 'Standardowy Audyt BHP',
     categories: [
       {
-        name: 'Dokumentacja',
+        name: 'Dokumentacja i Szkolenia',
         items: [
-          'Aktualność Oceny Ryzyka Zawodowego',
-          'Ważność instrukcji stanowiskowych',
-          'Rejestr czynników szkodliwych'
+          'Aktualność Oceny Ryzyka Zawodowego (ORZ)',
+          'Ważność instrukcji stanowiskowych BHP',
+          'Dokumentacja szkoleń (wstępne i okresowe)',
+          'Ważność zaświadczeń lekarskich pracowników'
         ]
       },
       {
-        name: 'Stan techniczny',
+        name: 'Obiekt i PPOŻ',
         items: [
-          'Oznakowanie dróg ewakuacyjnych',
-          'Stan osłon maszynowych',
-          'Legalizacja gaśnic'
+          'Oznakowanie dróg i wyjść ewakuacyjnych',
+          'Drożność przejść i dróg komunikacyjnych',
+          'Stan techniczny i legalizacja gaśnic',
+          'Oświetlenie ewakuacyjne i awaryjne'
         ]
       },
       {
-        name: 'Pracownicy',
+        name: 'Środowisko Pracy i Maszyny',
         items: [
-          'Stosowanie odzieży roboczej / ŚOI',
-          'Ważność badań i szkoleń (wyrywkowa)'
+          'Stan techniczny maszyn i osłon',
+          'Oznakowanie stref niebezpiecznych',
+          'Ergonomia stanowisk pracy',
+          'Prawidłowość składowania towarów i chemikaliów'
+        ]
+      },
+      {
+        name: 'Higiena i Pierwsza Pomoc',
+        items: [
+          'Kompletność i oznakowanie apteczek',
+          'Dostępność instrukcji pierwszej pomocy',
+          'Stosowanie ŚOI (Środki Ochrony Indywidualnej)',
+          'Stan zaplecza socjalnego i sanitarnego'
         ]
       }
     ]
