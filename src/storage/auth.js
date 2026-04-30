@@ -82,12 +82,12 @@ export async function setupPassword(password, hint = '') {
   setSessionKey(key);
 
   // Seed demo data
-  await seedDemoData(key);
+  await generateDemoData(key);
 
   return key;
 }
 
-async function seedDemoData(key) {
+export async function generateDemoData(key) {
   try {
     const firmId = await addFirm({
       name: 'Firma Demonstracyjna Sp. z o.o.',

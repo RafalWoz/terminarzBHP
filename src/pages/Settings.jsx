@@ -6,7 +6,8 @@ import {
   lockSession,
   changePassword,
   FileSystemDriver,
-  setSyncProvider
+  setSyncProvider,
+  generateDemoData
 } from '../storage';
 import { exportUserData } from '../storage/rodo/dataExport';
 import { eraseAllData } from '../storage/rodo/dataErasure';
@@ -94,8 +95,24 @@ export default function Settings() {
   const handleErasure = async () => {
     try {
       await eraseAllData(erasureInput);
+      window.location.reload();
     } catch (e) {
       setStatus({ type: 'error', msg: e.message });
+    }
+  };
+
+  const handleLoadDemo = async () => {
+    if (window.confirm('Czy na pewno chcesz załadować fikcyjne dane demonstracyjne? Spowoduje to dodanie "Firmy Demonstracyjnej" do Twojej bazy.')) {
+      try {
+        const key = getSessionKey();
+        await generateDemoData(key);
+        alert('Dane demonstracyjne zostały załadowane!');
+        window.location.hash = '#/';
+        window.location.reload();
+      } catch (e) {
+        alert('Wystąpił błąd podczas ładowania danych demo.');
+        console.error(e);
+      }
     }
   };
 
@@ -249,6 +266,26 @@ export default function Settings() {
         >
           Eksportuj moje dane (Art. 20 RODO)
         </button>
+      </section>
+
+      {/* 2.5 Demo Data */}
+      <section className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm space-y-4">
+        <div className="flex justify-between items-center">
+          <div>
+            <h2 className="text-lg font-bold text-slate-800 flex items-center gap-2">
+              <span>🎭</span> Dane Demonstracyjne
+            </h2>
+            <p className="text-xs text-slate-500 mt-1">
+              Wygeneruj fikcyjną firmę i audyt (do testów).
+            </p>
+          </div>
+          <button
+            onClick={handleLoadDemo}
+            className="bg-slate-100 text-slate-600 px-4 py-2 rounded-xl text-sm font-bold shadow-sm hover:bg-slate-200 transition-colors"
+          >
+            Załaduj
+          </button>
+        </div>
       </section>
 
       {/* 3. Sesja */}

@@ -18,6 +18,7 @@ export {
   getPasswordHint,
   changePassword,
   getFailedAttempts,
+  generateDemoData,
 } from './auth';
 
 // Repositories
