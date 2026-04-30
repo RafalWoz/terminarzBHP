@@ -12,6 +12,7 @@
 import { db } from './db';
 import { deriveKey, generateSalt, encrypt, decrypt } from './crypto';
 import { setSessionKey } from './session';
+import { addFirm } from './repositories/firms';
 
 const CANARY_VALUE = 'TerminyBHP-auth-canary-2026';
 
@@ -75,7 +76,26 @@ export async function setupPassword(password, hint = '') {
   });
 
   setSessionKey(key);
+
+  // Seed demo data
+  await seedDemoData(key);
+
   return key;
+}
+
+async function seedDemoData(key) {
+  try {
+    await addFirm({
+      name: 'Firma Demonstracyjna Sp. z o.o.',
+      nip: '0000000000',
+      address: 'ul. Przykładowa 1, 00-000 Warszawa',
+      phone: '123 456 789',
+      email: 'demo@przyklad.pl',
+      notes: 'To jest firma demonstracyjna. Możesz ją edytować lub skasować.'
+    }, key);
+  } catch (e) {
+    console.error('Failed to seed demo data:', e);
+  }
 }
 
 /**
