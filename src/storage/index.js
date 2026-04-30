@@ -49,6 +49,11 @@ export {
   addAudit, getAudit, getAuditsByFirm, getAllAudits, addAuditItem, getAuditItems, getAllAuditItems, addAuditPhoto, getAuditPhotos, getAllAuditPhotos, AUDIT_TEMPLATES, getCustomTemplates, saveCustomTemplates
 } from './repositories/audits';
 
+export {
+  getConsultantInfo,
+  saveConsultantInfo,
+} from './repositories/settings';
+
 // Backup
 export { exportLocalBackup, importLocalBackup, exportUnencryptedBackup } from './backup/local';
 

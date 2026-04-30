@@ -7,7 +7,7 @@ const RISK_LEVELS = [
   { val: 'critical', label: 'Krytyczne', color: 'bg-red-600 text-white border-red-700' }
 ];
 
-export default function AuditReport({ audit, firm, items, photos, currentScope, failCount }) {
+export default function AuditReport({ audit, firm, items, photos, currentScope, failCount, consultant }) {
   const [template, setTemplate] = useState('modern'); // 'modern', 'classic'
   
   const complianceRate = currentScope.length > 0 
@@ -69,15 +69,30 @@ export default function AuditReport({ audit, firm, items, photos, currentScope, 
               <p className="text-slate-600">NIP: {firm?.nip}</p>
             </div>
             <div>
-              <p className="text-[8px] text-slate-400 font-bold uppercase">Informacje o audycie</p>
-              <table className="w-full text-left">
-                <tbody>
-                  <tr><th className="py-0 pr-2 font-normal text-slate-500">Typ:</th><td className="font-bold capitalize">{audit.type}</td></tr>
-                  <tr><th className="py-0 pr-2 font-normal text-slate-500">Audytor:</th><td className="font-bold">{audit.auditor}</td></tr>
-                </tbody>
-              </table>
+              <p className="text-[8px] text-slate-400 font-bold uppercase">Podmiot wykonujący audyt</p>
+              {consultant ? (
+                <div className="text-[10px]">
+                  <p className="font-bold text-sm leading-tight">{consultant.name}</p>
+                  <p className="text-slate-600">{consultant.auditorName}</p>
+                  <p className="text-slate-600">{consultant.address}</p>
+                  <p className="text-slate-600">NIP: {consultant.nip} | {consultant.email}</p>
+                </div>
+              ) : (
+                <table className="w-full text-left">
+                  <tbody>
+                    <tr><th className="py-0 pr-2 font-normal text-slate-500">Typ:</th><td className="font-bold capitalize">{audit.type}</td></tr>
+                    <tr><th className="py-0 pr-2 font-normal text-slate-500">Audytor:</th><td className="font-bold">{audit.auditor}</td></tr>
+                  </tbody>
+                </table>
+              )}
             </div>
           </div>
+          {consultant && (
+            <div className="mt-1 pt-1 border-t border-slate-100 flex justify-between text-[8px] text-slate-400 font-bold uppercase">
+               <span>Typ audytu: {audit.type}</span>
+               <span>ID: {audit.id}</span>
+            </div>
+          )}
         </header>
 
         {/* STATYSTYKI */}

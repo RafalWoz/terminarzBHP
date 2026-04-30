@@ -11,7 +11,8 @@ import {
   getFirm,
   encrypt,
   db,
-  getCustomTemplates
+  getCustomTemplates,
+  getConsultantInfo
 } from '../storage';
 import AuditReport from '../components/AuditReport';
 
@@ -46,6 +47,7 @@ export default function AuditForm() {
   const [items, setItems] = useState({}); 
   const [photos, setPhotos] = useState([]);
   const [firm, setFirm] = useState(null);
+  const [consultant, setConsultant] = useState(null);
   const [newArea, setNewArea] = useState('');
   
   const [availableTemplates, setAvailableTemplates] = useState([]);
@@ -56,8 +58,10 @@ export default function AuditForm() {
       const key = getSessionKey();
       const f = await getFirm(parseInt(firmId), key);
       const tpl = await getCustomTemplates(key);
+      const cInfo = await getConsultantInfo(key);
       setFirm(f);
       setAvailableTemplates(tpl);
+      setConsultant(cInfo);
 
       if (auditId && auditId !== 'new') {
         const a = await getAudit(parseInt(auditId), key);
@@ -360,6 +364,7 @@ export default function AuditForm() {
           photos={photos}
           currentScope={currentScope}
           failCount={failCount}
+          consultant={consultant}
         />
       )}
     </div>

@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { 
   exportLocalBackup, 
   importLocalBackup, 
@@ -7,7 +7,9 @@ import {
   changePassword,
   FileSystemDriver,
   setSyncProvider,
-  generateDemoData
+  generateDemoData,
+  getConsultantInfo,
+  saveConsultantInfo
 } from '../storage';
 import { exportUserData } from '../storage/rodo/dataExport';
 import { eraseAllData } from '../storage/rodo/dataErasure';
@@ -20,6 +22,14 @@ export default function Settings() {
   
   // Password change state
   const [showPwdChange, setShowPwdChange] = useState(false);
+  const [consultantInfo, setConsultantInfo] = useState({
+    name: '',
+    auditorName: '',
+    address: '',
+    nip: '',
+    phone: '',
+    email: ''
+  });
   const [pwdForm, setPwdForm] = useState({ old: '', new1: '', new2: '' });
   
   const lastBackup = localStorage.getItem('lastBackup');
@@ -116,6 +126,31 @@ export default function Settings() {
     }
   };
 
+  useEffect(() => {
+    loadConsultantInfo();
+  }, []);
+
+  const loadConsultantInfo = async () => {
+    try {
+      const key = getSessionKey();
+      const info = await getConsultantInfo(key);
+      if (info) setConsultantInfo(info);
+    } catch (e) {
+      console.error('Failed to load consultant info:', e);
+    }
+  };
+
+  const handleSaveConsultantInfo = async (e) => {
+    e.preventDefault();
+    try {
+      const key = getSessionKey();
+      await saveConsultantInfo(consultantInfo, key);
+      setStatus({ type: 'success', msg: 'Dane audytora zostały zapisane.' });
+    } catch (e) {
+      setStatus({ type: 'error', msg: 'Błąd zapisu danych: ' + e.message });
+    }
+  };
+
   return (
     <div className="p-4 space-y-6 max-w-lg mx-auto pb-20">
       <h1 className="text-2xl font-bold text-slate-800">Ustawienia i Prywatność</h1>
@@ -143,6 +178,75 @@ export default function Settings() {
             Zarządzaj
           </Link>
         </div>
+      </section>
+
+      {/* Moje Dane (BHPowiec / Firma) */}
+      <section className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm space-y-4">
+        <div>
+          <h2 className="text-lg font-bold text-slate-800 flex items-center gap-2">
+            <span>👤</span> Dane Mojej Firmy (Audytora)
+          </h2>
+          <p className="text-xs text-gray-500 mt-1">
+            Te dane będą pojawiać się w nagłówku Twoich raportów BHP.
+          </p>
+        </div>
+        <form onSubmit={handleSaveConsultantInfo} className="space-y-3">
+          <div className="grid grid-cols-2 gap-3">
+            <label className="block">
+              <span className="text-[10px] font-bold text-slate-400 uppercase">Nazwa Firmy</span>
+              <input 
+                type="text" 
+                value={consultantInfo.name} 
+                onChange={e => setConsultantInfo({...consultantInfo, name: e.target.value})}
+                className="w-full bg-slate-50 p-2 rounded-lg text-sm border mt-1" 
+                placeholder="Twoja Firma BHP"
+              />
+            </label>
+            <label className="block">
+              <span className="text-[10px] font-bold text-slate-400 uppercase">Imię i Nazwisko</span>
+              <input 
+                type="text" 
+                value={consultantInfo.auditorName} 
+                onChange={e => setConsultantInfo({...consultantInfo, auditorName: e.target.value})}
+                className="w-full bg-slate-50 p-2 rounded-lg text-sm border mt-1" 
+                placeholder="Jan Kowalski"
+              />
+            </label>
+          </div>
+          <label className="block">
+            <span className="text-[10px] font-bold text-slate-400 uppercase">Adres</span>
+            <input 
+              type="text" 
+              value={consultantInfo.address} 
+              onChange={e => setConsultantInfo({...consultantInfo, address: e.target.value})}
+              className="w-full bg-slate-50 p-2 rounded-lg text-sm border mt-1" 
+              placeholder="ul. BHPowska 1, 00-000 Miasto"
+            />
+          </label>
+          <div className="grid grid-cols-2 gap-3">
+            <label className="block">
+              <span className="text-[10px] font-bold text-slate-400 uppercase">NIP</span>
+              <input 
+                type="text" 
+                value={consultantInfo.nip} 
+                onChange={e => setConsultantInfo({...consultantInfo, nip: e.target.value})}
+                className="w-full bg-slate-50 p-2 rounded-lg text-sm border mt-1" 
+              />
+            </label>
+            <label className="block">
+              <span className="text-[10px] font-bold text-slate-400 uppercase">E-mail / Tel.</span>
+              <input 
+                type="text" 
+                value={consultantInfo.email} 
+                onChange={e => setConsultantInfo({...consultantInfo, email: e.target.value})}
+                className="w-full bg-slate-50 p-2 rounded-lg text-sm border mt-1" 
+              />
+            </label>
+          </div>
+          <button type="submit" className="w-full bg-slate-800 text-white py-2 rounded-lg font-bold text-sm hover:bg-slate-900 transition-all">
+            Zapisz moje dane
+          </button>
+        </form>
       </section>
 
       {/* 1. Kopia Zapasowa (Zaszyfrowana) */}
