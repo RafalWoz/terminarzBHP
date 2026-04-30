@@ -13,6 +13,10 @@ import { db } from './db';
 import { deriveKey, generateSalt, encrypt, decrypt } from './crypto';
 import { setSessionKey } from './session';
 import { addFirm } from './repositories/firms';
+import { addEmployee } from './repositories/employees';
+import { addTraining } from './repositories/trainings';
+import { addMedical } from './repositories/medicals';
+import { addAudit, addAuditItem } from './repositories/audits';
 
 const CANARY_VALUE = 'TerminyBHP-auth-canary-2026';
 
@@ -85,7 +89,7 @@ export async function setupPassword(password, hint = '') {
 
 async function seedDemoData(key) {
   try {
-    await addFirm({
+    const firmId = await addFirm({
       name: 'Firma Demonstracyjna Sp. z o.o.',
       nip: '0000000000',
       address: 'ul. Przykładowa 1, 00-000 Warszawa',
@@ -93,6 +97,59 @@ async function seedDemoData(key) {
       email: 'demo@przyklad.pl',
       notes: 'To jest firma demonstracyjna. Możesz ją edytować lub skasować.'
     }, key);
+
+    const empId = await addEmployee({
+      firmId,
+      firstName: 'Jan',
+      lastName: 'Kowalski',
+      position: 'Pracownik biurowy',
+      department: 'Zarząd'
+    }, key);
+
+    const nextMonth = new Date();
+    nextMonth.setMonth(nextMonth.getMonth() + 1);
+    const dateStr = nextMonth.toISOString().split('T')[0];
+
+    await addTraining({
+      firmId,
+      employeeId: empId,
+      type: 'okresowe',
+      expiresAt: dateStr
+    }, key);
+
+    await addMedical({
+      firmId,
+      employeeId: empId,
+      type: 'okresowe',
+      expiresAt: dateStr
+    }, key);
+
+    const auditId = await addAudit({
+      firmId,
+      title: 'Przykładowy Raport z Audytu',
+      type: 'okresowy',
+      auditor: 'Główny Specjalista BHP',
+      location: 'Siedziba Główna',
+      scope: ['Ewakuacja i PPOŻ', 'Apteczki'],
+      status: 'completed'
+    }, key);
+
+    await addAuditItem({
+      auditId,
+      pointId: 'Ewakuacja i PPOŻ',
+      result: 'fail',
+      risk: 'high',
+      description: 'Zastawiona droga ewakuacyjna na korytarzu obok wejścia do magazynu. Przejście jest zablokowane paletami.',
+      recommendation: 'Natychmiast usunąć palety z korytarza. Wyznaczyć w magazynie odpowiednią strefę odkładczą.',
+      deadline: dateStr
+    }, key);
+
+    await addAuditItem({
+      auditId,
+      pointId: 'Apteczki',
+      result: 'ok'
+    }, key);
+
   } catch (e) {
     console.error('Failed to seed demo data:', e);
   }
