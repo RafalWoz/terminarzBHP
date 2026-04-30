@@ -11,6 +11,7 @@ import { getAllEmployees } from '../repositories/employees';
 import { getAllTrainings } from '../repositories/trainings';
 import { getAllMedicals } from '../repositories/medicals';
 import { getAllPermits } from '../repositories/permits';
+import { getAllAudits, getAllAuditItems } from '../repositories/audits';
 
 const BACKUP_FORMAT = 'TerminyBHP-Backup';
 const BACKUP_VERSION = 1;
@@ -21,12 +22,14 @@ const BACKUP_VERSION = 1;
  */
 export async function exportLocalBackup(sessionKey, returnBlobOnly = false) {
   // Decrypt all data from IndexedDB
-  const [firms, employees, trainings, medicals, permits] = await Promise.all([
+  const [firms, employees, trainings, medicals, permits, audits, auditItems] = await Promise.all([
     getAllFirms(sessionKey),
     getAllEmployees(sessionKey),
     getAllTrainings(sessionKey),
     getAllMedicals(sessionKey),
     getAllPermits(sessionKey),
+    getAllAudits(sessionKey),
+    getAllAuditItems(sessionKey),
   ]);
 
   const payload = {
@@ -36,6 +39,8 @@ export async function exportLocalBackup(sessionKey, returnBlobOnly = false) {
     trainings,
     medicals,
     permits,
+    audits,
+    auditItems,
   };
 
   const encryptedPayload = await encrypt(payload, sessionKey);
@@ -51,6 +56,8 @@ export async function exportLocalBackup(sessionKey, returnBlobOnly = false) {
       trainings: trainings.length,
       medicals: medicals.length,
       permits: permits.length,
+      audits: audits.length,
+      auditItems: auditItems.length,
     },
   };
 
@@ -86,16 +93,18 @@ export async function importLocalBackup(file, sessionKey) {
     throw new Error('Nieprawidłowy klucz sesji lub plik jest uszkodzony / zaszyfrowany innym hasłem.');
   }
 
-  const summary = { firms: 0, employees: 0, trainings: 0, medicals: 0, permits: 0 };
+  const summary = { firms: 0, employees: 0, trainings: 0, medicals: 0, permits: 0, audits: 0, auditItems: 0 };
 
   // Atomic import transaction
-  await db.transaction('rw', [db.firms, db.employees, db.trainings, db.medicals, db.permits], async () => {
+  await db.transaction('rw', [db.firms, db.employees, db.trainings, db.medicals, db.permits, db.audits, db.audit_items], async () => {
     // Clear existing data
     await db.firms.clear();
     await db.employees.clear();
     await db.trainings.clear();
     await db.medicals.clear();
     await db.permits.clear();
+    await db.audits.clear();
+    await db.audit_items.clear();
 
     // Re-encrypt with current session key and insert
     for (const firm of (payload.firms || [])) {
@@ -132,6 +141,20 @@ export async function importLocalBackup(file, sessionKey) {
       await db.permits.add({ employeeId: p.employeeId, firmId: p.firmId, expiresAt: p.expiresAt || null, encryptedData, createdAt: createdAt || new Date().toISOString() });
       summary.permits++;
     }
+
+    for (const a of (payload.audits || [])) {
+      const { id, createdAt, updatedAt, status, firmId, ...sensitive } = a;
+      const encryptedData = await encrypt(sensitive, sessionKey);
+      await db.audits.add({ firmId: a.firmId, status: a.status || 'draft', encryptedData, createdAt: createdAt || new Date().toISOString(), updatedAt: updatedAt || new Date().toISOString() });
+      summary.audits++;
+    }
+
+    for (const ai of (payload.auditItems || [])) {
+      const { id, auditId, ...sensitive } = ai;
+      const encryptedData = await encrypt(sensitive, sessionKey);
+      await db.audit_items.add({ auditId: ai.auditId, encryptedData });
+      summary.auditItems++;
+    }
   });
 
   return summary;
@@ -143,18 +166,20 @@ export async function importLocalBackup(file, sessionKey) {
  */
 export async function exportUnencryptedBackup() {
   const key = getSessionKey();
-  const [firms, employees, trainings, medicals, permits] = await Promise.all([
+  const [firms, employees, trainings, medicals, permits, audits, auditItems] = await Promise.all([
     getAllFirms(key),
     getAllEmployees(key),
     getAllTrainings(key),
     getAllMedicals(key),
     getAllPermits(key),
+    getAllAudits(key),
+    getAllAuditItems(key),
   ]);
 
   const payload = {
     exportedAt: new Date().toISOString(),
     warning: 'Ten plik zawiera dane osobowe. Zabezpiecz go po pobraniu (art. 20 RODO).',
-    firms, employees, trainings, medicals, permits,
+    firms, employees, trainings, medicals, permits, audits, auditItems,
   };
 
   const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
