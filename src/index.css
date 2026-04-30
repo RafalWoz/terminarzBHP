@@ -12,6 +12,8 @@ html, body, #root {
   html, body, #root {
     height: auto !important;
     overflow: visible !important;
+    background: white !important;
+    color: black !important;
   }
   
   main, .overflow-y-auto {
@@ -24,12 +26,30 @@ html, body, #root {
     display: none !important;
   }
 
+  .print\:exact-colors {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .print\:page-break-before {
+    page-break-before: always;
+  }
+
+  .print\:page-break-after {
+    page-break-after: always;
+  }
+
+  .print\:page-break-inside-avoid {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
   .shadow-sm, .shadow-md, .shadow-lg, .shadow-xl, .shadow-2xl {
     box-shadow: none !important;
-    border: 1px solid #eee !important;
   }
   
   .break-inside-avoid {
+    page-break-inside: avoid;
     break-inside: avoid;
   }
 }
