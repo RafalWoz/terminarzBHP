@@ -15,6 +15,7 @@ export default function AuditReport({ audit, firm, items, photos, currentScope, 
     : 0;
 
   const failedItems = Object.values(items).filter(i => i.result === 'fail');
+  const passedItems = Object.values(items).filter(i => i.result === 'ok');
 
   return (
     <div className="bg-white min-h-screen">
@@ -161,6 +162,20 @@ export default function AuditReport({ audit, firm, items, photos, currentScope, 
             </div>
           )}
         </section>
+
+        {/* ZGODNE OBSZARY */}
+        {passedItems.length > 0 && (
+          <section className="mt-4 print:page-break-inside-avoid">
+            <h2 className="text-xs font-black uppercase mb-2 border-b pb-1 text-slate-700">Obszary bez zastrzeżeń (Zgodne)</h2>
+            <div className="flex flex-wrap gap-2">
+              {passedItems.map((item, idx) => (
+                <span key={idx} className={`text-[9px] px-2 py-1 rounded border font-bold uppercase ${template === 'classic' ? 'border-black text-black' : 'bg-green-50 text-green-800 border-green-200'} print:exact-colors`}>
+                  ✓ {item.pointId}
+                </span>
+              ))}
+            </div>
+          </section>
+        )}
 
         {/* STOPKA PODPISY */}
         <section className="mt-8 pt-8 print:page-break-inside-avoid">
