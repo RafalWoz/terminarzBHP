@@ -111,33 +111,33 @@ export default function AuditReport({ audit, firm, items, photos, currentScope, 
                 const itemPhotos = photos.filter(p => p.pointId === item.pointId);
 
                 return (
-                  <div key={idx} className={`inline-block w-full print:page-break-inside-avoid border rounded-xl overflow-hidden mb-8 ${template === 'classic' ? 'border-black' : 'border-slate-300'}`}>
+                  <div key={idx} className={`inline-block w-full print:page-break-inside-avoid border rounded-xl overflow-hidden mb-3 ${template === 'classic' ? 'border-black' : 'border-slate-300'}`}>
                     
                     {/* Header uchybienia */}
-                    <div className={`flex items-center justify-between p-3 border-b ${template === 'classic' ? 'border-black bg-gray-100' : 'bg-slate-100 border-slate-300'}`}>
-                      <div className="flex items-center gap-3">
-                        <span className={`w-8 h-8 rounded-full flex items-center justify-center font-black text-sm ${template === 'classic' ? 'bg-black text-white' : 'bg-slate-800 text-white'}`}>
+                    <div className={`flex items-center justify-between p-2 border-b ${template === 'classic' ? 'border-black bg-gray-100' : 'bg-slate-100 border-slate-300'}`}>
+                      <div className="flex items-center gap-2">
+                        <span className={`w-6 h-6 rounded-full flex items-center justify-center font-black text-xs ${template === 'classic' ? 'bg-black text-white' : 'bg-slate-800 text-white'}`}>
                           {idx + 1}
                         </span>
-                        <h4 className="font-black uppercase text-base text-slate-900">{item.pointId}</h4>
+                        <h4 className="font-black uppercase text-sm text-slate-900">{item.pointId}</h4>
                       </div>
-                      <span className={`text-xs font-black px-3 py-1.5 rounded border uppercase print:exact-colors ${template === 'classic' ? 'border-black text-black' : riskLevel.color}`}>
+                      <span className={`text-[10px] font-black px-2 py-0.5 rounded border uppercase print:exact-colors ${template === 'classic' ? 'border-black text-black' : riskLevel.color}`}>
                         Ryzyko: {riskLevel.label}
                       </span>
                     </div>
 
                     {/* Treść uchybienia */}
-                    <div className="p-5 grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <div className="space-y-5">
+                    <div className="p-3 grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="space-y-2">
                         <div>
-                          <p className="text-xs font-bold text-slate-600 uppercase mb-2">Stan faktyczny (Niezgodność)</p>
-                          <p className="text-base text-slate-900 font-medium">{item.description || 'Brak opisu.'}</p>
+                          <p className="text-[10px] font-bold text-slate-600 uppercase mb-0.5">Stan faktyczny (Niezgodność)</p>
+                          <p className="text-sm text-slate-900 font-medium leading-tight">{item.description || 'Brak opisu.'}</p>
                         </div>
-                        <div className={`p-4 rounded-lg border-l-4 ${template === 'classic' ? 'border-black bg-gray-50' : 'border-red-600 bg-red-50'}`}>
-                          <p className={`text-xs font-bold uppercase mb-2 ${template === 'classic' ? 'text-black' : 'text-red-800'}`}>Zalecenie Naprawcze</p>
-                          <p className="text-base text-slate-900 font-bold">{item.recommendation || 'Brak zaleceń.'}</p>
+                        <div className={`p-2 rounded-lg border-l-4 ${template === 'classic' ? 'border-black bg-gray-50' : 'border-red-600 bg-red-50'}`}>
+                          <p className={`text-[10px] font-bold uppercase mb-0.5 ${template === 'classic' ? 'text-black' : 'text-red-800'}`}>Zalecenie Naprawcze</p>
+                          <p className="text-sm text-slate-900 font-bold leading-tight">{item.recommendation || 'Brak zaleceń.'}</p>
                           {item.deadline && (
-                            <p className="text-xs mt-3 font-black text-slate-800">
+                            <p className="text-[10px] mt-1 font-black text-slate-800">
                               TERMIN REALIZACJI: <span className="underline">{item.deadline}</span>
                             </p>
                           )}
