@@ -44,7 +44,8 @@ function soapCall($endpoint, $action, $body, $sid = null) {
 
     $xml = '<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope"'
          . ' xmlns:wsa="http://www.w3.org/2005/08/addressing"'
-         . ' xmlns:bir="http://CIS/BIR/PUBL/2014/07">'
+         . ' xmlns:bir="http://CIS/BIR/PUBL/2014/07"'
+         . ' xmlns:dat="http://CIS/BIR/PUBL/2014/07/DataContract">'
          . '<soap:Header>'
          . '<wsa:To>' . $endpoint . '</wsa:To>'
          . '<wsa:Action>' . $actionUrl . '</wsa:Action>'
@@ -113,7 +114,7 @@ try {
     // 2. SEARCH
     $searchBody = '<bir:DaneSzukajPodmioty>'
                 . '<bir:pParametryWyszukiwania>'
-                . '<bir:Nip>' . $nip . '</bir:Nip>'
+                . '<dat:Nip>' . $nip . '</dat:Nip>'
                 . '</bir:pParametryWyszukiwania>'
                 . '</bir:DaneSzukajPodmioty>';
 
