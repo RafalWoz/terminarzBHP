@@ -16,10 +16,10 @@ export default function Dashboard() {
     : items.filter((i) => i.status === filter);
 
   return (
-    <div className="p-4 max-w-lg mx-auto">
+    <div className="p-4 max-w-lg lg:max-w-6xl mx-auto">
       <h1 className="text-2xl font-bold mb-4 text-slate-800">Co dziś?</h1>
 
-      <div className="grid grid-cols-3 gap-3 mb-6">
+      <div className="grid grid-cols-3 gap-3 lg:gap-6 mb-6">
         <StatTile
           label="Przeterminowane"
           count={stats.expired}

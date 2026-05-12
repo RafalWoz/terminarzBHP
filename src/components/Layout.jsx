@@ -6,7 +6,7 @@ export default function Layout() {
   return (
     <div className="flex flex-col h-full bg-gray-50">
       <TopBar />
-      <main className="flex-1 overflow-y-auto pb-16">
+      <main className="flex-1 overflow-y-auto pb-16 lg:pb-8">
         <Outlet />
       </main>
       <BottomNav />

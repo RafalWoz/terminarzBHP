@@ -25,7 +25,7 @@ export default function Audits() {
   if (loading) return <div className="p-10 text-center">Ładowanie audytów...</div>;
 
   return (
-    <div className="p-4 max-w-lg mx-auto">
+    <div className="p-4 max-w-lg lg:max-w-4xl mx-auto">
       <div className="flex items-center gap-2 text-sm text-gray-500 mb-4">
         <Link to="/firms" className="hover:text-primary">Firmy</Link>
         <span>/</span>
