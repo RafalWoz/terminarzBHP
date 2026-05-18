@@ -6,8 +6,6 @@ type BlogPostPageProps = {
   params: Promise<{ slug: string }>;
 };
 
-export const dynamic = "force-dynamic";
-
 export function generateStaticParams() {
   return getAllPosts().map((post) => ({ slug: post.slug }));
 }
