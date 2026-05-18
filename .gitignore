@@ -1,5 +1,5 @@
 # dependencies
-/node_modules
+node_modules/
 /.pnp
 .pnp.js
 .yarn/install-state.gz
@@ -8,12 +8,12 @@
 /coverage
 
 # next.js
-/.next/
+.next/
 /out/
 
 # production
 /build
-/dist
+dist/
 
 # misc
 .DS_Store
@@ -32,6 +32,7 @@ yarn-error.log*
 regon_config.php
 public/regon_config.php
 dist/regon_config.php
+**/regon_config.php
 
 # vercel
 .vercel
@@ -39,6 +40,3 @@ dist/regon_config.php
 # typescript
 *.tsbuildinfo
 next-env.d.ts
-
-# config files
-regon_config.php
