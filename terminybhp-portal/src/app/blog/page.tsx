@@ -1,24 +1,41 @@
-import Link from 'next/link';
+import Link from "next/link";
+import { getAllPosts } from "@/lib/content";
+
+export const dynamic = "force-dynamic";
+
+export const metadata = {
+  title: "Blog BHP",
+  description: "Publiczna baza wiedzy TerminyBHP: szkolenia, badania, uprawnienia i organizacja terminów BHP.",
+};
 
 export default function BlogPage() {
+  const posts = getAllPosts();
+
   return (
-    <div className="container mx-auto px-4 py-12">
-      <h1 className="text-4xl font-extrabold text-slate-900 mb-8">BHP Blog & Baza Wiedzy</h1>
-      <p className="text-lg text-slate-600 mb-8">
-        Najnowsze artykuły, porady i aktualności ze świata BHP.
-      </p>
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {/* Przykładowy post (placeholder) */}
-        <div className="bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow p-6 border border-slate-100">
-          <span className="text-sm font-medium text-blue-600 bg-blue-50 px-3 py-1 rounded-full mb-4 inline-block">Wiedza</span>
-          <h2 className="text-xl font-bold text-slate-800 mb-3">Jak prawidłowo przeprowadzić szkolenie wstępne BHP?</h2>
-          <p className="text-slate-600 mb-4 line-clamp-3">Zastanawiasz się, z czego powinno składać się szkolenie wstępne pracownika? Sprawdź nasz poradnik krok po kroku.</p>
-          <Link href="/blog/przykladowy-post" className="text-blue-600 font-semibold hover:text-blue-800">
-            Czytaj dalej &rarr;
-          </Link>
-        </div>
+    <main className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
+      <div className="max-w-3xl">
+        <p className="text-sm font-semibold uppercase tracking-wide text-blue-700">Blog</p>
+        <h1 className="mt-2 text-4xl font-bold tracking-tight text-slate-950">Baza wiedzy BHP</h1>
+        <p className="mt-4 text-lg leading-8 text-slate-600">
+          Artykuły publiczne dla osób, które chcą uporządkować szkolenia, badania, uprawnienia i inne terminy BHP.
+        </p>
       </div>
-    </div>
+
+      <div className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+        {posts.map((post) => (
+          <article key={post.slug} className="rounded-lg border border-slate-200 bg-white p-6">
+            <div className="flex items-center justify-between gap-4 text-sm text-slate-500">
+              <span className="font-semibold text-blue-700">{post.category}</span>
+              <span>{post.readingTime}</span>
+            </div>
+            <h2 className="mt-4 text-xl font-bold text-slate-950">{post.title}</h2>
+            <p className="mt-3 text-sm leading-6 text-slate-600">{post.description}</p>
+            <Link href={`/blog/${post.slug}`} className="mt-5 inline-flex text-sm font-semibold text-slate-950 hover:text-blue-700">
+              Czytaj dalej
+            </Link>
+          </article>
+        ))}
+      </div>
+    </main>
   );
 }
