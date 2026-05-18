@@ -1,8 +1,6 @@
 import Link from "next/link";
 import { getAllPosts } from "@/lib/content";
 
-export const dynamic = "force-dynamic";
-
 export const metadata = {
   title: "Blog BHP",
   description: "Publiczna baza wiedzy TerminyBHP: szkolenia, badania, uprawnienia i organizacja terminów BHP.",
