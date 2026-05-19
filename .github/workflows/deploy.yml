@@ -3,33 +3,50 @@ name: Deploy do LH.pl BHP
 on:
   push:
     branches:
-      - main  # Sprawdź, czy Twoja główna gałąź to 'main' czy 'master'
+      - main
 
 jobs:
   web-deploy:
     name: Deploy
     runs-on: ubuntu-latest
     steps:
-    - name: Pobieranie kodu z repo
-      uses: actions/checkout@v4
+      - name: Pobieranie kodu z repo
+        uses: actions/checkout@v4
 
-    - name: Konfiguracja Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: 22
-        cache: 'npm'
+      - name: Konfiguracja Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            terminybhp-portal/package-lock.json
 
-    - name: Instalacja i budowanie aplikacji
-      run: |
-        npm install
-        npm run build
+      - name: Budowanie aplikacji serwisowej
+        run: |
+          npm ci
+          npm run build
 
-    - name: Wysyłka przez FTP (tylko folder dist)
-      uses: SamKirkland/FTP-Deploy-Action@v4.3.4
-      with:
-        server: ${{ secrets.FTP_SERVER }}
-        username: ${{ secrets.FTP_USERNAME }}
-        password: ${{ secrets.FTP_PASSWORD }}
-        local-dir: ./dist/
-        server-dir: /public_html/terminybhp/serwis/
+      - name: Budowanie publicznego portalu i bloga
+        working-directory: terminybhp-portal
+        run: |
+          npm ci
+          npm run build
 
+      - name: Wysylka aplikacji serwisowej przez FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./dist/
+          server-dir: /public_html/terminybhp/serwis/
+
+      - name: Wysylka publicznego portalu i bloga przez FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./terminybhp-portal/out/
+          server-dir: /public_html/terminybhp/
