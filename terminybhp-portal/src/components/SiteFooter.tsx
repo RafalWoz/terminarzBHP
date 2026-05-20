@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { AnalyticsConsentLink } from "@/components/AnalyticsConsentLink";
 
 export function SiteFooter() {
   return (
@@ -26,6 +27,7 @@ export function SiteFooter() {
           <Link href="/serwis/" className="hover:text-white">
             Serwis
           </Link>
+          <AnalyticsConsentLink />
         </div>
       </div>
     </footer>
