@@ -29,7 +29,7 @@ export function SiteHeader() {
           href="/serwis/"
           className="rounded-[14px] bg-[var(--teal-600)] px-4 py-2.5 text-sm font-extrabold text-white shadow-[0_10px_24px_rgba(14,145,139,0.2)] transition hover:bg-[var(--teal-700)]"
         >
-          Serwis
+          Serwis demo
         </Link>
       </div>
     </header>

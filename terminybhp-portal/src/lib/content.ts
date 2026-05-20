@@ -23,7 +23,7 @@ const seedPosts: BlogPost[] = [
     slug: "szkolenie-wstepne-bhp",
     title: "Szkolenie wstępne BHP: co trzeba dopilnować przed rozpoczęciem pracy",
     description:
-      "Praktyczna lista elementów, które powinny znaleźć się w procesie dopuszczenia pracownika do pracy.",
+      "Praktyczna lista elementów, które muszą znaleźć się w procesie dopuszczenia pracownika do pracy — od instruktażu ogólnego po wpis do rejestru.",
     category: "Szkolenia",
     date: "2026-05-18",
     readingTime: "4 min",
@@ -72,14 +72,14 @@ export const tools = [
   {
     title: "Kalkulator ryzyka zawodowego",
     description:
-      "Miejsce pod narzędzie do szybkiej oceny poziomu ryzyka na stanowisku pracy.",
-    status: "Planowane",
+      "Szybka ocena poziomu ryzyka na stanowisku pracy. Wpiszesz parametry, dostaniesz wynik gotowy do wpięcia w dokumentację.",
+    status: "W przygotowaniu",
   },
   {
     title: "Generator listy kontrolnej",
     description:
-      "Szkic narzędzia do przygotowania checklisty dla firmy, stanowiska albo audytu.",
-    status: "Planowane",
+      "Złożysz checklistę dopasowaną do firmy, stanowiska albo audytu — bez przepisywania tych samych punktów za każdym razem.",
+    status: "W przygotowaniu",
   },
   {
     title: "Przelicznik terminów",
@@ -93,14 +93,14 @@ export const templates = [
   {
     title: "Lista kontrolna szkolenia wstępnego",
     description:
-      "Szablon checklisty dla osoby przyjmowanej do pracy lub zmieniającej stanowisko.",
-    status: "Do przygotowania",
+      "Gotowy szablon dla osoby przyjmowanej do pracy lub zmieniającej stanowisko. Odhaczasz punkt po punkcie, nic nie ginie.",
+    status: "Wkrótce",
   },
   {
     title: "Rejestr badań lekarskich",
     description:
-      "Wzór tabeli do zebrania terminów badań wstępnych, okresowych i kontrolnych.",
-    status: "Do przygotowania",
+      "Wzór tabeli na terminy badań wstępnych, okresowych i kontrolnych. Jedno miejsce zamiast notatek w kilku plikach.",
+    status: "Wkrótce",
   },
   {
     title: "Rejestr szkoleń okresowych",
