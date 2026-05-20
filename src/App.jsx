@@ -3,6 +3,7 @@ import { AuthProvider, useAuth } from './contexts/AuthContext';
 import OnboardingWizard from './components/auth/OnboardingWizard';
 import UnlockScreen from './components/auth/UnlockScreen';
 import MigrationScreen from './components/auth/MigrationScreen';
+import AnalyticsConsent from './components/AnalyticsConsent';
 import Layout from './components/Layout';
 import Dashboard from './pages/Dashboard';
 import Firms from './pages/Firms';
@@ -91,8 +92,11 @@ function AppRoutes() {
 
 export default function App() {
   return (
-    <AuthProvider>
-      <AppRoutes />
-    </AuthProvider>
+    <>
+      <AuthProvider>
+        <AppRoutes />
+      </AuthProvider>
+      <AnalyticsConsent />
+    </>
   );
 }
