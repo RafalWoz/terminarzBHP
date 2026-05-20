@@ -3,7 +3,7 @@ import { getAllPosts } from "@/lib/content";
 
 export const metadata = {
   title: "Blog BHP",
-  description: "Publiczna baza wiedzy TerminyBHP: szkolenia, badania, uprawnienia i organizacja terminów BHP.",
+  description: "Publiczna baza wiedzy TerminyBHP: szkolenia, badania, uprawnienia i organizacja terminow BHP.",
 };
 
 export default function BlogPage() {
@@ -15,7 +15,7 @@ export default function BlogPage() {
         <p className="text-sm font-semibold uppercase tracking-wide text-blue-700">Blog</p>
         <h1 className="mt-2 text-4xl font-bold tracking-tight text-slate-950">Baza wiedzy BHP</h1>
         <p className="mt-4 text-lg leading-8 text-slate-600">
-          Artykuły publiczne dla osób, które chcą uporządkować szkolenia, badania, uprawnienia i inne terminy BHP.
+          Artykuly publiczne dla osob, ktore chca uporzadkowac szkolenia, badania, uprawnienia i inne terminy BHP.
         </p>
       </div>
 

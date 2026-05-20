@@ -35,7 +35,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
   return (
     <main className="mx-auto max-w-3xl px-4 py-12 sm:px-6">
       <Link href="/blog" className="text-sm font-semibold text-blue-700 hover:text-blue-900">
-        Wróć do bloga
+        Wroc do bloga
       </Link>
       <article className="mt-8">
         <div className="flex items-center gap-3 text-sm text-slate-500">
