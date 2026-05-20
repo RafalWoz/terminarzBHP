@@ -21,47 +21,47 @@ type RawPost = Partial<BlogPost> & {
 const seedPosts: BlogPost[] = [
   {
     slug: "szkolenie-wstepne-bhp",
-    title: "Szkolenie wstepne BHP: co trzeba dopilnowac przed rozpoczeciem pracy",
+    title: "Szkolenie wstępne BHP: co trzeba dopilnować przed rozpoczęciem pracy",
     description:
-      "Praktyczna lista elementow, ktore powinny znalezc sie w procesie dopuszczenia pracownika do pracy.",
+      "Praktyczna lista elementów, które powinny znaleźć się w procesie dopuszczenia pracownika do pracy.",
     category: "Szkolenia",
     date: "2026-05-18",
     readingTime: "4 min",
     status: "publish",
     content: [
-      "Szkolenie wstepne BHP jest jednym z podstawowych warunkow dopuszczenia pracownika do pracy. W praktyce najwazniejsze jest nie tylko samo przeprowadzenie szkolenia, ale tez poprawne udokumentowanie instruktazu ogolnego i stanowiskowego.",
-      "Dobry proces zaczyna sie od sprawdzenia stanowiska, zakresu obowiazkow i ryzyk, ktore beda dotyczyc konkretnej osoby. Dzieki temu instruktaz stanowiskowy nie jest formalnoscia, tylko realnym przygotowaniem do pracy.",
-      "Warto pilnowac rowniez terminow kolejnych szkolen okresowych. W serwisie TerminyBHP ta czesc pracy ma byc prowadzona automatycznie: firma, pracownicy, terminy i alerty w jednym miejscu.",
+      "Szkolenie wstępne BHP jest jednym z podstawowych warunków dopuszczenia pracownika do pracy. W praktyce najważniejsze jest nie tylko samo przeprowadzenie szkolenia, ale też poprawne udokumentowanie instruktażu ogólnego i stanowiskowego.",
+      "Dobry proces zaczyna się od sprawdzenia stanowiska, zakresu obowiązków i ryzyk, które będą dotyczyć konkretnej osoby. Dzięki temu instruktaż stanowiskowy nie jest formalnością, tylko realnym przygotowaniem do pracy.",
+      "Warto pilnować również terminów kolejnych szkoleń okresowych. W serwisie TerminyBHP ta część pracy ma być prowadzona automatycznie: firma, pracownicy, terminy i alerty w jednym miejscu.",
     ],
   },
   {
     slug: "badania-lekarskie-pracownikow",
-    title: "Badania lekarskie pracownikow: jak nie zgubic terminow",
+    title: "Badania lekarskie pracowników: jak nie zgubić terminów",
     description:
-      "Krotki przewodnik po badaniach wstepnych, okresowych i kontrolnych oraz sposobie ich monitorowania.",
+      "Krótki przewodnik po badaniach wstępnych, okresowych i kontrolnych oraz sposobie ich monitorowania.",
     category: "Badania",
     date: "2026-05-18",
     readingTime: "3 min",
     status: "publish",
     content: [
-      "Badania lekarskie sa jednym z tych obszarow, w ktorych opoznienie szybko staje sie problemem organizacyjnym. Pracownik bez aktualnego orzeczenia nie powinien byc dopuszczony do pracy.",
-      "Najprostszy porzadek to jedna lista pracownikow, przypisane stanowiska i daty waznosci badan. Przy wiekszej liczbie firm albo oddzialow reczne pilnowanie terminow szybko przestaje byc wygodne.",
-      "TerminyBHP ma pomagac wlasnie w tym miejscu: porzadkowac dane i pokazywac, co wymaga reakcji teraz, a co dopiero za kilka tygodni.",
+      "Badania lekarskie są jednym z tych obszarów, w których opóźnienie szybko staje się problemem organizacyjnym. Pracownik bez aktualnego orzeczenia nie powinien być dopuszczony do pracy.",
+      "Najprostszy porządek to jedna lista pracowników, przypisane stanowiska i daty ważności badań. Przy większej liczbie firm albo oddziałów ręczne pilnowanie terminów szybko przestaje być wygodne.",
+      "TerminyBHP ma pomagać właśnie w tym miejscu: porządkować dane i pokazywać, co wymaga reakcji teraz, a co dopiero za kilka tygodni.",
     ],
   },
   {
     slug: "rejestr-terminow-bhp",
-    title: "Rejestr terminow BHP w firmie: co warto miec w jednym miejscu",
+    title: "Rejestr terminów BHP w firmie: co warto mieć w jednym miejscu",
     description:
-      "Szkolenia, badania, uprawnienia i audyty w jednym uporzadkowanym rejestrze.",
+      "Szkolenia, badania, uprawnienia i audyty w jednym uporządkowanym rejestrze.",
     category: "Organizacja",
     date: "2026-05-18",
     readingTime: "5 min",
     status: "publish",
     content: [
-      "Dobry rejestr terminow BHP powinien odpowiadac na proste pytanie: kto, czego i do kiedy potrzebuje. Bez tego latwo przeoczyc szkolenie okresowe, badanie lekarskie albo wygasajace uprawnienie.",
-      "W jednym miejscu warto trzymac firmy, pracownikow, stanowiska, rodzaje dokumentow, daty waznosci i notatki. Taki porzadek zmniejsza liczbe telefonow, arkuszy i lokalnych plikow.",
-      "Publiczny blog TerminyBHP bedzie rozwijany obok serwisu, aby tlumaczyc te procesy prostym jezykiem i sciagac ruch z wyszukiwarki.",
+      "Dobry rejestr terminów BHP powinien odpowiadać na proste pytanie: kto, czego i do kiedy potrzebuje. Bez tego łatwo przeoczyć szkolenie okresowe, badanie lekarskie albo wygasające uprawnienie.",
+      "W jednym miejscu warto trzymać firmy, pracowników, stanowiska, rodzaje dokumentów, daty ważności i notatki. Taki porządek zmniejsza liczbę telefonów, arkuszy i lokalnych plików.",
+      "Publiczny blog TerminyBHP będzie rozwijany obok serwisu, aby tłumaczyć te procesy prostym językiem i ściągać ruch z wyszukiwarki.",
     ],
   },
 ];
@@ -72,40 +72,40 @@ export const tools = [
   {
     title: "Kalkulator ryzyka zawodowego",
     description:
-      "Miejsce pod narzedzie do szybkiej oceny poziomu ryzyka na stanowisku pracy.",
+      "Miejsce pod narzędzie do szybkiej oceny poziomu ryzyka na stanowisku pracy.",
     status: "Planowane",
   },
   {
     title: "Generator listy kontrolnej",
     description:
-      "Szkic narzedzia do przygotowania checklisty dla firmy, stanowiska albo audytu.",
+      "Szkic narzędzia do przygotowania checklisty dla firmy, stanowiska albo audytu.",
     status: "Planowane",
   },
   {
-    title: "Przelicznik terminow",
+    title: "Przelicznik terminów",
     description:
-      "Prosty pomocnik do liczenia dat szkolen okresowych, badan i przypomnien.",
+      "Prosty pomocnik do liczenia dat szkoleń okresowych, badań i przypomnień.",
     status: "Planowane",
   },
 ];
 
 export const templates = [
   {
-    title: "Lista kontrolna szkolenia wstepnego",
+    title: "Lista kontrolna szkolenia wstępnego",
     description:
-      "Szablon checklisty dla osoby przyjmowanej do pracy lub zmieniajacej stanowisko.",
+      "Szablon checklisty dla osoby przyjmowanej do pracy lub zmieniającej stanowisko.",
     status: "Do przygotowania",
   },
   {
-    title: "Rejestr badan lekarskich",
+    title: "Rejestr badań lekarskich",
     description:
-      "Wzor tabeli do zebrania terminow badan wstepnych, okresowych i kontrolnych.",
+      "Wzór tabeli do zebrania terminów badań wstępnych, okresowych i kontrolnych.",
     status: "Do przygotowania",
   },
   {
-    title: "Rejestr szkolen okresowych",
+    title: "Rejestr szkoleń okresowych",
     description:
-      "Prosty uklad danych, ktory pozniej bedzie mozna przeniesc do serwisu.",
+      "Prosty układ danych, który później będzie można przenieść do serwisu.",
     status: "Do przygotowania",
   },
 ];

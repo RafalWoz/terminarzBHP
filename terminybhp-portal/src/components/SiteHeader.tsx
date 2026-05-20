@@ -8,21 +8,26 @@ const navItems = [
 
 export function SiteHeader() {
   return (
-    <header className="border-b border-slate-200 bg-white">
-      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
-        <Link href="/" className="text-lg font-bold text-slate-950">
+    <header className="sticky top-0 z-20 border-b border-[var(--slate-200)] bg-[rgba(251,252,253,0.9)] backdrop-blur-xl">
+      <div className="mx-auto flex h-18 max-w-[1160px] items-center justify-between gap-5 px-5 sm:px-6">
+        <Link href="/" className="flex items-center gap-3 text-lg font-black tracking-[-0.03em] text-[var(--navy-950)]">
+          <span className="grid size-10 place-items-center rounded-[14px] bg-[linear-gradient(135deg,var(--navy-900),var(--teal-600))] text-base font-black text-white">
+            T
+          </span>
           TerminyBHP
         </Link>
-        <nav className="hidden items-center gap-6 text-sm font-medium text-slate-600 sm:flex">
+
+        <nav className="hidden items-center gap-6 text-sm font-semibold text-[var(--slate-700)] sm:flex">
           {navItems.map((item) => (
-            <Link key={item.href} href={item.href} className="hover:text-slate-950">
+            <Link key={item.href} href={item.href} className="transition hover:text-[var(--navy-950)]">
               {item.label}
             </Link>
           ))}
         </nav>
+
         <Link
           href="/serwis/"
-          className="rounded-md bg-slate-950 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800"
+          className="rounded-[14px] bg-[var(--teal-600)] px-4 py-2.5 text-sm font-extrabold text-white shadow-[0_10px_24px_rgba(14,145,139,0.2)] transition hover:bg-[var(--teal-700)]"
         >
           Serwis
         </Link>
