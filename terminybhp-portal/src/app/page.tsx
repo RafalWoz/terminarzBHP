@@ -1,22 +1,21 @@
 import Link from "next/link";
-import { getAllPosts, templates, tools } from "@/lib/content";
+import { templates, tools } from "@/lib/content";
 
-const brandRoles = [
+const audiences = [
   {
-    label: "Rola",
-    value: "Baza wiedzy i serwis pilnujący terminów BHP w jednym miejscu.",
+    title: "Kadry i HR w małej firmie",
+    description:
+      "Pilnujesz badań i szkoleń kilkunastu osób bez osobnego działu BHP. Potrzebujesz konkretu: co, kiedy, gdzie zapisać.",
   },
   {
-    label: "Ton",
-    value: "Ekspercki i neutralny. Mówimy konkretnie, bez straszenia.",
+    title: "Właściciel firmy",
+    description:
+      "Chcesz mieć pewność, że dokumentacja jest w porządku, zanim przyjdzie kontrola — bez wchodzenia w każdy przepis.",
   },
   {
-    label: "Dla kogo",
-    value: "HR, kadry i małe firmy, które same prowadzą sprawy BHP.",
-  },
-  {
-    label: "Cel",
-    value: "Pomóc podjąć dobrą decyzję. Sprzedaż schodzi na drugi plan.",
+    title: "Osoba zaczynająca z BHP",
+    description:
+      "Dopiero układasz sobie temat. Szukasz wyjaśnień bez żargonu i bez straszenia paragrafami.",
   },
 ];
 
@@ -26,7 +25,7 @@ const pillars = [
     label: "Serwis",
     title: "Terminy i pracownicy",
     description:
-      "Prywatna aplikacja porządkuje firmy, pracowników, badania, szkolenia, uprawnienia i audyty. Widzisz, co jest aktualne, a co wymaga reakcji — zanim termin minie.",
+      "Aplikacja porządkuje firmy, pracowników, badania, szkolenia, uprawnienia i audyty. Widzisz, co jest aktualne, a co wymaga reakcji — zanim termin minie.",
   },
   {
     number: "02",
@@ -40,7 +39,34 @@ const pillars = [
     label: "Zasoby",
     title: "Narzędzia i szablony",
     description:
-      "Publiczne dodatki pomagają przejść od wiedzy do działania — gotowy rejestr, checklista albo szybkie wyliczenie zamiast pustej kartki.",
+      "Gotowy rejestr, checklista albo szybkie wyliczenie — zamiast zaczynania od pustej kartki.",
+  },
+];
+
+const featuredPosts = [
+  {
+    href: "/blog/zrodla-prawa-bhp-w-polskim-porzadku-prawnym",
+    meta: "BHP · 6 min",
+    title: "Źródła prawa BHP w polskim porządku prawnym",
+    description: "Hierarchia aktów i to, co realnie trzeba sprawdzić.",
+  },
+  {
+    href: "/blog/szkolenie-wstepne-bhp",
+    meta: "Szkolenia · 4 min",
+    title: "Szkolenie wstępne BHP: co dopilnować przed rozpoczęciem pracy",
+    description: "Lista elementów dopuszczenia pracownika — od instruktażu po wpis do rejestru.",
+  },
+  {
+    href: "/blog/badania-lekarskie-pracownikow",
+    meta: "Badania · 3 min",
+    title: "Badania lekarskie pracowników: jak nie zgubić terminów",
+    description: "Wstępne, okresowe, kontrolne i sposób ich monitorowania.",
+  },
+  {
+    href: "/blog/rejestr-terminow-bhp",
+    meta: "Organizacja · 5 min",
+    title: "Rejestr terminów BHP: co warto mieć w jednym miejscu",
+    description: "Szkolenia, badania, uprawnienia i audyty w jednym rejestrze.",
   },
 ];
 
@@ -70,8 +96,6 @@ const comparison = [
 ];
 
 export default function Home() {
-  const latestPost = getAllPosts()[0];
-
   return (
     <main>
       <section className="border-b border-[var(--slate-200)] bg-[linear-gradient(180deg,#fff,var(--paper))]">
@@ -82,42 +106,51 @@ export default function Home() {
               Baza wiedzy + serwis terminów
             </span>
             <h1 className="mt-5 max-w-4xl text-5xl font-black leading-[0.96] tracking-[-0.06em] text-[var(--navy-950)] sm:text-6xl lg:text-7xl">
-              TerminyBHP.pl — wiedza, która kończy się decyzją, a nie kolejnym pytaniem.
+              Wiedza o BHP, która kończy się decyzją — nie kolejnym pytaniem.
             </h1>
             <p className="mt-6 max-w-3xl text-xl leading-8 text-[var(--slate-700)]">
-              Jeden adres, dwie potrzeby. Publiczny blog porządkuje to, co trzeba wiedzieć o BHP. Serwis pod /serwis/ pilnuje, żeby żaden termin badania, szkolenia czy uprawnienia nie umknął.
+              Jeden adres, dwie potrzeby. Blog porządkuje to, co trzeba wiedzieć o BHP. Serwis pilnuje, żeby żaden termin badania, szkolenia czy uprawnienia nie umknął.
             </p>
             <p className="mt-4 max-w-3xl text-base leading-7 text-[var(--slate-600)]">
-              Bez żargonu i bez presji. Tłumaczymy, co sprawdzić i kiedy działać — resztę zostawiamy Tobie.
+              Bez żargonu i bez presji. Mówimy, co sprawdzić i kiedy działać — decyzję zostawiamy Tobie.
             </p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <Link href="/blog" className="inline-flex justify-center rounded-[14px] bg-[var(--teal-600)] px-5 py-3 text-sm font-extrabold text-white hover:bg-[var(--teal-700)]">
                 Czytaj blog
               </Link>
               <Link href="/serwis/" className="inline-flex justify-center rounded-[14px] border border-[var(--slate-200)] bg-white px-5 py-3 text-sm font-extrabold text-[var(--navy-900)] hover:border-[var(--slate-500)]">
-                Przejdź do serwisu
+                Zobacz serwis demo
               </Link>
             </div>
           </div>
 
           <aside className="rounded-[28px] bg-[var(--navy-900)] p-7 text-white shadow-[var(--shadow-soft)]">
             <p className="text-sm font-extrabold uppercase tracking-[0.08em] text-[#b9cad8]">Serwis w budowie</p>
-            <h2 className="mt-3 text-3xl font-black tracking-[-0.04em]">Wersja demo jest już dostępna pod /serwis/.</h2>
+            <h2 className="mt-3 text-3xl font-black tracking-[-0.04em]">Wersja demo serwisu jest już dostępna.</h2>
             <p className="mt-4 leading-7 text-[#d8e3ea]">
-              Możesz zobaczyć kierunek aplikacji i sposób porządkowania terminów. To nie jest jeszcze finalny produkt ani miejsce na docelowe dane firmowe.
+              Zajrzyj pod /serwis/, żeby zobaczyć, jak aplikacja porządkuje terminy i pracowników. To podgląd kierunku — jeszcze nie finalny produkt i nie miejsce na docelowe dane firmy.
             </p>
+            <Link href="/serwis/" className="mt-6 inline-flex text-sm font-extrabold text-white hover:text-[#d8e3ea]">
+              Otwórz demo →
+            </Link>
           </aside>
         </div>
       </section>
 
       <section className="border-b border-[var(--slate-200)] bg-white">
-        <div className="mx-auto max-w-[1160px] px-5 py-10 sm:px-6">
-          <p className="text-sm font-extrabold uppercase tracking-[0.08em] text-[var(--teal-700)]">Założenie marki</p>
-          <div className="mt-5 grid gap-4 md:grid-cols-4">
-            {brandRoles.map((item) => (
-              <section key={item.label} className="rounded-[20px] border border-[var(--slate-200)] bg-[var(--paper)] p-5">
-                <h2 className="text-sm font-black uppercase tracking-[0.08em] text-[var(--navy-950)]">{item.label}</h2>
-                <p className="mt-3 text-sm leading-6 text-[var(--slate-700)]">{item.value}</p>
+        <div className="mx-auto max-w-[1160px] px-5 py-12 sm:px-6">
+          <p className="text-sm font-extrabold uppercase tracking-[0.08em] text-[var(--teal-700)]">Dla kogo to jest</p>
+          <h2 className="mt-3 max-w-3xl text-4xl font-black tracking-[-0.04em] text-[var(--navy-950)]">
+            Dla tych, którzy prowadzą BHP obok dziesięciu innych spraw.
+          </h2>
+          <p className="mt-4 max-w-3xl text-base leading-7 text-[var(--slate-700)]">
+            TerminyBHP powstało dla osób, które nie są wyłącznie specjalistami BHP — a i tak odpowiadają za to, żeby wszystko się zgadzało.
+          </p>
+          <div className="mt-7 grid gap-4 md:grid-cols-3">
+            {audiences.map((item) => (
+              <section key={item.title} className="rounded-[20px] border border-[var(--slate-200)] bg-[var(--paper)] p-5">
+                <h3 className="text-lg font-black tracking-[-0.02em] text-[var(--navy-950)]">{item.title}</h3>
+                <p className="mt-3 text-sm leading-6 text-[var(--slate-700)]">{item.description}</p>
               </section>
             ))}
           </div>
@@ -141,26 +174,32 @@ export default function Home() {
       </section>
 
       <section className="border-y border-[var(--slate-200)] bg-white">
-        <div className="mx-auto grid max-w-[1160px] gap-8 px-5 py-12 sm:px-6 lg:grid-cols-[0.74fr_1.26fr]">
-          <div>
-            <p className="text-sm font-extrabold uppercase tracking-[0.08em] text-[var(--teal-700)]">Najnowszy wpis</p>
-            <h2 className="mt-2 text-4xl font-black tracking-[-0.04em] text-[var(--navy-950)]">Placeholder — do podmiany po publikacji pierwszych artykułów.</h2>
-            <p className="mt-4 text-[var(--slate-700)]">
-              Blog gotowy pod rozbudowę. Pierwsze wpisy są w kodzie jako dane startowe; kolejne mogą trafiać jako pliki JSON przed statycznym eksportem.
-            </p>
+        <div className="mx-auto max-w-[1160px] px-5 py-12 sm:px-6">
+          <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+            <div>
+              <p className="text-sm font-extrabold uppercase tracking-[0.08em] text-[var(--teal-700)]">Polecany artykuł</p>
+              <h2 className="mt-2 max-w-3xl text-4xl font-black tracking-[-0.04em] text-[var(--navy-950)]">
+                Zacznij od pytania, które masz teraz.
+              </h2>
+              <p className="mt-4 max-w-2xl text-[var(--slate-700)]">
+                Cztery instrukcje, które najczęściej rozwiązują pierwszy problem.
+              </p>
+            </div>
+            <Link href="/blog" className="text-sm font-extrabold text-[var(--teal-700)] hover:text-[var(--navy-950)]">
+              Zobacz wszystkie wpisy →
+            </Link>
           </div>
-          <Link href={`/blog/${latestPost.slug}`} className="rounded-[24px] border border-[var(--slate-200)] bg-white p-6 shadow-[0_8px_24px_rgba(7,24,38,0.05)] hover:border-[var(--slate-500)]">
-            <p className="inline-flex rounded-full bg-[var(--green-50)] px-3 py-1.5 text-xs font-extrabold text-[var(--teal-700)]">
-              Szkolenia · 4 min czytania
-            </p>
-            <h3 className="mt-4 text-3xl font-black leading-tight tracking-[-0.04em] text-[var(--navy-950)]">
-              Szkolenie wstępne BHP: co trzeba dopilnować przed rozpoczęciem pracy
-            </h3>
-            <p className="mt-3 text-[var(--slate-700)]">
-              Praktyczna lista elementów, które muszą znaleźć się w procesie dopuszczenia pracownika do pracy — od instruktażu ogólnego po wpis do rejestru.
-            </p>
-            <p className="mt-5 text-sm font-extrabold text-[var(--navy-950)]">Czytaj instrukcję</p>
-          </Link>
+          <div className="mt-8 grid gap-4 md:grid-cols-2">
+            {featuredPosts.map((post) => (
+              <Link key={post.title} href={post.href} className="rounded-[24px] border border-[var(--slate-200)] bg-white p-6 shadow-[0_8px_24px_rgba(7,24,38,0.05)] hover:border-[var(--slate-500)]">
+                <p className="inline-flex rounded-full bg-[var(--green-50)] px-3 py-1.5 text-xs font-extrabold text-[var(--teal-700)]">
+                  {post.meta}
+                </p>
+                <h3 className="mt-4 text-2xl font-black leading-tight tracking-[-0.03em] text-[var(--navy-950)]">{post.title}</h3>
+                <p className="mt-3 text-sm leading-6 text-[var(--slate-700)]">{post.description}</p>
+              </Link>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -205,7 +244,7 @@ export default function Home() {
         <div className="mx-auto max-w-[1160px] px-5 py-14 sm:px-6">
           <p className="text-sm font-extrabold uppercase tracking-[0.08em] text-[var(--teal-700)]">Dwie strony tego samego adresu</p>
           <h2 className="mt-3 max-w-3xl text-4xl font-black tracking-[-0.04em] text-[var(--navy-950)]">
-            Najpierw zrozum, potem przestań pamiętać o terminach.
+            Najpierw zrozum — potem przestań pamiętać o terminach.
           </h2>
           <div className="mt-8 grid gap-5 md:grid-cols-2">
             {comparison.map((card) => (
