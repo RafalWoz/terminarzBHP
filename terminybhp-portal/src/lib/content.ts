@@ -72,13 +72,13 @@ export const tools = [
   {
     title: "Kalkulator ryzyka zawodowego",
     description:
-      "Szybka ocena poziomu ryzyka na stanowisku pracy. Wpiszesz parametry, dostaniesz wynik gotowy do wpięcia w dokumentację.",
+      "Szybka ocena poziomu ryzyka na stanowisku. Wpisujesz parametry, dostajesz wynik gotowy do wpięcia w dokumentację.",
     status: "W przygotowaniu",
   },
   {
     title: "Generator listy kontrolnej",
     description:
-      "Złożysz checklistę dopasowaną do firmy, stanowiska albo audytu — bez przepisywania tych samych punktów za każdym razem.",
+      "Składasz checklistę pod firmę, stanowisko albo audyt — bez przepisywania tych samych punktów za każdym razem.",
     status: "W przygotowaniu",
   },
   {
