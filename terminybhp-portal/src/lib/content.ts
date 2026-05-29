@@ -154,6 +154,15 @@ function normalizeContent(content: string | string[] | undefined) {
     .filter(Boolean);
 }
 
+function normalizeContentHtml(contentHtml: string | undefined) {
+  if (typeof contentHtml !== "string") {
+    return undefined;
+  }
+
+  const normalizedHtml = contentHtml.replace(/\\"/g, '"').trim();
+  return normalizedHtml.length > 0 ? normalizedHtml : undefined;
+}
+
 function normalizePost(rawPost: RawPost, fallbackSlug: string): BlogPost | null {
   const content = normalizeContent(rawPost.content);
   const slug = rawPost.slug || fallbackSlug;
@@ -172,7 +181,7 @@ function normalizePost(rawPost: RawPost, fallbackSlug: string): BlogPost | null 
     readingTime: rawPost.readingTime || estimateReadingTime(content),
     status: rawPost.status === "draft" ? "draft" : "publish",
     content,
-    contentHtml: typeof rawPost.contentHtml === "string" && rawPost.contentHtml.trim() ? rawPost.contentHtml : undefined,
+    contentHtml: normalizeContentHtml(rawPost.contentHtml),
   };
 }
 
