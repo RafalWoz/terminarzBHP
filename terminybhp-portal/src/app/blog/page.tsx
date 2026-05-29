@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import Link from "next/link";
 import { getAllPosts } from "@/lib/content";
 
@@ -69,8 +70,15 @@ export default function BlogPage() {
         <div className="mt-8 grid gap-5 lg:grid-cols-3">
           {posts.map((post) => (
             <article key={post.slug} className="overflow-hidden rounded-[24px] border border-[var(--slate-200)] bg-white shadow-[0_8px_24px_rgba(7,24,38,0.05)]">
-              <div className="relative h-36 bg-[linear-gradient(135deg,var(--navy-900),var(--teal-600))]">
-                <div className="absolute inset-5 rounded-[18px] border-2 border-white/40" />
+              <div className="relative h-36 overflow-hidden bg-[linear-gradient(135deg,var(--navy-900),var(--teal-600))]">
+                {post.coverImage ? (
+                  <>
+                    <img src={post.coverImage} alt={post.imageAlt || post.title} className="h-full w-full object-cover" />
+                    <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(7,24,38,0.02),rgba(7,24,38,0.48))]" />
+                  </>
+                ) : (
+                  <div className="absolute inset-5 rounded-[18px] border-2 border-white/40" />
+                )}
                 <div className="absolute bottom-4 left-4 inline-flex rounded-full bg-[var(--green-50)] px-3 py-1.5 text-xs font-extrabold text-[var(--teal-700)]">
                   {post.category} · {post.readingTime}
                 </div>
