@@ -9,6 +9,7 @@ export type BlogPost = {
   date: string;
   readingTime: string;
   content: string[];
+  contentHtml?: string;
   status: "publish" | "draft";
 };
 
@@ -20,7 +21,7 @@ type RawPost = Partial<BlogPost> & {
 
 const seedPosts: BlogPost[] = [
   {
-    slug: "zrodla-prawa-bhp-w-polskim-porzadku-prawnym",
+    slug: "zrodla-prawa-bhp",
     title: "Źródła prawa BHP w polskim porządku prawnym",
     description: "Hierarchia aktów i to, co realnie trzeba sprawdzić.",
     category: "BHP",
@@ -86,6 +87,10 @@ const seedPosts: BlogPost[] = [
 ];
 
 const postsDir = path.join(process.cwd(), "data", "posts");
+
+const postAliases = new Map<string, string>([
+  ["zrodla-prawa-bhp-w-polskim-porzadku-prawnym", "zrodla-prawa-bhp"],
+]);
 
 export const tools = [
   {
@@ -167,6 +172,7 @@ function normalizePost(rawPost: RawPost, fallbackSlug: string): BlogPost | null 
     readingTime: rawPost.readingTime || estimateReadingTime(content),
     status: rawPost.status === "draft" ? "draft" : "publish",
     content,
+    contentHtml: typeof rawPost.contentHtml === "string" && rawPost.contentHtml.trim() ? rawPost.contentHtml : undefined,
   };
 }
 
@@ -207,6 +213,17 @@ export function getAllPosts({ includeDrafts = false } = {}) {
     .sort((a, b) => Date.parse(b.date) - Date.parse(a.date));
 }
 
+export function getAllPostSlugs() {
+  const slugs = new Set(getAllPosts({ includeDrafts: false }).map((post) => post.slug));
+
+  for (const alias of postAliases.keys()) {
+    slugs.add(alias);
+  }
+
+  return Array.from(slugs);
+}
+
 export function getPost(slug: string) {
-  return getAllPosts({ includeDrafts: false }).find((post) => post.slug === slug);
+  const canonicalSlug = postAliases.get(slug) || slug;
+  return getAllPosts({ includeDrafts: false }).find((post) => post.slug === canonicalSlug);
 }
