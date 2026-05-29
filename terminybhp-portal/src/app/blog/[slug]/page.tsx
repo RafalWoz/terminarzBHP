@@ -6,24 +6,186 @@ type BlogPostPageProps = {
   params: Promise<{ slug: string }>;
 };
 
+type ArticleBlock =
+  | { type: "summary"; text: string }
+  | { type: "heading"; text: string }
+  | { type: "question"; text: string }
+  | { type: "paragraph"; text: string }
+  | { type: "list"; items: string[] };
+
 const articleChecks = [
   "Kiedy wykonać działanie",
   "Co zapisać w dokumentacji",
   "Kiedy potrzebna jest reakcja",
 ];
 
+const sectionHeadings = new Set([
+  "Hierarchia aktów prawa pracy w zakresie BHP",
+  "Wybrane artykuły Kodeksu pracy odnoszące się do BHP",
+  "Najważniejsze rozporządzenia wykonawcze",
+  "Zakres regulacji według obszarów praktycznych",
+  "Kto nadzoruje i kto wspiera wdrożenie przepisów BHP",
+  "Wpływ prawa unijnego na krajowe regulacje BHP",
+  "Rejestry, terminy i przechowywanie dokumentów",
+  "Checklist — co sprawdzić i kiedy działać",
+]);
+
+const questionHeadings = new Set([
+  "Jakie są najważniejsze źródła prawa BHP, które powinienem sprawdzić?",
+  "Czy regulamin wewnętrzny firmy może zastąpić rozporządzenie wykonawcze?",
+  "Jak długo powinienem przechowywać protokoły powypadkowe i karty szkoleń?",
+]);
+
+const sourceLinks = [
+  {
+    label: "Kodeks pracy (skonsolidowany) - ISAP",
+    href: "https://isap.sejm.gov.pl/isap.nsf/DocDetails.xsp?id=WDU20230001465",
+  },
+  {
+    label: "Kodeks pracy - ISAP",
+    href: "https://isap.sejm.gov.pl/isap.nsf/DocDetails.xsp?id=WDU20230001465",
+  },
+  {
+    label: "Nowelizacja rozporządzenia szkoleniowego - ISAP",
+    href: "https://isap.sejm.gov.pl/isap.nsf/DocDetails.xsp?id=WDU20250001640",
+  },
+  {
+    label: "Obwieszczenie dotyczące stanowisk z monitorami - ISAP",
+    href: "https://isap.sejm.gov.pl/isap.nsf/DocDetails.xsp?id=WDU20250000058",
+  },
+  {
+    label: "Rozporządzenia medyczne - ISAP",
+    href: "https://isap.sejm.gov.pl/isap.nsf/DocDetails.xsp?id=WDU20230000607",
+  },
+  {
+    label: "Państwowa Inspekcja Pracy - cele i zadania",
+    href: "https://pip.gov.pl/o-nas/cele-i-zadania",
+  },
+  {
+    label: "Jak zgłosić wypadek? - PIP",
+    href: "https://www.pip.gov.pl/dla-pracodawcow/niezbednik-pracodawcy/jak-zglosic-wypadek",
+  },
+  {
+    label: "Rozporządzenie UE ws. środków ochrony indywidualnej - Gov.pl",
+    href: "https://www.gov.pl/web/rozwoj-technologia/dyrektywa-i-rozporzadzenie-ue-ws-srodkow-ochrony-indywidualnej",
+  },
+];
+
 export function generateStaticParams() {
   return getAllPostSlugs().map((slug) => ({ slug }));
 }
 
-function sanitizePostHtml(html: string) {
-  return html
-    .replace(/<script[\s\S]*?<\/script>/gi, "")
-    .replace(/<style[\s\S]*?<\/style>/gi, "")
-    .replace(/\s+on\w+=(["']).*?\1/gi, "")
-    .replace(/\s+(href|src)=(["'])\s*javascript:[\s\S]*?\2/gi, ' $1="#"')
-    .replace(/<\/?(?!(p|strong|em|ul|ol|li|h2|h3|a|br)\b)[^>]*>/gi, "")
-    .replace(/<a\s+/gi, '<a target="_blank" rel="noopener noreferrer" ');
+function buildArticleBlocks(content: string[]) {
+  const blocks: ArticleBlock[] = [];
+  let listItems: string[] = [];
+
+  function flushList() {
+    if (listItems.length > 0) {
+      blocks.push({ type: "list", items: listItems });
+      listItems = [];
+    }
+  }
+
+  for (const chunk of content) {
+    const lines = chunk
+      .split("\n")
+      .map((line) => line.trim())
+      .filter(Boolean);
+
+    for (const line of lines) {
+      if (line.startsWith("- ")) {
+        listItems.push(line.slice(2).trim());
+        continue;
+      }
+
+      flushList();
+
+      if (line === "W skrócie") {
+        blocks.push({ type: "summary", text: line });
+      } else if (sectionHeadings.has(line)) {
+        blocks.push({ type: "heading", text: line });
+      } else if (questionHeadings.has(line)) {
+        blocks.push({ type: "question", text: line });
+      } else {
+        blocks.push({ type: "paragraph", text: line });
+      }
+    }
+  }
+
+  flushList();
+  return blocks;
+}
+
+function renderLinkedText(text: string) {
+  const links = [...sourceLinks].sort((a, b) => b.label.length - a.label.length);
+  const nodes = [];
+  let rest = text;
+  let key = 0;
+
+  while (rest.length > 0) {
+    const match = links
+      .map((link) => ({ link, index: rest.indexOf(link.label) }))
+      .filter((matchItem) => matchItem.index >= 0)
+      .sort((a, b) => a.index - b.index)[0];
+
+    if (!match) {
+      nodes.push(rest);
+      break;
+    }
+
+    if (match.index > 0) {
+      nodes.push(rest.slice(0, match.index));
+    }
+
+    nodes.push(
+      <a key={`${match.link.href}-${key}`} href={match.link.href} target="_blank" rel="noopener noreferrer">
+        {match.link.label}
+      </a>,
+    );
+
+    rest = rest.slice(match.index + match.link.label.length);
+    key += 1;
+  }
+
+  return nodes;
+}
+
+function ArticleContent({ content }: { content: string[] }) {
+  const blocks = buildArticleBlocks(content);
+
+  return (
+    <div className="article-content text-lg leading-8 text-[var(--slate-700)]">
+      {blocks.map((block, index) => {
+        if (block.type === "summary") {
+          return (
+            <p key={`${block.type}-${index}`} className="text-base font-black uppercase tracking-[0.08em] text-[var(--teal-700)]">
+              {block.text}
+            </p>
+          );
+        }
+
+        if (block.type === "heading") {
+          return <h2 key={`${block.type}-${index}`}>{block.text}</h2>;
+        }
+
+        if (block.type === "question") {
+          return <h3 key={`${block.type}-${index}`}>{block.text}</h3>;
+        }
+
+        if (block.type === "list") {
+          return (
+            <ul key={`${block.type}-${index}`}>
+              {block.items.map((item) => (
+                <li key={item}>{renderLinkedText(item)}</li>
+              ))}
+            </ul>
+          );
+        }
+
+        return <p key={`${block.type}-${index}`}>{renderLinkedText(block.text)}</p>;
+      })}
+    </div>
+  );
 }
 
 export async function generateMetadata({ params }: BlogPostPageProps) {
@@ -89,18 +251,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
       <section className="mx-auto grid max-w-[1160px] gap-8 px-5 py-12 sm:px-6 lg:grid-cols-[minmax(0,1fr)_320px]">
         <article className="rounded-[28px] border border-[var(--slate-200)] bg-white p-6 shadow-[0_8px_24px_rgba(7,24,38,0.05)] sm:p-9">
-          {post.contentHtml ? (
-            <div
-              className="article-content text-lg leading-8 text-[var(--slate-700)]"
-              dangerouslySetInnerHTML={{ __html: sanitizePostHtml(post.contentHtml) }}
-            />
-          ) : (
-            <div className="space-y-7 text-lg leading-8 text-[var(--slate-700)]">
-              {post.content.map((paragraph) => (
-                <p key={paragraph}>{paragraph}</p>
-              ))}
-            </div>
-          )}
+          <ArticleContent content={post.content} />
         </article>
 
         <aside className="space-y-5">
