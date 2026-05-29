@@ -20,10 +20,8 @@ function sanitizePostHtml(html: string) {
   return html
     .replace(/<script[\s\S]*?<\/script>/gi, "")
     .replace(/<style[\s\S]*?<\/style>/gi, "")
-    .replace(/\s+on\w=(["']).*?\1/gi, "")
+    .replace(/\s+on\w+=(["']).*?\1/gi, "")
     .replace(/\s+(href|src)=(["'])\s*javascript:[\s\S]*?\2/gi, ' $1="#"')
-    .replace(/<(\/?) (?!(p|strong|em|ul|ol|li|h2|h3|a|br)\b)[^>]*>/gi, "")
-    .replace(/<(\/?) (?!(p|strong|em|ul|ol|li|h2|h3|a|br)\b)[^>]*>/gi, "")
     .replace(/<(\/?)(?!(p|strong|em|ul|ol|li|h2|h3|a|br)\b)[^>]*>/gi, "")
     .replace(/<a\s+/gi, '<a target="_blank" rel="noopener noreferrer" ');
 }
