@@ -20,6 +20,25 @@ type RawPost = Partial<BlogPost> & {
 
 const seedPosts: BlogPost[] = [
   {
+    slug: "zrodla-prawa-bhp-w-polskim-porzadku-prawnym",
+    title: "Źródła prawa BHP w polskim porządku prawnym",
+    description: "Hierarchia aktów i to, co realnie trzeba sprawdzić.",
+    category: "BHP",
+    date: "2026-05-29",
+    readingTime: "6 min",
+    status: "publish",
+    content: [
+      "Źródła prawa BHP układają się w hierarchię. Najpierw sprawdzasz akty wyższego rzędu, potem przepisy wykonawcze, a na końcu dokumenty firmowe i instrukcje stanowiskowe. Dzięki temu nie zaczynasz od losowej checklisty, tylko od tego, co naprawdę wiąże pracodawcę.",
+      "W praktyce punktem startu jest Kodeks pracy, szczególnie dział dotyczący bezpieczeństwa i higieny pracy. To tam znajdziesz podstawowe obowiązki pracodawcy, pracowników i osób kierujących pracownikami. Kodeks nie opisuje każdego stanowiska w szczegółach, ale wyznacza ramę, której nie można pominąć.",
+      "Drugą warstwą są rozporządzenia. Najczęściej wraca rozporządzenie w sprawie ogólnych przepisów BHP, bo porządkuje wymagania dotyczące pomieszczeń, procesów pracy, organizacji stanowisk i podstawowych zasad bezpieczeństwa. Obok niego działają przepisy szczególne, na przykład dla wybranych branż, maszyn, substancji albo rodzajów prac.",
+      "Trzeci poziom to przepisy branżowe i techniczne. Mogą dotyczyć konkretnego procesu, urządzenia, czynnika szkodliwego albo środowiska pracy. Jeśli firma ma nietypowe stanowiska, prace na wysokości, chemikalia, maszyny lub transport wewnętrzny, sama ogólna lista BHP zwykle nie wystarczy.",
+      "Czwarta warstwa to dokumenty wewnętrzne: ocena ryzyka zawodowego, instrukcje BHP, regulaminy, procedury, rejestry szkoleń, badania lekarskie i uprawnienia. One nie zastępują przepisów, ale pokazują, jak firma stosuje je w konkretnym miejscu pracy. Przy kontroli często liczy się właśnie to połączenie: przepis, stanowisko, dokument i termin.",
+      "Jeżeli chcesz szybko ustalić, od czego zacząć, zadaj trzy pytania. Jakie stanowisko albo proces sprawdzasz? Czy istnieje przepis szczególny dla tej pracy? Jakie dokumenty firmowe potwierdzają, że obowiązek został wykonany? Dopiero po tym warto układać rejestr terminów, checklistę albo plan działań.",
+      "Najbezpieczniejszy porządek pracy wygląda prosto: najpierw identyfikujesz obowiązek, potem dokument, następnie osobę odpowiedzialną i termin. To pozwala uniknąć sytuacji, w której firma wie, że „coś trzeba zrobić”, ale nie wie, kto ma to zrobić i do kiedy.",
+      "Ten wpis ma charakter informacyjny. Nie zastępuje analizy konkretnego stanowiska, dokumentacji firmowej ani konsultacji ze specjalistą BHP. Jest jednak dobrym punktem startu, kiedy chcesz uporządkować źródła i przejść od ogólnej wiedzy do decyzji.",
+    ],
+  },
+  {
     slug: "szkolenie-wstepne-bhp",
     title: "Szkolenie wstępne BHP: co trzeba dopilnować przed rozpoczęciem pracy",
     description:
