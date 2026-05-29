@@ -10,6 +10,13 @@ export type BlogPost = {
   readingTime: string;
   content: string[];
   contentHtml?: string;
+  coverImage?: string;
+  ogImage?: string;
+  imageAlt?: string;
+  imageTitle?: string;
+  imageCaption?: string;
+  imageDescription?: string;
+  imageFocusKeyword?: string;
   status: "publish" | "draft";
 };
 
@@ -159,8 +166,33 @@ function normalizeContentHtml(contentHtml: string | undefined) {
     return undefined;
   }
 
-  const normalizedHtml = contentHtml.replace(/\\"/g, '"').trim();
+  const normalizedHtml = contentHtml.replace(/\\\"/g, '"').trim();
   return normalizedHtml.length > 0 ? normalizedHtml : undefined;
+}
+
+function normalizeImagePath(imagePath: string | undefined) {
+  if (typeof imagePath !== "string") {
+    return undefined;
+  }
+
+  const trimmedPath = imagePath.trim();
+
+  if (!trimmedPath) {
+    return undefined;
+  }
+
+  if (/^https?:\/\//i.test(trimmedPath)) {
+    return trimmedPath;
+  }
+
+  const normalizedPath = trimmedPath.startsWith("/") ? trimmedPath : `/${trimmedPath}`;
+  const appPublicPath = path.join(process.cwd(), "public", normalizedPath.slice(1));
+
+  if (normalizedPath.startsWith("/images/blog/") && !fs.existsSync(appPublicPath)) {
+    return `https://raw.githubusercontent.com/RafalWoz/terminarzBHP/main/public${normalizedPath}`;
+  }
+
+  return normalizedPath;
 }
 
 function normalizePost(rawPost: RawPost, fallbackSlug: string): BlogPost | null {
@@ -172,6 +204,9 @@ function normalizePost(rawPost: RawPost, fallbackSlug: string): BlogPost | null 
     return null;
   }
 
+  const coverImage = normalizeImagePath(rawPost.coverImage);
+  const ogImage = normalizeImagePath(rawPost.ogImage || rawPost.coverImage);
+
   return {
     slug,
     title,
@@ -182,6 +217,13 @@ function normalizePost(rawPost: RawPost, fallbackSlug: string): BlogPost | null 
     status: rawPost.status === "draft" ? "draft" : "publish",
     content,
     contentHtml: normalizeContentHtml(rawPost.contentHtml),
+    coverImage,
+    ogImage,
+    imageAlt: rawPost.imageAlt || title,
+    imageTitle: rawPost.imageTitle,
+    imageCaption: rawPost.imageCaption,
+    imageDescription: rawPost.imageDescription,
+    imageFocusKeyword: rawPost.imageFocusKeyword,
   };
 }
 
