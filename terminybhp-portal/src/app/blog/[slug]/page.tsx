@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getAllPosts, getPost } from "@/lib/content";
+import { getAllPostSlugs, getPost } from "@/lib/content";
 
 type BlogPostPageProps = {
   params: Promise<{ slug: string }>;
@@ -13,7 +13,19 @@ const articleChecks = [
 ];
 
 export function generateStaticParams() {
-  return getAllPosts().map((post) => ({ slug: post.slug }));
+  return getAllPostSlugs().map((slug) => ({ slug }));
+}
+
+function sanitizePostHtml(html: string) {
+  return html
+    .replace(/<script[\s\S]*?<\/script>/gi, "")
+    .replace(/<style[\s\S]*?<\/style>/gi, "")
+    .replace(/\s+on\w=(["']).*?\1/gi, "")
+    .replace(/\s+(href|src)=(["'])\s*javascript:[\s\S]*?\2/gi, ' $1="#"')
+    .replace(/<(\/?) (?!(p|strong|em|ul|ol|li|h2|h3|a|br)\b)[^>]*>/gi, "")
+    .replace(/<(\/?) (?!(p|strong|em|ul|ol|li|h2|h3|a|br)\b)[^>]*>/gi, "")
+    .replace(/<(\/?)(?!(p|strong|em|ul|ol|li|h2|h3|a|br)\b)[^>]*>/gi, "")
+    .replace(/<a\s+/gi, '<a target="_blank" rel="noopener noreferrer" ');
 }
 
 export async function generateMetadata({ params }: BlogPostPageProps) {
@@ -79,11 +91,18 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
       <section className="mx-auto grid max-w-[1160px] gap-8 px-5 py-12 sm:px-6 lg:grid-cols-[minmax(0,1fr)_320px]">
         <article className="rounded-[28px] border border-[var(--slate-200)] bg-white p-6 shadow-[0_8px_24px_rgba(7,24,38,0.05)] sm:p-9">
-          <div className="space-y-7 text-lg leading-8 text-[var(--slate-700)]">
-            {post.content.map((paragraph) => (
-              <p key={paragraph}>{paragraph}</p>
-            ))}
-          </div>
+          {post.contentHtml ? (
+            <div
+              className="article-content text-lg leading-8 text-[var(--slate-700)]"
+              dangerouslySetInnerHTML={{ __html: sanitizePostHtml(post.contentHtml) }}
+            />
+          ) : (
+            <div className="space-y-7 text-lg leading-8 text-[var(--slate-700)]">
+              {post.content.map((paragraph) => (
+                <p key={paragraph}>{paragraph}</p>
+              ))}
+            </div>
+          )}
         </article>
 
         <aside className="space-y-5">
