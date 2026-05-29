@@ -54,3 +54,67 @@ a {
 ::selection {
   background: rgba(14, 145, 139, 0.18);
 }
+
+.article-content > * + * {
+  margin-top: 1.5rem;
+}
+
+.article-content h2 {
+  margin-top: 2.75rem;
+  color: var(--navy-950);
+  font-size: clamp(1.75rem, 2vw, 2.25rem);
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  line-height: 1.12;
+}
+
+.article-content h3 {
+  margin-top: 2.25rem;
+  color: var(--navy-950);
+  font-size: 1.35rem;
+  font-weight: 900;
+  letter-spacing: -0.025em;
+  line-height: 1.2;
+}
+
+.article-content p {
+  margin-top: 1.25rem;
+}
+
+.article-content p:first-child {
+  margin-top: 0;
+}
+
+.article-content strong {
+  color: var(--navy-950);
+  font-weight: 900;
+}
+
+.article-content ul,
+.article-content ol {
+  margin-top: 1rem;
+  padding-left: 1.35rem;
+}
+
+.article-content ul {
+  list-style: disc;
+}
+
+.article-content ol {
+  list-style: decimal;
+}
+
+.article-content li {
+  padding-left: 0.25rem;
+}
+
+.article-content li + li {
+  margin-top: 0.65rem;
+}
+
+.article-content a {
+  color: var(--teal-700);
+  font-weight: 800;
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+}
