@@ -10,10 +10,7 @@ export function SiteHeader() {
   return (
     <header className="sticky top-0 z-20 border-b border-[var(--slate-200)] bg-[rgba(251,252,253,0.9)] backdrop-blur-xl">
       <div className="mx-auto flex h-18 max-w-[1160px] items-center justify-between gap-5 px-5 sm:px-6">
-        <Link href="/" className="flex items-center gap-3 text-lg font-black tracking-[-0.03em] text-[var(--navy-950)]">
-          <span className="grid size-10 place-items-center rounded-[14px] bg-[linear-gradient(135deg,var(--navy-900),var(--teal-600))] text-base font-black text-white">
-            T
-          </span>
+        <Link href="/" className="text-lg font-black tracking-[-0.03em] text-[var(--navy-950)]">
           TerminyBHP
         </Link>
 
