@@ -62,9 +62,6 @@ export default function BlogPage() {
             <p className="text-sm font-extrabold uppercase tracking-[0.08em] text-[var(--teal-700)]">Wpisy</p>
             <h2 className="mt-2 text-4xl font-black tracking-[-0.04em] text-[var(--navy-950)]">Praktyczne instrukcje BHP</h2>
           </div>
-          <p className="max-w-xl text-[var(--slate-700)]">
-            Każdy wpis ma prowadzić do konkretnego działania: sprawdzić termin, przygotować dokument albo uporządkować rejestr.
-          </p>
         </div>
 
         <div className="mt-8 grid gap-5 lg:grid-cols-3">
