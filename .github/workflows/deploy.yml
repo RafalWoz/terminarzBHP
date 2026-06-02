@@ -18,6 +18,8 @@ jobs:
     steps:
       - name: Pobieranie kodu z repo
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Konfiguracja Node.js
         uses: actions/setup-node@v4
@@ -32,6 +34,23 @@ jobs:
         run: |
           npm ci
           npm run build
+
+      - name: Generowanie kolejnosci publikacji artykulow
+        working-directory: terminybhp-portal
+        run: |
+          node - <<'NODE'
+          const { execFileSync } = require('node:child_process');
+          const fs = require('node:fs');
+          const path = require('node:path');
+          const postsDir = path.join('data', 'posts');
+          const order = {};
+          for (const fileName of fs.readdirSync(postsDir).filter((name) => name.endsWith('.json'))) {
+            const slug = fileName.replace(/\.json$/, '');
+            order[slug] = execFileSync('git', ['log', '-1', '--format=%cI', '--', path.join('terminybhp-portal', postsDir, fileName)], { cwd: '..', encoding: 'utf8' }).trim();
+          }
+          fs.mkdirSync('.generated', { recursive: true });
+          fs.writeFileSync(path.join('.generated', 'posts-order.json'), JSON.stringify(order));
+          NODE
 
       - name: Budowanie publicznego portalu i bloga
         working-directory: terminybhp-portal
