@@ -17,6 +17,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://terminybhp.pl"),
   title: {
     default: "TerminyBHP - serwis i blog BHP",
     template: "%s | TerminyBHP",

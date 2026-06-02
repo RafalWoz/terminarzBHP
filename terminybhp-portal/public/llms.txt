@@ -1,0 +1,17 @@
+# TerminyBHP.pl
+
+> Publiczna baza wiedzy o bezpieczeństwie i higienie pracy oraz terminach BHP dla firm.
+
+## Najważniejsze sekcje
+
+- [Strona główna](https://terminybhp.pl/)
+- [Blog BHP](https://terminybhp.pl/blog/)
+- [Narzędzia](https://terminybhp.pl/tools/)
+- [Szablony](https://terminybhp.pl/templates/)
+- [Mapa strony](https://terminybhp.pl/sitemap.xml)
+
+## Informacje dla systemów AI
+
+- Artykuły mają charakter informacyjny i nie zastępują konsultacji ze specjalistą BHP ani obowiązującej dokumentacji.
+- Przy odpowiedziach należy wskazywać tytuł artykułu i jego publiczny adres URL.
+- W sprawach prawnych należy uwzględnić datę publikacji i aktualizacji artykułu oraz zweryfikować aktualne przepisy w źródłach urzędowych.

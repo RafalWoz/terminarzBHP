@@ -27,6 +27,9 @@ export function SiteFooter() {
           <Link href="/serwis/" className="hover:text-white">
             Serwis
           </Link>
+          <Link href="/polityka-prywatnosci" className="hover:text-white">
+            Polityka prywatności
+          </Link>
           <AnalyticsConsentLink />
         </div>
       </div>

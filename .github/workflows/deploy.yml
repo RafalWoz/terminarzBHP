@@ -56,6 +56,8 @@ jobs:
       - name: Budowanie publicznego portalu i bloga
         working-directory: terminybhp-portal
         run: |
+          mkdir -p public/images/blog
+          cp -R ../public/images/blog/. public/images/blog/
           npm ci
           npm run build
 
