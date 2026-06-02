@@ -7,6 +7,7 @@ export type BlogPost = {
   description: string;
   category: string;
   date: string;
+  publishedAt?: string;
   readingTime: string;
   content: string[];
   contentHtml?: string;
@@ -27,47 +28,18 @@ type RawPost = Partial<BlogPost> & {
 };
 
 const postsDir = path.join(process.cwd(), "data", "posts");
+const postsOrderPath = path.join(process.cwd(), ".generated", "posts-order.json");
 
 export const tools = [
-  {
-    title: "Kalkulator ryzyka zawodowego",
-    description:
-      "Szybka ocena poziomu ryzyka na stanowisku. Wpisujesz parametry, dostajesz wynik gotowy do wpięcia w dokumentację.",
-    status: "W przygotowaniu",
-  },
-  {
-    title: "Generator listy kontrolnej",
-    description:
-      "Składasz checklistę pod firmę, stanowisko albo audyt — bez przepisywania tych samych punktów za każdym razem.",
-    status: "W przygotowaniu",
-  },
-  {
-    title: "Przelicznik terminów",
-    description:
-      "Prosty pomocnik do liczenia dat szkoleń okresowych, badań i przypomnień.",
-    status: "Planowane",
-  },
+  { title: "Kalkulator ryzyka zawodowego", description: "Szybka ocena poziomu ryzyka na stanowisku. Wpisujesz parametry, dostajesz wynik gotowy do wpięcia w dokumentację.", status: "W przygotowaniu" },
+  { title: "Generator listy kontrolnej", description: "Składasz checklistę pod firmę, stanowisko albo audyt — bez przepisywania tych samych punktów za każdym razem.", status: "W przygotowaniu" },
+  { title: "Przelicznik terminów", description: "Prosty pomocnik do liczenia dat szkoleń okresowych, badań i przypomnień.", status: "Planowane" },
 ];
 
 export const templates = [
-  {
-    title: "Lista kontrolna szkolenia wstępnego",
-    description:
-      "Gotowy szablon dla osoby przyjmowanej do pracy lub zmieniającej stanowisko. Odhaczasz punkt po punkcie, nic nie ginie.",
-    status: "Wkrótce",
-  },
-  {
-    title: "Rejestr badań lekarskich",
-    description:
-      "Wzór tabeli na terminy badań wstępnych, okresowych i kontrolnych. Jedno miejsce zamiast notatek w kilku plikach.",
-    status: "Wkrótce",
-  },
-  {
-    title: "Rejestr szkoleń okresowych",
-    description:
-      "Prosty układ danych, który później będzie można przenieść do serwisu.",
-    status: "Do przygotowania",
-  },
+  { title: "Lista kontrolna szkolenia wstępnego", description: "Gotowy szablon dla osoby przyjmowanej do pracy lub zmieniającej stanowisko. Odhaczasz punkt po punkcie, nic nie ginie.", status: "Wkrótce" },
+  { title: "Rejestr badań lekarskich", description: "Wzór tabeli na terminy badań wstępnych, okresowych i kontrolnych. Jedno miejsce zamiast notatek w kilku plikach.", status: "Wkrótce" },
+  { title: "Rejestr szkoleń okresowych", description: "Prosty układ danych, który później będzie można przenieść do serwisu.", status: "Do przygotowania" },
 ];
 
 function estimateReadingTime(content: string[]) {
@@ -76,72 +48,51 @@ function estimateReadingTime(content: string[]) {
 }
 
 function normalizeContent(content: string | string[] | undefined) {
-  if (Array.isArray(content)) {
-    return content.filter((paragraph) => typeof paragraph === "string" && paragraph.trim().length > 0);
-  }
-
-  if (typeof content !== "string") {
-    return [];
-  }
-
-  return content
-    .split(/\n{2,}/)
-    .map((paragraph) => paragraph.trim())
-    .filter(Boolean);
+  if (Array.isArray(content)) return content.filter((paragraph) => typeof paragraph === "string" && paragraph.trim().length > 0);
+  if (typeof content !== "string") return [];
+  return content.split(/\n{2,}/).map((paragraph) => paragraph.trim()).filter(Boolean);
 }
 
 function normalizeContentHtml(contentHtml: string | undefined) {
-  if (typeof contentHtml !== "string") {
-    return undefined;
-  }
-
+  if (typeof contentHtml !== "string") return undefined;
   const normalizedHtml = contentHtml.replace(/\\\"/g, '"').trim();
   return normalizedHtml.length > 0 ? normalizedHtml : undefined;
 }
 
 function normalizeImagePath(imagePath: string | undefined) {
-  if (typeof imagePath !== "string") {
-    return undefined;
-  }
-
+  if (typeof imagePath !== "string") return undefined;
   const trimmedPath = imagePath.trim();
-
-  if (!trimmedPath) {
-    return undefined;
-  }
-
-  if (/^https?:\/\//i.test(trimmedPath)) {
-    return trimmedPath;
-  }
-
+  if (!trimmedPath) return undefined;
+  if (/^https?:\/\//i.test(trimmedPath)) return trimmedPath;
   const normalizedPath = trimmedPath.startsWith("/") ? trimmedPath : `/${trimmedPath}`;
   const appPublicPath = path.join(process.cwd(), "public", normalizedPath.slice(1));
-
-  if (normalizedPath.startsWith("/images/blog/") && !fs.existsSync(appPublicPath)) {
-    return `https://raw.githubusercontent.com/RafalWoz/terminarzBHP/main/public${normalizedPath}`;
-  }
-
+  if (normalizedPath.startsWith("/images/blog/") && !fs.existsSync(appPublicPath)) return `https://raw.githubusercontent.com/RafalWoz/terminarzBHP/main/public${normalizedPath}`;
   return normalizedPath;
 }
 
-function normalizePost(rawPost: RawPost, fallbackSlug: string): BlogPost | null {
+function readPostsOrder() {
+  if (!fs.existsSync(postsOrderPath)) return {} as Record<string, string>;
+  try {
+    return JSON.parse(fs.readFileSync(postsOrderPath, "utf-8")) as Record<string, string>;
+  } catch {
+    return {} as Record<string, string>;
+  }
+}
+
+function normalizePost(rawPost: RawPost, fallbackSlug: string, publishedAt?: string): BlogPost | null {
   const content = normalizeContent(rawPost.content);
   const slug = rawPost.slug || fallbackSlug;
   const title = rawPost.title;
-
-  if (!slug || !title || content.length === 0) {
-    return null;
-  }
-
+  if (!slug || !title || content.length === 0) return null;
   const coverImage = normalizeImagePath(rawPost.coverImage);
   const ogImage = normalizeImagePath(rawPost.ogImage || rawPost.coverImage);
-
   return {
     slug,
     title,
     description: rawPost.description || rawPost.excerpt || content[0].slice(0, 180),
     category: rawPost.category || "BHP",
     date: rawPost.date || rawPost.createdAt || new Date().toISOString(),
+    publishedAt: rawPost.publishedAt || rawPost.createdAt || publishedAt,
     readingTime: rawPost.readingTime || estimateReadingTime(content),
     status: rawPost.status === "draft" ? "draft" : "publish",
     content,
@@ -157,19 +108,15 @@ function normalizePost(rawPost: RawPost, fallbackSlug: string): BlogPost | null 
 }
 
 function readPostsFromFiles() {
-  if (!fs.existsSync(postsDir)) {
-    return [];
-  }
-
-  return fs
-    .readdirSync(postsDir)
+  if (!fs.existsSync(postsDir)) return [];
+  const postsOrder = readPostsOrder();
+  return fs.readdirSync(postsDir)
     .filter((fileName) => fileName.endsWith(".json"))
     .map((fileName) => {
       const filePath = path.join(postsDir, fileName);
       const fallbackSlug = fileName.replace(/\.json$/, "");
-
       try {
-        return normalizePost(JSON.parse(fs.readFileSync(filePath, "utf-8")), fallbackSlug);
+        return normalizePost(JSON.parse(fs.readFileSync(filePath, "utf-8")), fallbackSlug, postsOrder[fallbackSlug]);
       } catch {
         return null;
       }
@@ -177,10 +124,14 @@ function readPostsFromFiles() {
     .filter((post): post is BlogPost => Boolean(post));
 }
 
+function postTimestamp(post: BlogPost) {
+  return Date.parse(post.publishedAt || post.date);
+}
+
 export function getAllPosts({ includeDrafts = false } = {}) {
   return readPostsFromFiles()
     .filter((post) => includeDrafts || post.status === "publish")
-    .sort((a, b) => Date.parse(b.date) - Date.parse(a.date));
+    .sort((a, b) => postTimestamp(b) - postTimestamp(a));
 }
 
 export function getAllPostSlugs() {
