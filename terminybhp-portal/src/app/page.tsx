@@ -32,14 +32,14 @@ export default function Home() {
             <p className="mt-4 max-w-3xl text-base leading-7 text-[var(--slate-600)]">Bez żargonu i bez presji. Mówimy, co sprawdzić i kiedy działać — decyzję zostawiamy Tobie.</p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <Link href="/blog" className="inline-flex justify-center rounded-[14px] bg-[var(--teal-600)] px-5 py-3 text-sm font-extrabold text-white hover:bg-[var(--teal-700)]">Czytaj blog</Link>
-              <Link href="/serwis/" className="inline-flex justify-center rounded-[14px] border border-[var(--slate-200)] bg-white px-5 py-3 text-sm font-extrabold text-[var(--navy-900)] hover:border-[var(--slate-500)]">Zobacz serwis demo</Link>
+              <a href="/serwis/" className="inline-flex justify-center rounded-[14px] border border-[var(--slate-200)] bg-white px-5 py-3 text-sm font-extrabold text-[var(--navy-900)] hover:border-[var(--slate-500)]">Zobacz serwis demo</a>
             </div>
           </div>
           <aside className="rounded-[28px] bg-[var(--navy-900)] p-7 text-white shadow-[var(--shadow-soft)]">
             <p className="text-sm font-extrabold uppercase tracking-[0.08em] text-[#b9cad8]">Serwis w budowie</p>
             <h2 className="mt-3 text-3xl font-black tracking-[-0.04em]">Wersja demo serwisu jest już dostępna.</h2>
             <p className="mt-4 leading-7 text-[#d8e3ea]">Zajrzyj pod /serwis/, żeby zobaczyć, jak aplikacja porządkuje terminy i pracowników. To podgląd kierunku — jeszcze nie finalny produkt i nie miejsce na docelowe dane firmy.</p>
-            <Link href="/serwis/" className="mt-6 inline-flex text-sm font-extrabold text-white hover:text-[#d8e3ea]">Otwórz demo →</Link>
+            <a href="/serwis/" className="mt-6 inline-flex text-sm font-extrabold text-white hover:text-[#d8e3ea]">Otwórz demo →</a>
           </aside>
         </div>
       </section>
@@ -67,8 +67,8 @@ export default function Home() {
       </section>
 
       <section className="mx-auto grid max-w-[1160px] gap-8 px-5 py-14 sm:px-6 md:grid-cols-2">
-        <div><div className="flex items-center justify-between gap-4"><h2 className="text-3xl font-black tracking-[-0.04em] text-[var(--navy-950)]">Narzędzia</h2><Link href="/tools" className="text-sm font-extrabold text-[var(--teal-700)] hover:text-[var(--navy-950)]">Zobacz wszystkie</Link></div><div className="mt-5 space-y-3">{tools.slice(0, 2).map((tool) => <div key={tool.title} className="rounded-[20px] border border-[var(--slate-200)] bg-white p-5"><p className="text-xs font-black uppercase tracking-[0.08em] text-[var(--teal-700)]">{tool.status}</p><h3 className="mt-2 font-black text-[var(--navy-950)]">{tool.title}</h3><p className="mt-2 text-sm leading-6 text-[var(--slate-700)]">{tool.description}</p></div>)}</div></div>
-        <div><div className="flex items-center justify-between gap-4"><h2 className="text-3xl font-black tracking-[-0.04em] text-[var(--navy-950)]">Szablony</h2><Link href="/templates" className="text-sm font-extrabold text-[var(--teal-700)] hover:text-[var(--navy-950)]">Zobacz wszystkie</Link></div><div className="mt-5 space-y-3">{templates.slice(0, 2).map((template) => <div key={template.title} className="rounded-[20px] border border-[var(--slate-200)] bg-white p-5"><p className="text-xs font-black uppercase tracking-[0.08em] text-[var(--teal-700)]">{template.status}</p><h3 className="mt-2 font-black text-[var(--navy-950)]">{template.title}</h3><p className="mt-2 text-sm leading-6 text-[var(--slate-700)]">{template.description}</p></div>)}</div></div>
+        <div><div className="flex items-center justify-between gap-4"><h2 className="text-3xl font-black tracking-[-0.04em] text-[var(--navy-950)]">Narzędzia</h2><Link href="/tools" className="text-sm font-extrabold text-[var(--teal-700)] hover:text-[var(--navy-950)]">Zobacz wszystkie narzędzia</Link></div><div className="mt-5 space-y-3">{tools.slice(0, 2).map((tool) => <div key={tool.title} className="rounded-[20px] border border-[var(--slate-200)] bg-white p-5"><p className="text-xs font-black uppercase tracking-[0.08em] text-[var(--teal-700)]">{tool.status}</p><h3 className="mt-2 font-black text-[var(--navy-950)]">{tool.title}</h3><p className="mt-2 text-sm leading-6 text-[var(--slate-700)]">{tool.description}</p></div>)}</div></div>
+        <div><div className="flex items-center justify-between gap-4"><h2 className="text-3xl font-black tracking-[-0.04em] text-[var(--navy-950)]">Szablony</h2><Link href="/templates" className="text-sm font-extrabold text-[var(--teal-700)] hover:text-[var(--navy-950)]">Zobacz wszystkie szablony</Link></div><div className="mt-5 space-y-3">{templates.slice(0, 2).map((template) => <div key={template.title} className="rounded-[20px] border border-[var(--slate-200)] bg-white p-5"><p className="text-xs font-black uppercase tracking-[0.08em] text-[var(--teal-700)]">{template.status}</p><h3 className="mt-2 font-black text-[var(--navy-950)]">{template.title}</h3><p className="mt-2 text-sm leading-6 text-[var(--slate-700)]">{template.description}</p></div>)}</div></div>
       </section>
 
       <section className="border-t border-[var(--slate-200)] bg-[var(--paper)]">

@@ -24,9 +24,9 @@ export function SiteFooter() {
           <Link href="/templates" className="hover:text-white">
             Szablony
           </Link>
-          <Link href="/serwis/" className="hover:text-white">
+          <a href="/serwis/" className="hover:text-white">
             Serwis
-          </Link>
+          </a>
           <Link href="/polityka-prywatnosci" className="hover:text-white">
             Polityka prywatności
           </Link>
