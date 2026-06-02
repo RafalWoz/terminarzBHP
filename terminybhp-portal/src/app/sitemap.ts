@@ -1,6 +1,8 @@
 import type { MetadataRoute } from "next";
 import { getAllPosts } from "@/lib/content";
 
+export const dynamic = "force-static";
+
 const siteUrl = "https://terminybhp.pl";
 
 export default function sitemap(): MetadataRoute.Sitemap {
