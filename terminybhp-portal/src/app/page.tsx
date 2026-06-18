@@ -13,6 +13,20 @@ const pillars = [
   { number: "03", label: "Zasoby", title: "Narzędzia i szablony", description: "Gotowy rejestr, checklista albo szybkie wyliczenie — zamiast zaczynania od pustej kartki." },
 ];
 
+const onboardingSteps = [
+  { title: "Wybierasz folder na swoim dysku", description: "Przy pierwszym uruchomieniu serwis prosi o folder docelowy, bo musi mieć wskazane miejsce, w którym będzie zapisywać lokalną kopię danych aplikacji." },
+  { title: "Serwis zapisuje zaszyfrowany plik bazy", description: "W tym folderze powstaje techniczny, zaszyfrowany plik z danymi: firmami, pracownikami, terminami, audytami i ustawieniami. Nie jest to zwykły arkusz do edycji ręcznej." },
+  { title: "Folder służy do trwałości i kopii zapasowej", description: "Dzięki temu dane nie znikają po zamknięciu przeglądarki, a Ty masz nad nimi kontrolę. Serwis używa folderu do zapisu zmian oraz późniejszego odtworzenia bazy." },
+];
+
+const serviceSteps = [
+  "Dodajesz firmę i podstawowe dane kontaktowe.",
+  "Dodajesz pracowników oraz ich badania, szkolenia i uprawnienia.",
+  "Serwis pokazuje, które terminy są aktualne, bliskie końca albo przeterminowane.",
+  "W module audytów możesz przejść checklistę BHP, opisać uchybienia, dodać zdjęcia i wygenerować raport.",
+  "Wygenerowane raporty zostają zapamiętane w historii firmy, żeby było wiadomo, kiedy i jaki raport powstał.",
+];
+
 const comparison = [
   { title: "Blog", visibility: "publiczny", headline: "Wiedza, którą czytasz raz", points: ["Tłumaczy, co i kiedy trzeba zrobić", "Prowadzi od pytania do decyzji", "Bez logowania, otwarte dla każdego", "Narzędzia i szablony pod ręką"] },
   { title: "Serwis", visibility: "prywatny, wersja demo", headline: "System, który pilnuje za Ciebie", points: ["Firmy, pracownicy i ich terminy w jednym widoku", "Badania, szkolenia, uprawnienia i audyty", "Sygnał, zanim termin się skończy", "Dostęp prywatny, dane Twojej firmy"] },
@@ -36,11 +50,38 @@ export default function Home() {
             </div>
           </div>
           <aside className="rounded-[28px] bg-[var(--navy-900)] p-7 text-white shadow-[var(--shadow-soft)]">
-            <p className="text-sm font-extrabold uppercase tracking-[0.08em] text-[#b9cad8]">Serwis w budowie</p>
-            <h2 className="mt-3 text-3xl font-black tracking-[-0.04em]">Wersja demo serwisu jest już dostępna.</h2>
-            <p className="mt-4 leading-7 text-[#d8e3ea]">Zajrzyj pod /serwis/, żeby zobaczyć, jak aplikacja porządkuje terminy i pracowników. To podgląd kierunku — jeszcze nie finalny produkt i nie miejsce na docelowe dane firmy.</p>
+            <p className="text-sm font-extrabold uppercase tracking-[0.08em] text-[#b9cad8]">Zanim wejdziesz do serwisu</p>
+            <h2 className="mt-3 text-3xl font-black tracking-[-0.04em]">Pierwsze logowanie wymaga wyboru folderu.</h2>
+            <p className="mt-4 leading-7 text-[#d8e3ea]">Serwis zapisuje dane lokalnie, w wybranym przez Ciebie miejscu, jako zaszyfrowaną bazę aplikacji. Folder jest potrzebny po to, żeby kopia danych była trwała, możliwa do odtworzenia i pod Twoją kontrolą.</p>
             <a href="/serwis/" className="mt-6 inline-flex text-sm font-extrabold text-white hover:text-[#d8e3ea]">Otwórz demo →</a>
           </aside>
+        </div>
+      </section>
+
+      <section className="border-b border-[var(--slate-200)] bg-white">
+        <div className="mx-auto max-w-[1160px] px-5 py-12 sm:px-6">
+          <p className="text-sm font-extrabold uppercase tracking-[0.08em] text-[var(--teal-700)]">Instrukcja serwisu</p>
+          <h2 className="mt-3 max-w-4xl text-4xl font-black tracking-[-0.04em] text-[var(--navy-950)]">Na początku wybierasz folder, bo tam serwis zapisuje zaszyfrowaną kopię Twoich danych.</h2>
+          <p className="mt-4 max-w-4xl text-base leading-7 text-[var(--slate-700)]">TerminyBHP nie działa jak zwykła publiczna strona, która tylko wyświetla treści. To prywatny serwis roboczy. Po zalogowaniu tworzysz w nim dane firm, pracowników, terminów i audytów, dlatego aplikacja musi wiedzieć, gdzie ma zapisywać lokalną bazę. Wskazany folder jest używany do automatycznego zapisu i odczytu zaszyfrowanego pliku z danymi serwisu.</p>
+          <div className="mt-8 grid gap-4 md:grid-cols-3">
+            {onboardingSteps.map((step) => (
+              <section key={step.title} className="rounded-[22px] border border-[var(--slate-200)] bg-[var(--paper)] p-5">
+                <h3 className="text-lg font-black tracking-[-0.02em] text-[var(--navy-950)]">{step.title}</h3>
+                <p className="mt-3 text-sm leading-6 text-[var(--slate-700)]">{step.description}</p>
+              </section>
+            ))}
+          </div>
+          <div className="mt-8 rounded-[24px] border border-[var(--slate-200)] bg-white p-6 shadow-[0_8px_24px_rgba(7,24,38,0.05)]">
+            <h3 className="text-2xl font-black tracking-[-0.03em] text-[var(--navy-950)]">Jak korzystać krok po kroku</h3>
+            <ol className="mt-5 space-y-3 text-sm leading-6 text-[var(--slate-700)]">
+              {serviceSteps.map((step, index) => (
+                <li key={step} className="flex gap-3">
+                  <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-[var(--green-50)] text-xs font-black text-[var(--teal-700)]">{index + 1}</span>
+                  <span>{step}</span>
+                </li>
+              ))}
+            </ol>
+          </div>
         </div>
       </section>
 
