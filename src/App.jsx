@@ -15,6 +15,7 @@ import RecordForm from './pages/RecordForm';
 import Documents from './pages/Documents';
 import Audits from './pages/Audits';
 import AuditForm from './pages/AuditForm';
+import Reports from './pages/Reports';
 import Settings from './pages/Settings';
 import Templates from './pages/Templates';
 
@@ -80,6 +81,7 @@ function AppRoutes() {
           <Route path="firms/:firmId/employees/:id/edit" element={<EmployeeForm />} />
           <Route path="firms/:firmId/employees/:employeeId/records/new" element={<RecordForm />} />
           <Route path="firms/:id/audits" element={<Audits />} />
+          <Route path="firms/:id/reports" element={<Reports />} />
           <Route path="firms/:firmId/audits/:id" element={<AuditForm />} />
           <Route path="documents" element={<Documents />} />
           <Route path="settings" element={<Settings />} />
