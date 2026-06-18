@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import Link from "next/link";
 
 const statusRows = [
@@ -29,6 +30,7 @@ const audienceCards = [
     note: "Na razie w pełni za darmo",
   },
   {
+    variant: "secondary",
     tag: "Odbiorca bloga",
     title: "Odpowiadasz za BHP przy okazji",
     description: "Właściciel małej firmy albo osoba z HR bez działu BHP. Chcesz wiedzieć, co sprawdzić i kiedy działać — bez wczytywania się w każdy przepis.",
@@ -38,6 +40,7 @@ const audienceCards = [
       "Narzędzia i szablony pod ręką",
       "A gdy terminów robi się za dużo — przejście do serwisu",
     ],
+    note: "",
   },
 ];
 
@@ -98,7 +101,7 @@ const toneStyles = {
   },
 };
 
-function Eyebrow({ children, dark = false }: { children: React.ReactNode; dark?: boolean }) {
+function Eyebrow({ children, dark = false }: { children: ReactNode; dark?: boolean }) {
   return (
     <span className={`inline-flex items-center gap-2 font-mono text-xs font-semibold uppercase tracking-[0.14em] ${dark ? "text-[#9FD8C2]" : "text-[var(--teal-700)]"}`}>
       <span className={`size-2 rounded-full ${dark ? "bg-[#46C28F]" : "bg-[#2E7D5B]"}`} />
