@@ -1,12 +1,11 @@
-import { useState, useEffect } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import { useParams, Link } from 'react-router-dom';
 import { useFirm } from '../hooks/useFirms';
 import { useEmployees } from '../hooks/useEmployees';
 import EmployeeDetailView from '../components/EmployeeDetailView';
 
 export default function FirmDetails() {
   const { id } = useParams();
-  const navigate = useNavigate();
   const firm = useFirm(id);
   const employees = useEmployees(id);
   const [selectedEmployeeId, setSelectedEmployeeId] = useState(null);
@@ -60,10 +59,13 @@ export default function FirmDetails() {
               <div className="text-[10px] font-black text-slate-800 uppercase tracking-widest">Audyty</div>
             </Link>
             
-            <div className="bg-white p-4 rounded-2xl border-2 border-transparent shadow-sm flex flex-col items-center justify-center opacity-40 grayscale cursor-not-allowed">
+            <Link
+              to={`/firms/${id}/reports`}
+              className="bg-white p-4 rounded-2xl border-2 border-transparent shadow-sm flex flex-col items-center justify-center hover:border-primary/20 transition-all active:scale-95"
+            >
               <div className="text-2xl mb-1">📊</div>
               <div className="text-[10px] font-black text-slate-800 uppercase tracking-widest">Raporty</div>
-            </div>
+            </Link>
           </div>
 
           {/* Employees Section */}
