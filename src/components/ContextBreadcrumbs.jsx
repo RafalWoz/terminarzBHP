@@ -68,6 +68,9 @@ function buildCrumbs({ firm, employee, firmId, employeeId, currentLabel }) {
   const crumbs = [{ label: 'Start', to: '/' }];
 
   if (!firmId && currentLabel !== 'Panel główny') {
+    if (currentLabel === 'Nowa firma') {
+      crumbs.push({ label: 'Firmy', to: '/firms' });
+    }
     crumbs.push({ label: currentLabel });
     return crumbs;
   }
@@ -85,7 +88,8 @@ function buildCrumbs({ firm, employee, firmId, employeeId, currentLabel }) {
   }
 
   const last = crumbs[crumbs.length - 1];
-  if (currentLabel !== 'Panel główny' && last?.label !== currentLabel) {
+  const entityDetails = ['Szczegóły firmy', 'Pracownik'];
+  if (currentLabel !== 'Panel główny' && !entityDetails.includes(currentLabel) && last?.label !== currentLabel) {
     crumbs.push({ label: currentLabel });
   }
 
