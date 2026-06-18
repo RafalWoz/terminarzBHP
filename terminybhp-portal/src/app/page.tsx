@@ -27,7 +27,7 @@ const audienceCards = [
       "Dane klientów zaszyfrowane i trzymane na Twoim dysku",
       "Audyt i raport gotowy na kontrolę PIP",
     ],
-    note: "Na razie w pełni za darmo",
+    note: "Wersja demo do testów · 0 zł",
   },
   {
     variant: "secondary",
@@ -77,7 +77,7 @@ const dataRows = [
   { label: "Twoje dane", value: "na Twoim dysku", tone: "ok" },
   { label: "Plik bazy", value: "zaszyfrowany", tone: "ok" },
   { label: "Zewnętrzny serwer", value: "nie używamy", tone: "late" },
-  { label: "Koszt", value: "0 zł na razie", tone: "ok" },
+  { label: "Koszt", value: "0 zł", tone: "ok" },
 ];
 
 const toneStyles = {
@@ -135,7 +135,7 @@ export default function Home() {
               </Link>
             </div>
             <p className="mt-5 font-mono text-xs text-[var(--slate-600)]">
-              ● Na razie w pełni za darmo · ● Dane zostają na Twoim dysku
+              ● Wersja demo do testów · ● Dane zostają na Twoim dysku
             </p>
           </div>
 
@@ -255,10 +255,10 @@ export default function Home() {
       <section className="px-5 py-16 sm:px-6 lg:py-20">
         <div className="mx-auto grid max-w-[1160px] gap-8 rounded-[28px] bg-[#0E1F19] p-8 text-[#EAF1EC] shadow-[0_30px_60px_-30px_rgba(14,31,25,0.55)] lg:grid-cols-[1.1fr_0.9fr] lg:items-center lg:p-12">
           <div>
-            <Eyebrow dark>Serwis · za darmo</Eyebrow>
+            <Eyebrow dark>Serwis · demo do testów</Eyebrow>
             <h2 className="mt-4 text-4xl font-black tracking-[-0.05em] text-white sm:text-5xl">Działa w przeglądarce. Zapisuje na Twoim dysku.</h2>
             <p className="mt-4 max-w-2xl text-base leading-7 text-[#B7CCC2]">
-              TerminyBHP nie wysyła danych firm i pracowników na żaden zewnętrzny serwer. Przy pierwszym wejściu wskazujesz folder, a serwis trzyma w nim jeden zaszyfrowany plik z całą bazą — pod Twoją kontrolą. Kopia zapasowa to po prostu skopiowanie tego pliku. Na razie korzystasz w pełni za darmo.
+              TerminyBHP nie wysyła danych firm i pracowników na żaden zewnętrzny serwer. Przy pierwszym wejściu wskazujesz folder, a serwis trzyma w nim jeden zaszyfrowany plik z całą bazą — pod Twoją kontrolą. Kopia zapasowa to po prostu skopiowanie tego pliku. Obecnie działa jako wersja demo do testów.
             </p>
             <div className="mt-7 flex flex-col gap-3 sm:flex-row">
               <a href="/serwis/" className="inline-flex justify-center rounded-[14px] bg-[#2E9A77] px-5 py-3 text-sm font-extrabold text-white hover:bg-[#26815f]">Otwórz serwis →</a>
