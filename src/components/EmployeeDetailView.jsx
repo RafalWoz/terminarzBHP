@@ -11,6 +11,12 @@ import {
 import { getExpirationStatus, formatDaysMessage, getDaysUntilExpiration } from '../utils/expirations';
 import { Link } from 'react-router-dom';
 
+function isValidRecordDate(value) {
+  if (!value) return false;
+  const date = new Date(value);
+  return !Number.isNaN(date.getTime());
+}
+
 function formatRecordDate(value) {
   if (!value) return 'Brak daty';
   const date = new Date(value);
@@ -114,7 +120,9 @@ export default function EmployeeDetailView({ employeeId, firmId, onDeleted }) {
               {record.expiresAt ? (
                 <div className="mt-3 pt-3 border-t border-gray-50 flex items-center justify-between gap-3">
                   <div className="text-xs font-semibold text-gray-500">Ważne do: {formatRecordDate(record.expiresAt)}</div>
-                  <StatusBadge status={getExpirationStatus(record.expiresAt)} days={getDaysUntilExpiration(record.expiresAt)} />
+                  {isValidRecordDate(record.expiresAt) && (
+                    <StatusBadge status={getExpirationStatus(record.expiresAt)} days={getDaysUntilExpiration(record.expiresAt)} />
+                  )}
                 </div>
               ) : (
                 <div className="mt-2 text-xs italic text-gray-300">Bezterminowo</div>
