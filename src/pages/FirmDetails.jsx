@@ -23,13 +23,6 @@ export default function FirmDetails() {
 
   return (
     <div className="p-4 max-w-lg lg:max-w-7xl mx-auto pb-24">
-      {/* Breadcrumb */}
-      <div className="flex items-center gap-2 text-sm text-gray-500 mb-4">
-        <Link to="/firms" className="hover:text-primary transition-colors">Firmy</Link>
-        <span>/</span>
-        <span className="font-medium text-gray-800 truncate">{firm.name}</span>
-      </div>
-
       <div className="lg:grid lg:grid-cols-12 lg:gap-8 items-start">
         
         {/* LEFT COLUMN: Firm Info + Employees List */}
