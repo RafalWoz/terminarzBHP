@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useParams, useNavigate, Link, useLocation } from 'react-router-dom';
 import { 
   getAudit, 
   addAudit, 
@@ -42,9 +42,10 @@ const DEFAULT_AREAS = [
 export default function AuditForm() {
   const { firmId, id: auditId } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const fileInputRef = useRef();
 
-  const [step, setStep] = useState(1); // 1: Dane, 2: Zakres/Realizacja, 3: Podsumowanie/Raport
+  const [step, setStep] = useState(() => (location.state?.showReport ? 3 : 1)); // 1: Dane, 2: Zakres/Realizacja, 3: Podsumowanie/Raport
   const [loading, setLoading] = useState(true);
   const [audit, setAudit] = useState(null);
   const [items, setItems] = useState({}); 
@@ -114,7 +115,7 @@ export default function AuditForm() {
     setAudit(updated);
     const { id, firmId: fId, status, createdAt, updatedAt, ...sensitive } = updated;
     const encryptedData = await encrypt(sensitive, key);
-    await db.audits.update(id, { encryptedData, updatedAt: new Date().toISOString() });
+    await db.audits.update(id, { status: status || 'draft', encryptedData, updatedAt: new Date().toISOString() });
   };
 
   const updateItemData = async (pointId, fields) => {
@@ -146,6 +147,31 @@ export default function AuditForm() {
       updateAuditData({ scope: [...currentScope, newArea.trim()] });
     }
     setNewArea('');
+  };
+
+  const currentScope = audit?.scope || DEFAULT_AREAS;
+  const failCount = Object.values(items).filter(i => i.result === 'fail').length;
+
+  const handleGenerateReport = async () => {
+    const generatedAt = new Date().toISOString();
+    const reportHistory = [
+      ...(Array.isArray(audit.reportHistory) ? audit.reportHistory : []),
+      {
+        id: generatedAt,
+        generatedAt,
+        title: audit.title || 'Raport z audytu BHP',
+        failCount,
+        scopeCount: currentScope.length
+      }
+    ];
+
+    await updateAuditData({
+      status: 'completed',
+      reportGeneratedAt: generatedAt,
+      reportHistory
+    });
+    setStep(3);
+    window.scrollTo(0, 0);
   };
 
   if (loading) return <div className="p-10 text-center text-slate-400">Ładowanie systemu audytowego...</div>;
@@ -224,10 +250,6 @@ export default function AuditForm() {
       </div>
     );
   }
-
-  // Fallback dla zakresu audytu
-  const currentScope = audit.scope || DEFAULT_AREAS;
-  const failCount = Object.values(items).filter(i => i.result === 'fail').length;
 
   return (
     <div className={`p-4 mx-auto pb-48 ${step === 3 ? 'print:p-0 bg-white max-w-4xl print:max-w-none print:w-full' : 'max-w-lg'}`}>
@@ -345,10 +367,7 @@ export default function AuditForm() {
            {/* Dodatkowy duży przycisk na końcu listy */}
            <div className="pt-10">
               <button 
-                onClick={() => {
-                  setStep(3);
-                  window.scrollTo(0,0);
-                }} 
+                onClick={handleGenerateReport}
                 className="w-full bg-slate-900 text-white py-5 rounded-3xl font-black shadow-2xl shadow-slate-200 hover:scale-[1.02] active:scale-95 transition-all text-lg"
               >
                 🏁 ZAKOŃCZ I GENERUJ RAPORT
