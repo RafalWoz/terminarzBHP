@@ -19,11 +19,11 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL("https://terminybhp.pl"),
   title: {
-    default: "TerminyBHP - serwis i blog BHP",
+    default: "TerminyBHP - pilnuj terminów BHP, zanim zrobi to kontrola",
     template: "%s | TerminyBHP",
   },
   description:
-    "Publiczny blog BHP, narzędzia i serwis do pilnowania terminów szkoleń, badań, uprawnień i audytów.",
+    "Darmowy, lokalny system pilnowania terminów BHP oraz publiczna baza wiedzy. Badania, szkolenia, uprawnienia i audyty w jednym widoku.",
 };
 
 export default function RootLayout({
