@@ -80,6 +80,7 @@ function AppRoutes() {
           <Route path="firms/:firmId/employees/:id" element={<EmployeeDetails />} />
           <Route path="firms/:firmId/employees/:id/edit" element={<EmployeeForm />} />
           <Route path="firms/:firmId/employees/:employeeId/records/new" element={<RecordForm />} />
+          <Route path="firms/:firmId/employees/:employeeId/records/:recordKind/:recordId/edit" element={<RecordForm />} />
           <Route path="firms/:id/audits" element={<Audits />} />
           <Route path="firms/:id/reports" element={<Reports />} />
           <Route path="firms/:firmId/audits/:id" element={<AuditForm />} />

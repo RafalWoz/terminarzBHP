@@ -11,6 +11,23 @@ import {
 import { getExpirationStatus, formatDaysMessage, getDaysUntilExpiration } from '../utils/expirations';
 import { Link } from 'react-router-dom';
 
+function isValidRecordDate(value) {
+  if (!value) return false;
+  const date = new Date(value);
+  return !Number.isNaN(date.getTime());
+}
+
+function formatRecordDate(value) {
+  if (!value) return 'Brak daty';
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? 'Nieprawidłowa data' : date.toLocaleDateString('pl-PL');
+}
+
+function getRecordTime(value) {
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? 0 : date.getTime();
+}
+
 export default function EmployeeDetailView({ employeeId, firmId, onDeleted }) {
   const employee = useEmployee(employeeId);
   const records = useLiveQuery(async () => {
@@ -30,9 +47,9 @@ export default function EmployeeDetailView({ employeeId, firmId, onDeleted }) {
   );
 
   const allRecords = [
-    ...(records?.trainings?.map(r => ({ ...r, kind: 'Szkolenie' })) || []),
-    ...(records?.medicals?.map(r => ({ ...r, kind: 'Badanie' })) || [])
-  ].sort((a, b) => new Date(b.date) - new Date(a.date));
+    ...(records?.trainings?.map(r => ({ ...r, kind: 'Szkolenie', table: 'trainings' })) || []),
+    ...(records?.medicals?.map(r => ({ ...r, kind: 'Badanie', table: 'medicals' })) || [])
+  ].sort((a, b) => getRecordTime(b.date) - getRecordTime(a.date));
 
   const handleDeleteRecord = async (kind, recordId) => {
     if (!window.confirm('Usunąć ten wpis z historii?')) return;
@@ -84,18 +101,28 @@ export default function EmployeeDetailView({ employeeId, firmId, onDeleted }) {
             </div>
             
             <div className="flex-1 bg-white p-4 rounded-xl border border-gray-100 shadow-sm hover:border-primary/20 transition-all">
-              <div className="flex justify-between items-start mb-2">
+              <div className="flex justify-between items-start mb-2 gap-3">
                 <div>
                   <div className="font-bold text-slate-800">{record.kind}: {record.type}</div>
-                  <div className="text-xs text-gray-400 font-medium uppercase tracking-wider">{new Date(record.date).toLocaleDateString('pl-PL')}</div>
+                  <div className="text-xs text-gray-400 font-medium uppercase tracking-wider">{formatRecordDate(record.date)}</div>
                 </div>
-                <button onClick={() => handleDeleteRecord(record.kind, record.id)} className="text-gray-300 hover:text-red-500 transition-colors">✕</button>
+                <div className="flex items-center gap-3">
+                  <Link
+                    to={`/firms/${firmId}/employees/${employeeId}/records/${record.table}/${record.id}/edit`}
+                    className="text-xs font-bold text-primary hover:text-blue-900 transition-colors"
+                  >
+                    Edytuj
+                  </Link>
+                  <button onClick={() => handleDeleteRecord(record.kind, record.id)} className="text-gray-300 hover:text-red-500 transition-colors">✕</button>
+                </div>
               </div>
 
               {record.expiresAt ? (
-                <div className="mt-3 pt-3 border-t border-gray-50 flex items-center justify-between">
-                  <div className="text-xs font-semibold text-gray-500">Ważne do: {new Date(record.expiresAt).toLocaleDateString('pl-PL')}</div>
-                  <StatusBadge status={getExpirationStatus(record.expiresAt)} days={getDaysUntilExpiration(record.expiresAt)} />
+                <div className="mt-3 pt-3 border-t border-gray-50 flex items-center justify-between gap-3">
+                  <div className="text-xs font-semibold text-gray-500">Ważne do: {formatRecordDate(record.expiresAt)}</div>
+                  {isValidRecordDate(record.expiresAt) && (
+                    <StatusBadge status={getExpirationStatus(record.expiresAt)} days={getDaysUntilExpiration(record.expiresAt)} />
+                  )}
                 </div>
               ) : (
                 <div className="mt-2 text-xs italic text-gray-300">Bezterminowo</div>
