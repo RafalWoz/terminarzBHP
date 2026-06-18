@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import Link from "next/link";
 import { getAllPosts, type BlogPost } from "@/lib/content";
 
@@ -43,7 +44,7 @@ function nextStepFor(post: BlogPost) {
   return "Następny krok → uporządkuj terminy w serwisie";
 }
 
-function Eyebrow({ children, dark = false }: { children: React.ReactNode; dark?: boolean }) {
+function Eyebrow({ children, dark = false }: { children: ReactNode; dark?: boolean }) {
   return (
     <span className={`inline-flex items-center gap-2 font-mono text-xs font-semibold uppercase tracking-[0.14em] ${dark ? "text-[#9FD8C2]" : "text-[var(--teal-700)]"}`}>
       <span className={`size-2 rounded-full ${dark ? "bg-[#46C28F]" : "bg-[#2E7D5B]"}`} />
