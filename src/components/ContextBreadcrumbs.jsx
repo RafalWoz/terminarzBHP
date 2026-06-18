@@ -107,7 +107,7 @@ export default function ContextBreadcrumbs({ variant = 'desktop' }) {
 
   if (variant === 'mobile') {
     return (
-      <nav className="lg:hidden sticky top-16 z-20 bg-white/95 backdrop-blur border-b border-gray-100 px-4 py-2 overflow-x-auto print:hidden" aria-label="Ścieżka nawigacji">
+      <nav className="lg:hidden sticky top-0 z-20 bg-white/95 backdrop-blur border-b border-gray-100 px-4 py-2 overflow-x-auto print:hidden" aria-label="Ścieżka nawigacji">
         <ol className="flex items-center gap-2 text-xs whitespace-nowrap text-gray-500">
           {crumbs.map((crumb, index) => (
             <li key={`${crumb.label}-${index}`} className="flex items-center gap-2">
