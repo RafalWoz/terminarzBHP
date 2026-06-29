@@ -1,0 +1,51 @@
+{
+  "slug": "karta-pomiarow-wzor-wymagane-pola",
+  "title": "Karta pomiarów czynników szkodliwych — wzór i wymagane pola",
+  "description": "Praktyczny wzór karty pomiarów czynników szkodliwych i lista wymaganych pól. Co sprawdzić przed kontrolą, jak dokumentować wyniki i terminy przechowywania.",
+  "category": "Dokumentacja",
+  "date": "2026-06-29",
+  "readingTime": "3 min",
+  "status": "publish",
+  "type": "satellite",
+  "focusKeyword": "karta pomiarów czynników szkodliwych — wzór i wymagane pola",
+  "parentSlug": "odpowiedzialnosc-za-naruszenie-przepisow-bhp",
+  "internalLinks": [
+    {
+      "slug": "odpowiedzialnosc-za-naruszenie-przepisow-bhp",
+      "anchor": "karty pomiarów i wyniki badań;"
+    }
+  ],
+  "content": [
+    "Karta pomiarów czynników szkodliwych to dokument, który powinien zawierać dane identyfikujące miejsce i wynik pomiaru oraz informacje o metodzie i wykonawcy.",
+    "Rozporządzenie Ministra Zdrowia z 2 lutego 2011 r. nakłada obowiązek wykonywania badań i przechowywania ich wyników, jednak nie wskazuje jednego, obowiązkowego formularza karty.",
+    "Co prawo naprawdę wymaga Formalnie trzeba przeprowadzać badania i pomiary czynników szkodliwych oraz przechowywać wyniki i karty pomiarów, zgodnie z rozporządzeniem Ministra Zdrowia (z 2 lutego 2011 r.).",
+    "Badania wykonują laboratoria posiadające akredytację w tym zakresie, o ile takie laboratoria są dostępne.",
+    "Metody pomiarów określają Polskie Normy.",
+    "Różnica między obowiązkiem prawnym a praktyką dokumentacji Prawo wskazuje konieczność przeprowadzenia pomiarów i przechowywania wyników, ale nie narzuca jednego wzoru karty.",
+    "W praktyce kontrolerzy (np.",
+    "SANEPID) oczekują jednak czytelnej dokumentacji: kto i kiedy mierzył, jaką metodą, jakie były wyniki i jak porównują się do wartości odniesienia (np.",
+    "NDS/NDN).",
+    "Brak tych elementów utrudnia ocenę ryzyka i może skutkować koniecznością powtórzenia badań.",
+    "Jakie pola powinna zawierać karta (dobra praktyka) Poniższa lista to praktyczny wzór pól, które warto umieścić na karcie pomiarów czynników szkodliwych — wzór i wymagane pola stosuj jako checklistę przy zlecaniu i archiwizacji pomiarów: identyfikacja zakładu i numer rejestru pomiarów, lokalizacja pomiaru (stanowisko, pomieszczenie, punkt pomiarowy), data i godzina wykonania pomiaru, nazwa i charakter czynnika (np. pył respirabilny, benzen), wynik pomiaru z jednostką, wartości odniesienia (NDS/NDC/NDN lub inne stosowne), metoda badawcza / norma (odwołanie do PN lub metodyki), laboratorium wykonujące pomiar i informacja o akredytacji, osoba/osoby wykonujące pomiar (imię, stanowisko, podpis), uwagi i zalecenia (np. konieczność działań naprawczych), data możliwości rewizji/ważność pomiaru.",
+    "Najczęstsze błędy firm brak informacji o metodzie pomiaru i odwołaniu do normy — kontroler nie może ocenić wiarygodności wyniku, pominięcie danych o laboratorium lub braku akredytacji, nieokreślenie dokładnego miejsca pomiaru (np. tylko „hala A” zamiast stanowiska), brak porównania wyniku z wartościami odniesienia, nieuporządkowane przechowywanie kart, co utrudnia udostępnienie dokumentów przy kontroli.",
+    "Co sprawdzić w firmie i jakie kroki podjąć Sprawdź, czy każda karta zawiera informacje z powyższej listy.",
+    "Zweryfikuj akredytację laboratorium przed zleceniem badań.",
+    "Uporządkuj karty w rejestrze cyfrowym lub papierowym z datami i numerami wpisów.",
+    "Aktualizuj ocenę ryzyka na podstawie wyników pomiarów.",
+    "Praktyczna procedura — szybka checklista Określ potrzeby pomiarowe na podstawie oceny ryzyka.",
+    "Zleć pomiary laboratorium z odpowiednią akredytacją.",
+    "Przed badaniem ustal punkty pomiarowe i metodę (wpisać na zleceniu).",
+    "Po otrzymaniu wyników wypełnij kartę zgodnie z listą pól.",
+    "Porównaj wyniki z wartościami odniesienia i zanotuj zalecenia.",
+    "Wprowadź wyniki do rejestru i przechowuj zgodnie z wymaganiami.",
+    "Aktualizuj ocenę ryzyka i działania ochronne w zakładzie.",
+    "FAQ Czy istnieje oficjalny, jedyny wzór karty pomiarów? Nie ma jednego obowiązkowego wzoru.",
+    "Rozporządzenie nakłada obowiązek prowadzenia pomiarów i dokumentacji, a wzór karty można dostosować do specyfiki zakładu.",
+    "Jak długo przechowywać karty pomiarów? W praktyce wyniki pomiarów przechowuje się przez 3 lata od daty ostatniego wpisu, a w przypadku likwidacji zakładu rejestry i karty należy przekazać właściwemu państwowemu inspektorowi sanitarnemu i przechowywać dalej przez okres wskazany w praktyce (informacje urzędowe wskazują na konieczność dłuższego archiwum).",
+    "Czy pomiary musi wykonać laboratorium akredytowane? Tak: badania i pomiary wykonują laboratoria, które uzyskały akredytację do badań w tym zakresie, o ile są dostępne.",
+    "Zobacz też: odpowiedzialność za naruszenie przepisów BHP — gdy dokumentacja pomiarów jest niekompletna, rośnie ryzyko konsekwencji prawnych.",
+    "Podstawa prawna Rozporządzenie Ministra Zdrowia z dnia 2 lutego 2011 r. w sprawie badań i pomiarów czynników szkodliwych dla zdrowia w środowisku pracy (Dz.U. 2011 Nr 33, poz. 166 z późn. zm.).",
+    "Ustawa z dnia 30 sierpnia 2002 r. o systemie oceny zgodności (dot. akredytacji laboratoriów)."
+  ],
+  "contentHtml": "<p>Karta pomiarów czynników szkodliwych to dokument, który powinien zawierać dane identyfikujące miejsce i wynik pomiaru oraz informacje o metodzie i wykonawcy. Rozporządzenie Ministra Zdrowia z 2 lutego 2011 r. nakłada obowiązek wykonywania badań i przechowywania ich wyników, jednak nie wskazuje jednego, obowiązkowego formularza karty.</p>\n\n<h2>Co prawo naprawdę wymaga</h2>\n<p>Formalnie trzeba przeprowadzać badania i pomiary czynników szkodliwych oraz przechowywać wyniki i karty pomiarów, zgodnie z rozporządzeniem Ministra Zdrowia (z 2 lutego 2011 r.). Badania wykonują laboratoria posiadające akredytację w tym zakresie, o ile takie laboratoria są dostępne. Metody pomiarów określają Polskie Normy.</p>\n\n<h2>Różnica między obowiązkiem prawnym a praktyką dokumentacji</h2>\n<p>Prawo wskazuje konieczność przeprowadzenia pomiarów i przechowywania wyników, ale nie narzuca jednego wzoru karty. W praktyce kontrolerzy (np. SANEPID) oczekują jednak czytelnej dokumentacji: kto i kiedy mierzył, jaką metodą, jakie były wyniki i jak porównują się do wartości odniesienia (np. NDS/NDN). Brak tych elementów utrudnia ocenę ryzyka i może skutkować koniecznością powtórzenia badań.</p>\n\n<h2>Jakie pola powinna zawierać karta (dobra praktyka)</h2>\n<p>Poniższa lista to praktyczny wzór pól, które warto umieścić na karcie pomiarów czynników szkodliwych — wzór i wymagane pola stosuj jako checklistę przy zlecaniu i archiwizacji pomiarów:</p>\n<ul>\n  <li>identyfikacja zakładu i numer rejestru pomiarów,</li>\n  <li>lokalizacja pomiaru (stanowisko, pomieszczenie, punkt pomiarowy),</li>\n  <li>data i godzina wykonania pomiaru,</li>\n  <li>nazwa i charakter czynnika (np. pył respirabilny, benzen),</li>\n  <li>wynik pomiaru z jednostką,</li>\n  <li>wartości odniesienia (NDS/NDC/NDN lub inne stosowne),</li>\n  <li>metoda badawcza / norma (odwołanie do PN lub metodyki),</li>\n  <li>laboratorium wykonujące pomiar i informacja o akredytacji,</li>\n  <li>osoba/osoby wykonujące pomiar (imię, stanowisko, podpis),</li>\n  <li>uwagi i zalecenia (np. konieczność działań naprawczych),</li>\n  <li>data możliwości rewizji/ważność pomiaru.</li>\n</ul>\n\n<h2>Najczęstsze błędy firm</h2>\n<ul>\n  <li>brak informacji o metodzie pomiaru i odwołaniu do normy — kontroler nie może ocenić wiarygodności wyniku,</li>\n  <li>pominięcie danych o laboratorium lub braku akredytacji,</li>\n  <li>nieokreślenie dokładnego miejsca pomiaru (np. tylko „hala A” zamiast stanowiska),</li>\n  <li>brak porównania wyniku z wartościami odniesienia,</li>\n  <li>nieuporządkowane przechowywanie kart, co utrudnia udostępnienie dokumentów przy kontroli.</li>\n</ul>\n\n<h2>Co sprawdzić w firmie i jakie kroki podjąć</h2>\n<p>Sprawdź, czy każda karta zawiera informacje z powyższej listy. Zweryfikuj akredytację laboratorium przed zleceniem badań. Uporządkuj karty w rejestrze cyfrowym lub papierowym z datami i numerami wpisów. Aktualizuj ocenę ryzyka na podstawie wyników pomiarów.</p>\n\n<h3>Praktyczna procedura — szybka checklista</h3>\n<ol>\n  <li>Określ potrzeby pomiarowe na podstawie oceny ryzyka.</li>\n  <li>Zleć pomiary laboratorium z odpowiednią akredytacją.</li>\n  <li>Przed badaniem ustal punkty pomiarowe i metodę (wpisać na zleceniu).</li>\n  <li>Po otrzymaniu wyników wypełnij kartę zgodnie z listą pól.</li>\n  <li>Porównaj wyniki z wartościami odniesienia i zanotuj zalecenia.</li>\n  <li>Wprowadź wyniki do rejestru i przechowuj zgodnie z wymaganiami.</li>\n  <li>Aktualizuj ocenę ryzyka i działania ochronne w zakładzie.</li>\n</ol>\n\n<h2>FAQ</h2>\n<ul>\n  <li><strong>Czy istnieje oficjalny, jedyny wzór karty pomiarów?</strong><br/>Nie ma jednego obowiązkowego wzoru. Rozporządzenie nakłada obowiązek prowadzenia pomiarów i dokumentacji, a wzór karty można dostosować do specyfiki zakładu.</li>\n  <li><strong>Jak długo przechowywać karty pomiarów?</strong><br/>W praktyce wyniki pomiarów przechowuje się przez 3 lata od daty ostatniego wpisu, a w przypadku likwidacji zakładu rejestry i karty należy przekazać właściwemu państwowemu inspektorowi sanitarnemu i przechowywać dalej przez okres wskazany w praktyce (informacje urzędowe wskazują na konieczność dłuższego archiwum).</li>\n  <li><strong>Czy pomiary musi wykonać laboratorium akredytowane?</strong><br/>Tak: badania i pomiary wykonują laboratoria, które uzyskały akredytację do badań w tym zakresie, o ile są dostępne.</li>\n</ul>\n\n<p>Zobacz też: <a href=\"/blog/odpowiedzialnosc-za-naruszenie-przepisow-bhp\">odpowiedzialność za naruszenie przepisów BHP</a> — gdy dokumentacja pomiarów jest niekompletna, rośnie ryzyko konsekwencji prawnych.</p>\n\n<h2>Podstawa prawna</h2>\n<ul>\n  <li>Rozporządzenie Ministra Zdrowia z dnia 2 lutego 2011 r. w sprawie badań i pomiarów czynników szkodliwych dla zdrowia w środowisku pracy (Dz.U. 2011 Nr 33, poz. 166 z późn. zm.).</li>\n  <li>Ustawa z dnia 30 sierpnia 2002 r. o systemie oceny zgodności (dot. akredytacji laboratoriów).</li>\n</ul>"
+}
