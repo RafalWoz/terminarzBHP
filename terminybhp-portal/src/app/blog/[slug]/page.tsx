@@ -14,9 +14,17 @@ export function generateStaticParams() {
   return getAllPostSlugs().map((slug) => ({ slug }));
 }
 
+function escapeHtmlAttribute(value: string) {
+  return value.replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+
+function isSafeArticleHref(href: string) {
+  return /^https?:\/\//i.test(href) || /^\/(?!\/)/.test(href) || /^#[A-Za-z0-9_-]/.test(href);
+}
+
 function sanitizeArticleHtml(html: string) {
   return html
-    .replace(/<!--([\s\S]*?)-->/g, "")
+    .replace(/<!--[\s\S]*?-->/g, "")
     .replace(/<(script|style|iframe|object|embed|form)\b[^>]*>[\s\S]*?<\/\1>/gi, "")
     .replace(/<(script|style|iframe|object|embed|form)\b[^>]*\/?\s*>/gi, "")
     .replace(/<\/?([a-z][a-z0-9]*)\b([^>]*)>/gi, (tag, rawName: string, rawAttributes: string) => {
@@ -27,9 +35,12 @@ function sanitizeArticleHtml(html: string) {
       if (name !== "a") return `<${name}>`;
       const hrefMatch = rawAttributes.match(/\bhref\s*=\s*(?:"([^"]*)"|'([^']*)')/i);
       const href = (hrefMatch?.[1] || hrefMatch?.[2] || "").trim();
-      if (!/^https?:\/\//i.test(href)) return "";
-      const safeHref = href.replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-      return `<a href="${safeHref}" target="_blank" rel="noopener noreferrer">`;
+      if (!isSafeArticleHref(href)) return "";
+      const safeHref = escapeHtmlAttribute(href);
+      if (/^https?:\/\//i.test(href)) {
+        return `<a href="${safeHref}" target="_blank" rel="noopener noreferrer">`;
+      }
+      return `<a href="${safeHref}">`;
     });
 }
 
