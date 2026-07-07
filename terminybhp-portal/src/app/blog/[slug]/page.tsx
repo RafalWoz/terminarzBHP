@@ -22,6 +22,23 @@ function isSafeArticleHref(href: string) {
   return /^https?:\/\//i.test(href) || /^\/(?!\/)/.test(href) || /^#[A-Za-z0-9_-]/.test(href);
 }
 
+function canonicalizeArticleHref(href: string) {
+  if (!href.startsWith("/") || href.startsWith("//")) return href;
+
+  const hashIndex = href.indexOf("#");
+  const hrefWithoutHash = hashIndex >= 0 ? href.slice(0, hashIndex) : href;
+  const hash = hashIndex >= 0 ? href.slice(hashIndex) : "";
+  const queryIndex = hrefWithoutHash.indexOf("?");
+  const pathname = queryIndex >= 0 ? hrefWithoutHash.slice(0, queryIndex) : hrefWithoutHash;
+  const query = queryIndex >= 0 ? hrefWithoutHash.slice(queryIndex) : "";
+
+  if (pathname === "/" || pathname.endsWith("/") || /\.[A-Za-z0-9]{2,8}$/.test(pathname)) {
+    return href;
+  }
+
+  return `${pathname}/${query}${hash}`;
+}
+
 function sanitizeArticleHtml(html: string) {
   return html
     .replace(/<!--[\s\S]*?-->/g, "")
@@ -36,7 +53,8 @@ function sanitizeArticleHtml(html: string) {
       const hrefMatch = rawAttributes.match(/\bhref\s*=\s*(?:"([^"]*)"|'([^']*)')/i);
       const href = (hrefMatch?.[1] || hrefMatch?.[2] || "").trim();
       if (!isSafeArticleHref(href)) return "";
-      const safeHref = escapeHtmlAttribute(href);
+      const canonicalHref = canonicalizeArticleHref(href);
+      const safeHref = escapeHtmlAttribute(canonicalHref);
       if (/^https?:\/\//i.test(href)) {
         return `<a href="${safeHref}" target="_blank" rel="noopener noreferrer">`;
       }
@@ -106,14 +124,14 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
       <div className="mx-auto grid max-w-[1160px] gap-8 px-5 py-12 sm:px-6 lg:grid-cols-[1fr_340px] lg:items-start lg:py-16">
         <article>
           <nav aria-label="Okruszki" className="text-sm font-semibold text-[var(--slate-700)]">
-            <Link href="/" className="hover:text-[var(--teal-700)]">Strona główna</Link><span aria-hidden="true"> / </span><Link href="/blog" className="hover:text-[var(--teal-700)]">Blog</Link>
+            <Link href="/" className="hover:text-[var(--teal-700)]">Strona główna</Link><span aria-hidden="true"> / </span><Link href="/blog/" className="hover:text-[var(--teal-700)]">Blog</Link>
           </nav>
           <div className="mt-8 inline-flex rounded-full bg-[var(--green-50)] px-3 py-1.5 text-xs font-extrabold text-[var(--teal-700)]">{post.category} · {post.readingTime} · {publishedDate}</div>
           <h1 className="mt-5 max-w-4xl text-5xl font-black leading-[0.98] tracking-[-0.055em] text-[var(--navy-950)] sm:text-6xl">{post.title}</h1>
           <p className="mt-6 max-w-3xl text-xl leading-8 text-[var(--slate-700)]">{post.description}</p>
           <p className="mt-4 text-sm font-semibold text-[var(--slate-700)]">Autor: {editorialAuthor} · Publikacja: {publishedDate} · Aktualizacja: {modifiedDate}</p>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-            <Link href="/templates" className="inline-flex justify-center rounded-[14px] bg-[var(--teal-600)] px-5 py-3 text-sm font-extrabold text-white hover:bg-[var(--teal-700)]">Sprawdź szablony</Link>
+            <Link href="/templates/" className="inline-flex justify-center rounded-[14px] bg-[var(--teal-600)] px-5 py-3 text-sm font-extrabold text-white hover:bg-[var(--teal-700)]">Sprawdź szablony</Link>
             <Link href="/serwis/" className="inline-flex justify-center rounded-[14px] border border-[var(--slate-200)] bg-white px-5 py-3 text-sm font-extrabold text-[var(--navy-900)] hover:border-[var(--slate-500)]">Zobacz terminy w serwisie</Link>
           </div>
           {post.coverImage ? <figure className="mt-8 max-w-4xl overflow-hidden rounded-[24px] border border-[var(--slate-200)] bg-white shadow-[0_8px_24px_rgba(7,24,38,0.05)]"><img src={post.coverImage} alt={post.imageAlt || post.title} title={post.imageTitle} width="1200" height="675" fetchPriority="high" decoding="async" className="aspect-[16/9] w-full object-cover" /></figure> : null}

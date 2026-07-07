@@ -5,9 +5,9 @@ import Link from "next/link";
 
 const navItems = [
   { href: "/#serwis", label: "Serwis" },
-  { href: "/blog", label: "Blog" },
-  { href: "/tools", label: "Narzędzia" },
-  { href: "/templates", label: "Szablony" },
+  { href: "/blog/", label: "Blog" },
+  { href: "/tools/", label: "Narzędzia" },
+  { href: "/templates/", label: "Szablony" },
 ];
 
 export function SiteHeader() {

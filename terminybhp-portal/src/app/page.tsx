@@ -1,6 +1,10 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
 
+export const metadata = {
+  alternates: { canonical: "https://terminybhp.pl/" },
+};
+
 const statusRows = [
   { tone: "late", title: "Badania okresowe", person: "Kowalski J. · Firma ALFA", status: "Po terminie", days: "−12 dni" },
   { tone: "soon", title: "Szkolenie okresowe BHP", person: "Nowak A. · Firma BETA", status: "Wkrótce", days: "za 9 dni" },
@@ -130,7 +134,7 @@ export default function Home() {
               <a href="/serwis/" className="inline-flex justify-center rounded-[14px] bg-[var(--teal-600)] px-5 py-3 text-sm font-extrabold text-white shadow-[0_10px_24px_rgba(14,145,139,0.2)] hover:bg-[var(--teal-700)]">
                 Otwórz serwis →
               </a>
-              <Link href="/blog" className="inline-flex justify-center rounded-[14px] border border-[var(--slate-200)] bg-white px-5 py-3 text-sm font-extrabold text-[var(--navy-900)] hover:border-[var(--slate-500)]">
+              <Link href="/blog/" className="inline-flex justify-center rounded-[14px] border border-[var(--slate-200)] bg-white px-5 py-3 text-sm font-extrabold text-[var(--navy-900)] hover:border-[var(--slate-500)]">
                 Czytaj blog BHP
               </Link>
             </div>
