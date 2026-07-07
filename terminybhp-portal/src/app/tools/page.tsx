@@ -3,6 +3,7 @@ import { tools } from "@/lib/content";
 export const metadata = {
   title: "Narzędzia BHP",
   description: "Planowane narzędzia i kalkulatory BHP w portalu TerminyBHP.",
+  alternates: { canonical: "https://terminybhp.pl/tools/" },
 };
 
 export default function ToolsPage() {
