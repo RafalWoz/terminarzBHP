@@ -18,16 +18,16 @@ export function SiteFooter() {
           <Link href="/#serwis" className="hover:text-white">
             Serwis
           </Link>
-          <Link href="/blog" className="hover:text-white">
+          <Link href="/blog/" className="hover:text-white">
             Blog
           </Link>
-          <Link href="/tools" className="hover:text-white">
+          <Link href="/tools/" className="hover:text-white">
             Narzędzia
           </Link>
-          <Link href="/templates" className="hover:text-white">
+          <Link href="/templates/" className="hover:text-white">
             Szablony
           </Link>
-          <Link href="/polityka-prywatnosci" className="hover:text-white">
+          <Link href="/polityka-prywatnosci/" className="hover:text-white">
             Polityka prywatności
           </Link>
           <AnalyticsConsentLink />
