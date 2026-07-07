@@ -5,6 +5,7 @@ import { getAllPosts, type BlogPost } from "@/lib/content";
 export const metadata = {
   title: "Blog BHP - instrukcje bez żargonu, od pytania do kroku",
   description: "Blog TerminyBHP: praktyczne instrukcje BHP bez żargonu. Szkolenia, badania, dokumentacja, ocena ryzyka, audyty i organizacja terminów.",
+  alternates: { canonical: "https://terminybhp.pl/blog/" },
 };
 
 const topicChips = ["Wszystko", "Szkolenia", "Badania", "Dokumentacja", "Ocena ryzyka", "Audyty", "Organizacja terminów"];
@@ -44,6 +45,10 @@ function nextStepFor(post: BlogPost) {
   return "Następny krok → uporządkuj terminy w serwisie";
 }
 
+function postUrl(slug: string) {
+  return `/blog/${slug}/`;
+}
+
 function Eyebrow({ children, dark = false }: { children: ReactNode; dark?: boolean }) {
   return (
     <span className={`inline-flex items-center gap-2 font-mono text-xs font-semibold uppercase tracking-[0.14em] ${dark ? "text-[#9FD8C2]" : "text-[var(--teal-700)]"}`}>
@@ -71,7 +76,7 @@ export default function BlogPage() {
               Trafiłeś tu z konkretnym pytaniem: kiedy zrobić szkolenie, czy badania są jeszcze ważne, co wpisać do dokumentacji. Każdy wpis prowadzi Cię do odpowiedzi i pokazuje, co zrobić dalej.
             </p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-              <Link href={featuredPost ? `/blog/${featuredPost.slug}` : "#wpisy"} className="inline-flex justify-center rounded-[14px] bg-[var(--teal-600)] px-5 py-3 text-sm font-extrabold text-white shadow-[0_10px_24px_rgba(14,145,139,0.22)] hover:bg-[var(--teal-700)]">
+              <Link href={featuredPost ? postUrl(featuredPost.slug) : "#wpisy"} className="inline-flex justify-center rounded-[14px] bg-[var(--teal-600)] px-5 py-3 text-sm font-extrabold text-white shadow-[0_10px_24px_rgba(14,145,139,0.22)] hover:bg-[var(--teal-700)]">
                 Czytaj najnowszy wpis →
               </Link>
               <a href="/serwis/" className="inline-flex justify-center rounded-[14px] border border-[var(--slate-200)] bg-white px-5 py-3 text-sm font-extrabold text-[var(--navy-900)] hover:border-[var(--slate-500)]">
@@ -123,7 +128,7 @@ export default function BlogPage() {
               <h3 className="mt-4 text-3xl font-black leading-tight tracking-[-0.04em] text-[var(--navy-950)] sm:text-4xl">{featuredPost.title}</h3>
               <p className="mt-4 max-w-2xl text-base leading-7 text-[var(--slate-700)]">{featuredPost.description}</p>
               <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center">
-                <Link href={`/blog/${featuredPost.slug}`} className="inline-flex font-bold text-[var(--teal-700)] hover:text-[var(--navy-950)]">
+                <Link href={postUrl(featuredPost.slug)} className="inline-flex font-bold text-[var(--teal-700)] hover:text-[var(--navy-950)]">
                   Czytaj instrukcję →
                 </Link>
                 <span className="inline-flex self-start rounded-[12px] bg-[#E4F0E8] px-3 py-2 font-mono text-xs font-bold text-[var(--teal-700)]">
@@ -151,7 +156,7 @@ export default function BlogPage() {
               <p className="mt-3 flex-1 text-sm leading-6 text-[var(--slate-700)]">{post.description}</p>
               <div className="mt-5 flex flex-col gap-3">
                 <span className="inline-flex self-start rounded-[12px] bg-[#E4F0E8] px-3 py-2 font-mono text-xs font-bold text-[var(--teal-700)]">{nextStepFor(post)}</span>
-                <Link href={`/blog/${post.slug}`} className="inline-flex font-bold text-[var(--teal-700)] hover:text-[var(--navy-950)]">
+                <Link href={postUrl(post.slug)} className="inline-flex font-bold text-[var(--teal-700)] hover:text-[var(--navy-950)]">
                   Czytaj instrukcję →
                 </Link>
               </div>
