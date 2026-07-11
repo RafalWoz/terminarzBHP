@@ -1,0 +1,48 @@
+{
+  "slug": "wzor-karty-oceny-ryzyka-zawodowego",
+  "title": "Wzór karty oceny ryzyka zawodowego — co musi zawierać",
+  "description": "Gotowy wzór karty oceny ryzyka zawodowego: sprawdź, jakie elementy muszą znaleźć się w karcie według wytycznych PIP i jak poprawnie dokumentować ocenę.",
+  "category": "Dokumentacja",
+  "date": "2026-07-11",
+  "readingTime": "3 min",
+  "status": "publish",
+  "type": "satellite",
+  "focusKeyword": "wzór karty oceny ryzyka zawodowego",
+  "parentSlug": "dokumentowanie-oceny-ryzyka-zawodowego",
+  "internalLinks": [
+    {
+      "slug": "dokumentowanie-oceny-ryzyka-zawodowego",
+      "anchor": "Przykładowy wzór i karta oceny ryzyka zawodowego"
+    }
+  ],
+  "content": [
+    "Nie ma jednego obowiązkowego, ogólnokrajowego wzoru karty oceny ryzyka zawodowego, ale dokumentacja musi zawierać elementy wymienione w przepisach.",
+    "Zgodnie z art. 226 Kodeksu pracy oraz § 39 i § 39a ust. 3 rozporządzenia w sprawie ogólnych przepisów BHP, karta powinna opisywać stanowisko, wyniki oceny, środki profilaktyczne, datę i osoby dokonujące oceny.",
+    "Najczęstszy błąd: pusty formularz zamiast kompletnej karty Firmy często korzystają z uniwersalnych wzorów, które wyglądają estetycznie, ale pomijają wymagane informacje.",
+    "Brak szczegółowego opisu stanowiska, niewskazanie stosowanych maszyn lub brak daty i nazwisk osób przeprowadzających ocenę powoduje, że dokumentacja nie spełnia wymogów § 39a ust. 3.",
+    "Co to oznacza w praktyce dla HR i osób prowadzących BHP Każdy używany wzór karty sprawdź pod kątem elementów wymienionych w przepisach: opis stanowiska, wykaz maszyn i materiałów, wykaz czynników niebezpiecznych, wynik oceny ryzyka, proponowane środki profilaktyczne, data i osoby dokonujące oceny.",
+    "Jeśli szablon nie ma pola na nazwisko osoby dokonującej oceny i datę, uznaj go za niekompletny i dostosuj przed użyciem.",
+    "Pamiętaj, że forma punktacji (opisowa czy punktowa) nie jest narzucona przez badane przepisy, natomiast wyniki oceny i środki profilaktyczne muszą być jasne i odtworzalne.",
+    "Jak poprawić używany wzór karty Wprowadź minimalne pola wymagane przepisami oraz dodatkowe elementy ułatwiające późniejsze aktualizacje.",
+    "Przydatne pola to: wersja karty, data ostatniej aktualizacji, osoba odpowiedzialna, krótkie pole na uzasadnienie proponowanych środków ochrony.",
+    "Elementy karty, które muszą się znaleźć (na podstawie § 39a ust. 3) opis ocenianego stanowiska: zadania, maszyny, narzędzia, materiały; występujące czynniki niebezpieczne, szkodliwe i uciążliwe; stosowane środki ochrony zbiorowej i indywidualnej; wyniki przeprowadzonej oceny ryzyka oraz proponowane środki profilaktyczne; data przeprowadzenia oceny i osoby dokonujące oceny.",
+    "Procedura szybkiej weryfikacji wzoru karty (checklista) Otwórz aktualnie używany wzór karty.",
+    "Sprawdź, czy są pola na wszystkie elementy wymienione w § 39a ust. 3.",
+    "Zaznacz brakujące.",
+    "Jeżeli brak pól na datę, nazwisko i wersję, dodaj je natychmiast.",
+    "Ustal osobę odpowiedzialną za wypełnianie i archiwizację kart (HR lub BHP).",
+    "Wprowadź prostą politykę aktualizacji: przegląd po zmianie organizacji pracy, wyposażenia lub używanych substancji (zgodnie z wymaganiami oceny ryzyka).",
+    "Przechowuj karty w miejscu dostępnym dla uprawnionych osób i prowadź rejestr wersji (papierowo lub elektronicznie).",
+    "FAQ Czy jest oficjalny, państwowy wzór karty oceny ryzyka zawodowego? Nie ma jednego, obowiązkowego wzoru zatwierdzonego ustawowo.",
+    "Przepisy wymagają jednak określonych elementów dokumentacji (patrz § 39a ust. 3).",
+    "Można korzystać z gotowych narzędzi, np. systemów rekomendowanych przez PIP.",
+    "Czy karta musi zawierać ocenę punktową (liczbową)? Prawo nie narzuca sztywnego sposobu punktacji.",
+    "Można stosować metody punktowe lub opisowe.",
+    "Jeśli używacie punktacji, dokumentujcie sposób liczenia i progi interpretacyjne (PN-N-18002 może służyć jako odniesienie).",
+    "Kto powinien podpisywać kartę? Najważniejsze jest wskazanie osoby lub osób, które przeprowadziły ocenę, oraz daty.",
+    "Podpis potwierdza odpowiedzialność wewnętrzną firmy; szczegóły procedury podpisów ustalcie w wewnętrznej polityce BHP.",
+    "Zobacz też dokumentowanie oceny ryzyka zawodowego: praktyczny poradnik — przewodnik, który rozwija metodykę i przykładowe szablony.",
+    "Podstawa prawna Źródła użyte w tekście: art. 226 Kodeksu pracy oraz § 39 i § 39a ust. 3 rozporządzenia w sprawie ogólnych przepisów BHP; wskazania praktyczne dostępne na stronach Państwowej Inspekcji Pracy oraz norma PN-N-18002:2011."
+  ],
+  "contentHtml": "<p>Nie ma jednego obowiązkowego, ogólnokrajowego wzoru karty oceny ryzyka zawodowego, ale dokumentacja musi zawierać elementy wymienione w przepisach. Zgodnie z art. 226 Kodeksu pracy oraz § 39 i § 39a ust. 3 rozporządzenia w sprawie ogólnych przepisów BHP, karta powinna opisywać stanowisko, wyniki oceny, środki profilaktyczne, datę i osoby dokonujące oceny.</p>\n\n<h2>Najczęstszy błąd: pusty formularz zamiast kompletnej karty</h2>\n<p>Firmy często korzystają z uniwersalnych wzorów, które wyglądają estetycznie, ale pomijają wymagane informacje. Brak szczegółowego opisu stanowiska, niewskazanie stosowanych maszyn lub brak daty i nazwisk osób przeprowadzających ocenę powoduje, że dokumentacja nie spełnia wymogów § 39a ust. 3.</p>\n\n<h2>Co to oznacza w praktyce dla HR i osób prowadzących BHP</h2>\n<ul>\n  <li>Każdy używany wzór karty sprawdź pod kątem elementów wymienionych w przepisach: opis stanowiska, wykaz maszyn i materiałów, wykaz czynników niebezpiecznych, wynik oceny ryzyka, proponowane środki profilaktyczne, data i osoby dokonujące oceny.</li>\n  <li>Jeśli szablon nie ma pola na nazwisko osoby dokonującej oceny i datę, uznaj go za niekompletny i dostosuj przed użyciem.</li>\n  <li>Pamiętaj, że forma punktacji (opisowa czy punktowa) nie jest narzucona przez badane przepisy, natomiast wyniki oceny i środki profilaktyczne muszą być jasne i odtworzalne.</li>\n</ul>\n\n<h2>Jak poprawić używany wzór karty</h2>\n<p>Wprowadź minimalne pola wymagane przepisami oraz dodatkowe elementy ułatwiające późniejsze aktualizacje. Przydatne pola to: wersja karty, data ostatniej aktualizacji, osoba odpowiedzialna, krótkie pole na uzasadnienie proponowanych środków ochrony.</p>\n\n<h3>Elementy karty, które muszą się znaleźć (na podstawie § 39a ust. 3)</h3>\n<ul>\n  <li>opis ocenianego stanowiska: zadania, maszyny, narzędzia, materiały;</li>\n  <li>występujące czynniki niebezpieczne, szkodliwe i uciążliwe;</li>\n  <li>stosowane środki ochrony zbiorowej i indywidualnej;</li>\n  <li>wyniki przeprowadzonej oceny ryzyka oraz proponowane środki profilaktyczne;</li>\n  <li>data przeprowadzenia oceny i osoby dokonujące oceny.</li>\n</ul>\n\n<h2>Procedura szybkiej weryfikacji wzoru karty (checklista)</h2>\n<ol>\n  <li>Otwórz aktualnie używany wzór karty.</li>\n  <li>Sprawdź, czy są pola na wszystkie elementy wymienione w § 39a ust. 3. Zaznacz brakujące.</li>\n  <li>Jeżeli brak pól na datę, nazwisko i wersję, dodaj je natychmiast.</li>\n  <li>Ustal osobę odpowiedzialną za wypełnianie i archiwizację kart (HR lub BHP).</li>\n  <li>Wprowadź prostą politykę aktualizacji: przegląd po zmianie organizacji pracy, wyposażenia lub używanych substancji (zgodnie z wymaganiami oceny ryzyka).</li>\n  <li>Przechowuj karty w miejscu dostępnym dla uprawnionych osób i prowadź rejestr wersji (papierowo lub elektronicznie).</li>\n</ol>\n\n<h2>FAQ</h2>\n<h3>Czy jest oficjalny, państwowy wzór karty oceny ryzyka zawodowego?</h3>\n<p>Nie ma jednego, obowiązkowego wzoru zatwierdzonego ustawowo. Przepisy wymagają jednak określonych elementów dokumentacji (patrz § 39a ust. 3). Można korzystać z gotowych narzędzi, np. systemów rekomendowanych przez PIP.</p>\n\n<h3>Czy karta musi zawierać ocenę punktową (liczbową)?</h3>\n<p>Prawo nie narzuca sztywnego sposobu punktacji. Można stosować metody punktowe lub opisowe. Jeśli używacie punktacji, dokumentujcie sposób liczenia i progi interpretacyjne (PN-N-18002 może służyć jako odniesienie).</p>\n\n<h3>Kto powinien podpisywać kartę?</h3>\n<p>Najważniejsze jest wskazanie osoby lub osób, które przeprowadziły ocenę, oraz daty. Podpis potwierdza odpowiedzialność wewnętrzną firmy; szczegóły procedury podpisów ustalcie w wewnętrznej polityce BHP.</p>\n\n<h2>Zobacz też</h2>\n<p><a href=\"/blog/dokumentowanie-oceny-ryzyka-zawodowego\">dokumentowanie oceny ryzyka zawodowego: praktyczny poradnik</a> — przewodnik, który rozwija metodykę i przykładowe szablony.</p>\n\n<h2>Podstawa prawna</h2>\n<p>Źródła użyte w tekście: art. 226 Kodeksu pracy oraz § 39 i § 39a ust. 3 rozporządzenia w sprawie ogólnych przepisów BHP; wskazania praktyczne dostępne na stronach Państwowej Inspekcji Pracy oraz norma PN-N-18002:2011.</p>"
+}
