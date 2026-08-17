@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getAllPostSlugs, getPost } from "@/lib/content";
+import { getAffiliateRecommendation, isAffiliateHref } from "@/lib/affiliateLinks";
 
 type BlogPostPageProps = { params: Promise<{ slug: string }> };
 
@@ -56,7 +57,8 @@ function sanitizeArticleHtml(html: string) {
       const canonicalHref = canonicalizeArticleHref(href);
       const safeHref = escapeHtmlAttribute(canonicalHref);
       if (/^https?:\/\//i.test(href)) {
-        return `<a href="${safeHref}" target="_blank" rel="noopener noreferrer">`;
+        const rel = isAffiliateHref(href) ? "sponsored nofollow noopener noreferrer" : "noopener noreferrer";
+        return `<a href="${safeHref}" target="_blank" rel="${rel}">`;
       }
       return `<a href="${safeHref}">`;
     });
@@ -67,6 +69,18 @@ function ArticleContent({ content, contentHtml }: { content: string[]; contentHt
     return <div className="article-content text-lg leading-8 text-[var(--slate-700)]" dangerouslySetInnerHTML={{ __html: sanitizeArticleHtml(contentHtml) }} />;
   }
   return <div className="article-content text-lg leading-8 text-[var(--slate-700)]">{content.map((paragraph, index) => <p key={index}>{paragraph}</p>)}</div>;
+}
+
+function AffiliateRecommendation({ slug }: { slug: string }) {
+  const affiliate = getAffiliateRecommendation(slug);
+  if (!affiliate) return null;
+
+  return <aside aria-label="Polecany materiał" className="mt-8 rounded-[24px] border border-[#bfe0d0] bg-[#F1F8F3] p-5 shadow-[0_8px_24px_rgba(7,24,38,0.04)] sm:p-6">
+    <p className="font-mono text-xs font-bold uppercase tracking-[0.08em] text-[var(--teal-700)]">Polecane po lekturze · link afiliacyjny</p>
+    <h2 className="mt-3 text-2xl font-black leading-tight tracking-[-0.03em] text-[var(--navy-950)]">{affiliate.title}</h2>
+    <p className="mt-3 text-base leading-7 text-[var(--slate-700)]">{affiliate.description}</p>
+    <a href={affiliate.href} target="_blank" rel="sponsored nofollow noopener noreferrer" className="mt-5 inline-flex rounded-[14px] bg-[var(--teal-600)] px-5 py-3 text-sm font-extrabold text-white hover:bg-[var(--teal-700)]">{affiliate.cta}</a>
+  </aside>;
 }
 
 export async function generateMetadata({ params }: BlogPostPageProps) {
@@ -143,7 +157,10 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
       </div>
     </section>
     <section className="mx-auto grid max-w-[1160px] gap-8 px-5 py-12 sm:px-6 lg:grid-cols-[minmax(0,1fr)_320px]">
-      <article className="rounded-[28px] border border-[var(--slate-200)] bg-white p-6 shadow-[0_8px_24px_rgba(7,24,38,0.05)] sm:p-9"><ArticleContent content={post.content} contentHtml={post.contentHtml} /></article>
+      <article className="rounded-[28px] border border-[var(--slate-200)] bg-white p-6 shadow-[0_8px_24px_rgba(7,24,38,0.05)] sm:p-9">
+        <ArticleContent content={post.content} contentHtml={post.contentHtml} />
+        <AffiliateRecommendation slug={post.slug} />
+      </article>
       <aside className="space-y-5">
         <div className="rounded-[20px] border border-[#f6d997] bg-[var(--amber-50)] p-5 text-[#77520b]"><p className="font-black">Kiedy to nie wystarczy?</p><p className="mt-2 text-sm leading-6">Jeśli sytuacja dotyczy wypadku, sporu, kontroli albo nietypowego stanowiska, potraktuj wpis jako punkt startu i sprawdź szczegóły w dokumentacji firmowej.</p></div>
         <div className="rounded-[24px] bg-[var(--navy-900)] p-6 text-white shadow-[var(--shadow-soft)]"><p className="font-black">Kolejny krok</p><p className="mt-2 text-sm leading-6 text-[#b9cad8]">Uporządkuj pracowników, daty i przypomnienia w jednym rejestrze, zanim termin stanie się problemem.</p><Link href="/serwis/" className="mt-5 inline-flex rounded-[14px] bg-[var(--teal-600)] px-4 py-2.5 text-sm font-extrabold text-white hover:bg-[var(--teal-700)]">Przejdź do serwisu</Link></div>
