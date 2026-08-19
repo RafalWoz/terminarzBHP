@@ -7,10 +7,10 @@ on:
     paths-ignore:
       - public/images/blog/**
 
-# Keep stale builds from overwriting a newer production release.
+# Let an active FTP deploy finish before the next deploy starts.
 concurrency:
   group: deploy-production
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   web-deploy:
