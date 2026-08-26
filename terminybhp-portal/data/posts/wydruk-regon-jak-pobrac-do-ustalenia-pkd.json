@@ -1,0 +1,52 @@
+{
+  "slug": "wydruk-regon-jak-pobrac-do-ustalenia-pkd",
+  "title": "Wydruk z rejestru REGON: jak uzyskać i co ma być na nim",
+  "description": "Zobacz, jak przygotować aktualny wydruk z REGON do potwierdzenia PKD. Co powinien zawierać, kiedy go odświeżyć i jak uniknąć braków przy kontroli.",
+  "category": "Dokumentacja",
+  "date": "2026-08-26",
+  "readingTime": "3 min",
+  "status": "publish",
+  "type": "satellite",
+  "focusKeyword": "aktualny wydruk z rejestru REGON",
+  "parentSlug": "jak-ustalic-kod-pkd-kategorie-ryzyka-skladka-wypadkowa",
+  "internalLinks": [
+    {
+      "slug": "jak-ustalic-kod-pkd-kategorie-ryzyka-skladka-wypadkowa",
+      "anchor": "Dokument: aktualny wydruk z rejestru REGON."
+    }
+  ],
+  "content": [
+    "Aktualny wydruk z rejestru REGON przydaje się, gdy musisz udokumentować przeważający kod PKD, na przykład do wyliczenia kategorii ryzyka i składki wypadkowej.",
+    "Rejestr REGON jest jawny, więc możesz samodzielnie przygotować wydruk z wyszukiwarki GUS.",
+    "Nie ma urzędowego wzoru „wydruku”, ale są dane, które rejestr udostępnia i które powinny być na wydruku widoczne.",
+    "Czy istnieje urzędowy wzór Nie ma urzędowego wzoru „wydruku” z REGON.",
+    "GUS udostępnia publiczną wyszukiwarkę, z której możesz odczytać informacje o podmiocie i je wydrukować.",
+    "Istnieje też urzędowy wyciąg z rejestru dla osób trzecich, realizowany na pisemne zamówienie i odpłatny.",
+    "Natomiast organy administracji publicznej otrzymują wyciągi nieodpłatnie w ramach swoich zadań.",
+    "Pola wymagane przepisem w rejestrze REGON REGON gromadzi i udostępnia m.in. następujące informacje o podmiotach: numer REGON, nazwa podmiotu, adres siedziby, NIP, forma prawna i forma własności, wykonywana działalność, w tym rodzaj przeważającej działalności (PKD), daty: powstania i rozpoczęcia działalności, ewentualnego zawieszenia/wznowienia, zakończenia, wpisu oraz skreślenia z rejestru, nazwa organu rejestrowego i nazwa rejestru wraz z numerem, jednostki lokalne podmiotu.",
+    "Wydruk przygotowany z wyszukiwarki powinien te dane pokazywać w takim zakresie, w jakim są dostępne dla danego podmiotu.",
+    "To wystarcza, aby potwierdzić PKD przeważające.",
+    "Pola z dobrej praktyki na wydruku Aby wydruk był użyteczny przy kontroli lub w dokumentacji BHP, dodaj lub upewnij się, że widać: datę i godzinę wygenerowania wydruku, adres strony źródłowej GUS widoczny w stopce lub na zrzucie ekranu, REGON, NIP, nazwa i adres siedziby, kod i nazwę przeważającej działalności PKD, informację, z którego widoku pochodzi wydruk: siedziba czy jednostka lokalna.",
+    "Jeśli Twoja procedura wewnętrzna tego wymaga, możesz parafować wydruk na ostatniej stronie i opisać cel: „Do kalkulacji składki wypadkowej na rok …”.",
+    "Kto podpisuje, gdzie przechowuje i jak długo Wydruk z wyszukiwarki GUS nie wymaga podpisu GUS.",
+    "To kopia jawnych danych rejestrowych.",
+    "Przechowuj go w teczce dokumentacji naliczeń składek lub BHP, razem z kalkulacją kategorii ryzyka.",
+    "Odśwież wydruk po każdej zmianie danych w rejestrze, zwłaszcza po zmianie PKD, oraz zawsze gdy przygotowujesz nową kalkulację składki.",
+    "Podmiot ma 14 dni na zgłoszenie zmian do REGON.",
+    "Najczęstsze braki, przez które wydruk traci wartość dowodową Brak daty i godziny wydruku lub brak źródła URL.",
+    "Wydruk z widoku jednostki lokalnej zamiast siedziby głównej, gdy potrzebne jest PKD przeważające podmiotu.",
+    "Nieczytelny kod PKD albo brak nazwy odpowiadającej kodowi.",
+    "Nieaktualne dane, bo wydruk pochodzi sprzed zmian w REGON.",
+    "Zobacz też Jeśli przygotowujesz dokumenty do ustalenia kategorii ryzyka, sprawdź przewodnik: PKD a składka wypadkowa: jak ustalić kategorię ryzyka .",
+    "FAQ Czy „aktualny wydruk z rejestru REGON” musi być poświadczony przez GUS? Nie.",
+    "Wydruk z publicznej wyszukiwarki potwierdza stan jawnego rejestru w chwili pobrania.",
+    "Urzędowy wyciąg z rejestru zamawia się pisemnie, a dla osób trzecich jest on odpłatny.",
+    "Czy na wydruku zobaczę przeważający kod PKD? Tak, REGON udostępnia informację o wykonywanej działalności, w tym o rodzaju przeważającej działalności.",
+    "Upewnij się, że na wydruku widać zarówno kod, jak i nazwę grupowania.",
+    "Jak często aktualizować wydruk do kalkulacji składki wypadkowej? Po każdej zmianie PKD lub innych danych w rejestrze oraz przy przygotowywaniu nowej kalkulacji składki.",
+    "Podmiot ma 14 dni na zgłoszenie zmiany do REGON, więc po tym terminie pobierz nowy wydruk.",
+    "Czym różni się wydruk z wyszukiwarki od urzędowego wyciągu? Wydruk to samodzielnie przygotowana kopia jawnych danych.",
+    "Wyciąg to formalna informacja z rejestru: organy publiczne otrzymują go nieodpłatnie w ramach zadań, natomiast indywidualne zamówienia dla osób trzecich są odpłatne i obejmują określony zakres danych."
+  ],
+  "contentHtml": "<p>Aktualny wydruk z rejestru REGON przydaje się, gdy musisz udokumentować przeważający kod PKD, na przykład do wyliczenia kategorii ryzyka i składki wypadkowej. Rejestr REGON jest jawny, więc możesz samodzielnie przygotować wydruk z wyszukiwarki GUS. Nie ma urzędowego wzoru „wydruku”, ale są dane, które rejestr udostępnia i które powinny być na wydruku widoczne.</p><h2>Czy istnieje urzędowy wzór</h2><p>Nie ma urzędowego wzoru „wydruku” z REGON. GUS udostępnia publiczną wyszukiwarkę, z której możesz odczytać informacje o podmiocie i je wydrukować. Istnieje też urzędowy <strong>wyciąg z rejestru</strong> dla osób trzecich, realizowany na pisemne zamówienie i odpłatny. Natomiast organy administracji publicznej otrzymują wyciągi nieodpłatnie w ramach swoich zadań.</p><h2>Pola wymagane przepisem w rejestrze REGON</h2><p>REGON gromadzi i udostępnia m.in. następujące informacje o podmiotach:</p><ul><li>numer REGON,</li><li>nazwa podmiotu,</li><li>adres siedziby,</li><li>NIP,</li><li>forma prawna i forma własności,</li><li>wykonywana działalność, w tym <strong>rodzaj przeważającej działalności</strong> (PKD),</li><li>daty: powstania i rozpoczęcia działalności, ewentualnego zawieszenia/wznowienia, zakończenia, wpisu oraz skreślenia z rejestru,</li><li>nazwa organu rejestrowego i nazwa rejestru wraz z numerem,</li><li>jednostki lokalne podmiotu.</li></ul><p>Wydruk przygotowany z wyszukiwarki powinien te dane <em>pokazywać</em> w takim zakresie, w jakim są dostępne dla danego podmiotu. To wystarcza, aby potwierdzić PKD przeważające.</p><h2>Pola z dobrej praktyki na wydruku</h2><p>Aby wydruk był użyteczny przy kontroli lub w dokumentacji BHP, dodaj lub upewnij się, że widać:</p><ul><li>datę i godzinę wygenerowania wydruku,</li><li>adres strony źródłowej GUS widoczny w stopce lub na zrzucie ekranu,</li><li>REGON, NIP, nazwa i adres siedziby,</li><li>kod i nazwę <strong>przeważającej</strong> działalności PKD,</li><li>informację, z którego widoku pochodzi wydruk: siedziba czy jednostka lokalna.</li></ul><p>Jeśli Twoja procedura wewnętrzna tego wymaga, możesz parafować wydruk na ostatniej stronie i opisać cel: „Do kalkulacji składki wypadkowej na rok …”.</p><h2>Kto podpisuje, gdzie przechowuje i jak długo</h2><ul><li>Wydruk z wyszukiwarki GUS nie wymaga podpisu GUS. To kopia jawnych danych rejestrowych.</li><li>Przechowuj go w teczce dokumentacji naliczeń składek lub BHP, razem z kalkulacją kategorii ryzyka.</li><li>Odśwież wydruk po każdej zmianie danych w rejestrze, zwłaszcza po zmianie PKD, oraz zawsze gdy przygotowujesz nową kalkulację składki. Podmiot ma 14 dni na zgłoszenie zmian do REGON.</li></ul><h2>Najczęstsze braki, przez które wydruk traci wartość dowodową</h2><ul><li>Brak daty i godziny wydruku lub brak źródła URL.</li><li>Wydruk z widoku jednostki lokalnej zamiast siedziby głównej, gdy potrzebne jest PKD przeważające podmiotu.</li><li>Nieczytelny kod PKD albo brak nazwy odpowiadającej kodowi.</li><li>Nieaktualne dane, bo wydruk pochodzi sprzed zmian w REGON.</li></ul><h2>Zobacz też</h2><p>Jeśli przygotowujesz dokumenty do ustalenia kategorii ryzyka, sprawdź przewodnik: <a href=\"/blog/jak-ustalic-kod-pkd-kategorie-ryzyka-skladka-wypadkowa\">PKD a składka wypadkowa: jak ustalić kategorię ryzyka</a>.</p><h2>FAQ</h2><h3>Czy „aktualny wydruk z rejestru REGON” musi być poświadczony przez GUS?</h3><p>Nie. Wydruk z publicznej wyszukiwarki potwierdza stan jawnego rejestru w chwili pobrania. Urzędowy wyciąg z rejestru zamawia się pisemnie, a dla osób trzecich jest on odpłatny.</p><h3>Czy na wydruku zobaczę przeważający kod PKD?</h3><p>Tak, REGON udostępnia informację o wykonywanej działalności, w tym o rodzaju przeważającej działalności. Upewnij się, że na wydruku widać zarówno kod, jak i nazwę grupowania.</p><h3>Jak często aktualizować wydruk do kalkulacji składki wypadkowej?</h3><p>Po każdej zmianie PKD lub innych danych w rejestrze oraz przy przygotowywaniu nowej kalkulacji składki. Podmiot ma 14 dni na zgłoszenie zmiany do REGON, więc po tym terminie pobierz nowy wydruk.</p><h3>Czym różni się wydruk z wyszukiwarki od urzędowego wyciągu?</h3><p>Wydruk to samodzielnie przygotowana kopia jawnych danych. Wyciąg to formalna informacja z rejestru: organy publiczne otrzymują go nieodpłatnie w ramach zadań, natomiast indywidualne zamówienia dla osób trzecich są odpłatne i obejmują określony zakres danych.</p>"
+}
