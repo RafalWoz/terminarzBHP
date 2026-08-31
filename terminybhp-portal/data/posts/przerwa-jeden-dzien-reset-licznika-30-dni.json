@@ -1,0 +1,46 @@
+{
+  "slug": "przerwa-jeden-dzien-reset-licznika-30-dni",
+  "title": "Czy jednodniowa przerwa resetuje licznik 30 dni L4?",
+  "description": "Kiedy jednodniowa przerwa w L4 przerywa ciągłość i wpływa na badania kontrolne po 30 dniach? Praktyczne kryteria i co sprawdzić w dokumentach.",
+  "category": "Badania",
+  "date": "2026-08-31",
+  "readingTime": "3 min",
+  "status": "publish",
+  "type": "satellite",
+  "focusKeyword": "czy jednodniowa przerwa resetuje licznik 30 dni niezdolności",
+  "parentSlug": "badania-kontrolne-po-30-dniach",
+  "internalLinks": [
+    {
+      "slug": "badania-kontrolne-po-30-dniach",
+      "anchor": "choćby <strong>1 dzień przerwy</strong> przerywa ciągłość – liczenie 30 dni zaczyna się od nowa (przerwa resetuje licznik także wtedy, gdy przypada w dzień wolny);"
+    }
+  ],
+  "content": [
+    "Krótko: tak, ale tylko wtedy, gdy między zwolnieniami pracownik choć jeden dzień był zdolny do pracy i faktycznie do niej dopuszczony.",
+    "Jednodniowa przerwa, która nie była realnym powrotem do pracy (np. przypadała na dzień wolny i zwolnienia medycznie się łączą), nie resetuje licznika 30 dni niezdolności.",
+    "Od czego to zależy Ciągłość medyczna : jeżeli kolejne e-ZLA następują bez dnia przerwy w orzeczonej niezdolności (lekarz ocenił nieprzerwaną niezdolność), okres liczy się łącznie.",
+    "Faktyczny powrót do pracy : jeżeli między zwolnieniami pracownik choć jeden dzień pracował lub był dopuszczony do pracy, ciągłość jest przerwana i licznik 30 dni biegnie od zera.",
+    "Dni wolne z grafiku : sam weekend lub inny zaplanowany dzień wolny przypadający między e-ZLA nie oznacza automatycznie przerwy w niezdolności, jeśli zwolnienia obejmują okresy bez luki w orzeczeniu.",
+    "Przyczyna zwolnienia : dla liczenia 30 dni istotna jest nieprzerwana niezdolność do pracy , a nie to, czy rozpoznanie choroby było takie samo w kolejnych e-ZLA.",
+    "Co sprawdzić u siebie, zanim dopuścisz pracownika Chronologię e-ZLA : w PUE ZUS pobierz zestawienie zwolnień i sprawdź, czy między nimi występuje choć jeden dzień bez orzeczonej niezdolności.",
+    "Listę obecności/grafik : ustal, czy pracownik faktycznie świadczył pracę między zwolnieniami (nawet 1 dzień pracy przerywa ciągłość).",
+    "Dokument dopuszczenia : jeżeli absencja chorobowa przekroczyła 30 dni bez przerwy, przed dopuszczeniem do pracy wymagana jest aktualna orzeczona zdolność do pracy z badań kontrolnych.",
+    "Zadbaj, by było to udokumentowane.",
+    "Obieg informacji : uzgodnij z działem kadr/superwizorem sposób szybkiego sygnalizowania ciągłości zwolnień, aby nie dopuścić pracownika bez wymaganych badań.",
+    "Najczęstsze potknięcia w praktyce Liczenie „od nowa” tylko dlatego, że między e-ZLA był weekend.",
+    "Bez faktycznego dnia pracy lub luki w orzeczeniu nie ma resetu.",
+    "Pomijanie jednodniowego powrotu do pracy między zwolnieniami.",
+    "Taki dzień przerywa ciągłość i znosi obowiązek badań kontrolnych do czasu kolejnej serii absencji przekraczającej 30 dni.",
+    "Dopuszczenie do pracy po długiej nieobecności na podstawie starego orzeczenia wstępnego/okresowego, zamiast uzyskać orzeczenie z badania kontrolnego po 30 dniach nieprzerwanej niezdolności.",
+    "FAQ Czy weekend między zwolnieniami przerywa liczenie 30 dni? Nie, o ile nie było dnia pracy między e-ZLA i nie ma luki w orzeczonej niezdolności.",
+    "Sam dzień wolny z grafiku nie resetuje licznika.",
+    "Czy jednodniowy urlop między e-ZLA resetuje licznik 30 dni? Tak.",
+    "Skoro udzielono urlopu, oznacza to zdolność i dopuszczenie do pracy w tym dniu, więc ciągłość choroby jest przerwana.",
+    "Co w sytuacji dwóch zwolnień na różne choroby bez dnia przerwy? Liczy się ciągłość niezdolności, a nie diagnoza.",
+    "Dwa kolejne e-ZLA bez faktycznego dnia pracy liczymy łącznie do progu 30 dni.",
+    "Jak dokumentować decyzję o badaniach kontrolnych? W rejestrze absencji odnotuj okresy e-ZLA, wskaż, czy wystąpił choć jeden dzień pracy, i dołącz kopię/odniesienie do orzeczenia lekarskiego potwierdzającego dopuszczenie po badaniu kontrolnym.",
+    "Zobacz też Jeżeli masz niejednoznaczny przebieg zwolnień, zajrzyj do przewodnika: Badania kontrolne po 30 dniach: kiedy i jak liczyć .",
+    "Podstawa prawna Rozporządzenie Ministra Pracy i Polityki Społecznej z dnia 10 listopada 2015 r. w sprawie trybu i sposobu orzekania o czasowej niezdolności do pracy, Dz.U. 2015 poz. 2013."
+  ],
+  "contentHtml": "<p>Krótko: tak, ale tylko wtedy, gdy między zwolnieniami pracownik choć jeden dzień był zdolny do pracy i faktycznie do niej dopuszczony. Jednodniowa przerwa, która nie była realnym powrotem do pracy (np. przypadała na dzień wolny i zwolnienia medycznie się łączą), nie resetuje licznika 30 dni niezdolności.</p><h2>Od czego to zależy</h2><ul><li><strong>Ciągłość medyczna</strong>: jeżeli kolejne e-ZLA następują bez dnia przerwy w orzeczonej niezdolności (lekarz ocenił nieprzerwaną niezdolność), okres liczy się łącznie.</li><li><strong>Faktyczny powrót do pracy</strong>: jeżeli między zwolnieniami pracownik choć jeden dzień pracował lub był dopuszczony do pracy, ciągłość jest przerwana i licznik 30 dni biegnie od zera.</li><li><strong>Dni wolne z grafiku</strong>: sam weekend lub inny zaplanowany dzień wolny przypadający między e-ZLA nie oznacza automatycznie przerwy w niezdolności, jeśli zwolnienia obejmują okresy bez luki w orzeczeniu.</li><li><strong>Przyczyna zwolnienia</strong>: dla liczenia 30 dni istotna jest <em>nieprzerwana niezdolność do pracy</em>, a nie to, czy rozpoznanie choroby było takie samo w kolejnych e-ZLA.</li></ul><h2>Co sprawdzić u siebie, zanim dopuścisz pracownika</h2><ul><li><strong>Chronologię e-ZLA</strong>: w PUE ZUS pobierz zestawienie zwolnień i sprawdź, czy między nimi występuje choć jeden dzień bez orzeczonej niezdolności.</li><li><strong>Listę obecności/grafik</strong>: ustal, czy pracownik faktycznie świadczył pracę między zwolnieniami (nawet 1 dzień pracy przerywa ciągłość).</li><li><strong>Dokument dopuszczenia</strong>: jeżeli absencja chorobowa przekroczyła 30 dni bez przerwy, przed dopuszczeniem do pracy wymagana jest aktualna orzeczona zdolność do pracy z badań kontrolnych. Zadbaj, by było to udokumentowane.</li><li><strong>Obieg informacji</strong>: uzgodnij z działem kadr/superwizorem sposób szybkiego sygnalizowania ciągłości zwolnień, aby nie dopuścić pracownika bez wymaganych badań.</li></ul><h2>Najczęstsze potknięcia w praktyce</h2><ul><li>Liczenie „od nowa” tylko dlatego, że między e-ZLA był weekend. Bez faktycznego dnia pracy lub luki w orzeczeniu nie ma resetu.</li><li>Pomijanie jednodniowego powrotu do pracy między zwolnieniami. Taki dzień przerywa ciągłość i znosi obowiązek badań kontrolnych do czasu kolejnej serii absencji przekraczającej 30 dni.</li><li>Dopuszczenie do pracy po długiej nieobecności na podstawie starego orzeczenia wstępnego/okresowego, zamiast uzyskać orzeczenie z badania kontrolnego po 30 dniach nieprzerwanej niezdolności.</li></ul><h2>FAQ</h2><h3>Czy weekend między zwolnieniami przerywa liczenie 30 dni?</h3><p>Nie, o ile nie było dnia pracy między e-ZLA i nie ma luki w orzeczonej niezdolności. Sam dzień wolny z grafiku nie resetuje licznika.</p><h3>Czy jednodniowy urlop między e-ZLA resetuje licznik 30 dni?</h3><p>Tak. Skoro udzielono urlopu, oznacza to zdolność i dopuszczenie do pracy w tym dniu, więc ciągłość choroby jest przerwana.</p><h3>Co w sytuacji dwóch zwolnień na różne choroby bez dnia przerwy?</h3><p>Liczy się ciągłość niezdolności, a nie diagnoza. Dwa kolejne e-ZLA bez faktycznego dnia pracy liczymy łącznie do progu 30 dni.</p><h3>Jak dokumentować decyzję o badaniach kontrolnych?</h3><p>W rejestrze absencji odnotuj okresy e-ZLA, wskaż, czy wystąpił choć jeden dzień pracy, i dołącz kopię/odniesienie do orzeczenia lekarskiego potwierdzającego dopuszczenie po badaniu kontrolnym.</p><h2>Zobacz też</h2><p>Jeżeli masz niejednoznaczny przebieg zwolnień, zajrzyj do przewodnika: <a href=\"/blog/badania-kontrolne-po-30-dniach\">Badania kontrolne po 30 dniach: kiedy i jak liczyć</a>.</p><h2>Podstawa prawna</h2><ul><li>Rozporządzenie Ministra Pracy i Polityki Społecznej z dnia 10 listopada 2015 r. w sprawie trybu i sposobu orzekania o czasowej niezdolności do pracy, Dz.U. 2015 poz. 2013.</li></ul>"
+}
