@@ -1,9 +1,10 @@
 import { tools } from "@/lib/content";
+import { canonicalUrl } from "@/lib/seo";
 
 export const metadata = {
   title: "Narzędzia BHP",
   description: "Planowane narzędzia i kalkulatory BHP w portalu TerminyBHP.",
-  alternates: { canonical: "https://terminybhp.pl/tools/" },
+  alternates: { canonical: canonicalUrl("/tools/") },
 };
 
 export default function ToolsPage() {

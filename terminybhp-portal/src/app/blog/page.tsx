@@ -1,11 +1,12 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
 import { getAllPosts, type BlogPost } from "@/lib/content";
+import { canonicalUrl } from "@/lib/seo";
 
 export const metadata = {
   title: "Blog BHP - instrukcje bez żargonu, od pytania do kroku",
   description: "Blog TerminyBHP: praktyczne instrukcje BHP bez żargonu. Szkolenia, badania, dokumentacja, ocena ryzyka, audyty i organizacja terminów.",
-  alternates: { canonical: "https://terminybhp.pl/blog/" },
+  alternates: { canonical: canonicalUrl("/blog/") },
 };
 
 const topicChips = ["Wszystko", "Szkolenia", "Badania", "Dokumentacja", "Ocena ryzyka", "Audyty", "Organizacja terminów"];
@@ -177,7 +178,7 @@ export default function BlogPage() {
             </p>
             <div className="mt-7 flex flex-col gap-3 sm:flex-row">
               <a href="/serwis/" className="inline-flex justify-center rounded-[14px] bg-[#2E9A77] px-5 py-3 text-sm font-extrabold text-white hover:bg-[#26815f]">Otwórz serwis →</a>
-              <a href="/#serwis" className="inline-flex justify-center rounded-[14px] border border-[#2C4C40] px-5 py-3 text-sm font-extrabold text-[#EAF1EC] hover:border-[#6E9686]">Jak działa zapis danych</a>
+              <Link href="/#serwis" className="inline-flex justify-center rounded-[14px] border border-[#2C4C40] px-5 py-3 text-sm font-extrabold text-[#EAF1EC] hover:border-[#6E9686]">Jak działa zapis danych</Link>
             </div>
           </div>
           <div className="rounded-[20px] border border-[#234035] bg-[#13261F] p-5">

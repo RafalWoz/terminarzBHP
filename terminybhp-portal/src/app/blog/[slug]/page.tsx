@@ -3,12 +3,12 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getAllPostSlugs, getPost } from "@/lib/content";
 import { getAffiliateRecommendation, isAffiliateHref } from "@/lib/affiliateLinks";
+import { canonicalInternalHref, canonicalUrl, siteUrl } from "@/lib/seo";
 
 type BlogPostPageProps = { params: Promise<{ slug: string }> };
 
 const articleChecks = ["Kiedy wykonać działanie", "Co zapisać w dokumentacji", "Kiedy potrzebna jest reakcja"];
 const allowedArticleTags = new Set(["a", "blockquote", "br", "em", "h2", "h3", "h4", "li", "ol", "p", "strong", "ul"]);
-const siteUrl = "https://terminybhp.pl";
 const editorialAuthor = "Redakcja TerminyBHP";
 
 export function generateStaticParams() {
@@ -24,20 +24,20 @@ function isSafeArticleHref(href: string) {
 }
 
 function canonicalizeArticleHref(href: string) {
-  if (!href.startsWith("/") || href.startsWith("//")) return href;
+  if (href.startsWith("/") && !href.startsWith("//")) {
+    return canonicalInternalHref(href);
+  }
 
-  const hashIndex = href.indexOf("#");
-  const hrefWithoutHash = hashIndex >= 0 ? href.slice(0, hashIndex) : href;
-  const hash = hashIndex >= 0 ? href.slice(hashIndex) : "";
-  const queryIndex = hrefWithoutHash.indexOf("?");
-  const pathname = queryIndex >= 0 ? hrefWithoutHash.slice(0, queryIndex) : hrefWithoutHash;
-  const query = queryIndex >= 0 ? hrefWithoutHash.slice(queryIndex) : "";
-
-  if (pathname === "/" || pathname.endsWith("/") || /\.[A-Za-z0-9]{2,8}$/.test(pathname)) {
+  try {
+    const url = new URL(href);
+    if (url.hostname === "terminybhp.pl" || url.hostname === "www.terminybhp.pl") {
+      return `${canonicalUrl(url.pathname)}${url.search}${url.hash}`;
+    }
+  } catch {
     return href;
   }
 
-  return `${pathname}/${query}${hash}`;
+  return href;
 }
 
 function sanitizeArticleHtml(html: string) {
@@ -86,7 +86,7 @@ function AffiliateRecommendation({ slug }: { slug: string }) {
 export async function generateMetadata({ params }: BlogPostPageProps) {
   const post = getPost((await params).slug);
   if (!post) return {};
-  const articleUrl = `${siteUrl}/blog/${post.slug}/`;
+  const articleUrl = canonicalUrl(`/blog/${post.slug}/`);
   return {
     title: post.title,
     description: post.description,
@@ -106,7 +106,7 @@ export async function generateMetadata({ params }: BlogPostPageProps) {
 export default async function BlogPostPage({ params }: BlogPostPageProps) {
   const post = getPost((await params).slug);
   if (!post) notFound();
-  const articleUrl = `${siteUrl}/blog/${post.slug}/`;
+  const articleUrl = canonicalUrl(`/blog/${post.slug}/`);
   const publishedDate = new Date(post.date).toLocaleDateString("pl-PL");
   const modifiedDate = new Date(post.publishedAt || post.date).toLocaleDateString("pl-PL");
   const articleSchema = {

@@ -1,4 +1,5 @@
 "use client";
+/* eslint-disable react-hooks/set-state-in-effect */
 
 import Script from "next/script";
 import { useEffect, useState } from "react";

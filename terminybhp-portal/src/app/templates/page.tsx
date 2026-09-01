@@ -1,9 +1,10 @@
 import { templates } from "@/lib/content";
+import { canonicalUrl } from "@/lib/seo";
 
 export const metadata = {
   title: "Szablony BHP",
   description: "Planowane szablony dokumentów, rejestrów i checklist BHP w TerminyBHP.",
-  alternates: { canonical: "https://terminybhp.pl/templates/" },
+  alternates: { canonical: canonicalUrl("/templates/") },
 };
 
 export default function TemplatesPage() {

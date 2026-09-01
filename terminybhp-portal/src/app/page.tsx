@@ -1,8 +1,9 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
+import { canonicalUrl } from "@/lib/seo";
 
 export const metadata = {
-  alternates: { canonical: "https://terminybhp.pl/" },
+  alternates: { canonical: canonicalUrl("/") },
 };
 
 const statusRows = [

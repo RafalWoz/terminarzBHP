@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
+import { canonicalUrl } from "@/lib/seo";
 
 export const metadata: Metadata = {
   title: "Polityka prywatności",
   description: "Informacje o prywatności i analityce na stronie TerminyBHP.pl.",
-  alternates: { canonical: "https://terminybhp.pl/polityka-prywatnosci/" },
+  alternates: { canonical: canonicalUrl("/polityka-prywatnosci/") },
 };
 
 export default function PrivacyPolicyPage() {
