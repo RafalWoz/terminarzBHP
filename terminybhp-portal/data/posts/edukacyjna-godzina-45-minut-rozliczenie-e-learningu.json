@@ -1,0 +1,52 @@
+{
+  "slug": "edukacyjna-godzina-45-minut-rozliczenie-e-learningu",
+  "title": "45‑minutowa godzina edukacyjna a e‑learning BHP: jak liczyć",
+  "description": "Nie wiesz, czy w e‑learningu BHP liczyć 45‑ czy 60‑minutowe godziny? Zobacz, co wpisać w poleceniu i programie oraz jak rozliczyć raporty z platformy.",
+  "category": "Szkolenia",
+  "date": "2026-09-02",
+  "readingTime": "3 min",
+  "status": "publish",
+  "type": "satellite",
+  "focusKeyword": "edukacyjna godzina 45 minut w rozliczeniu e‑learningu",
+  "parentSlug": "polecenie-e-learning-asynchroniczny-okno-realizacji-godziny",
+  "internalLinks": [
+    {
+      "slug": "polecenie-e-learning-asynchroniczny-okno-realizacji-godziny",
+      "anchor": "Łączna liczba godzin przewidzianych na kurs oraz definicja jednostki (godzina zegarowa albo edukacyjna – wskaż, ile minut trwa jednostka)."
+    }
+  ],
+  "content": [
+    "Edukacyjna godzina 45 minut to dydaktyczna konwencja rozliczeń, a godzina zegarowa 60 minut to faktyczny czas – w e‑learningu BHP decyduje to, co wpiszesz w poleceniu i programie szkolenia.",
+    "Co naprawdę oznacza 45 minut, a co 60 minut „Godzina edukacyjna” 45 minut To przyjęty w edukacji i na rynku szkoleń sposób liczenia zajęć.",
+    "Często trafia do opisów zamówień i umów szkoleniowych („1 godzina = 45 min”).",
+    "Nie jest to jednak automatyczna reguła dla każdego kursu online.",
+    "Jeśli zamawiacie lub zlecacie e‑learning, skrót 45 minut działa tylko wtedy, gdy wynika wprost z dokumentów szkolenia. „Godzina zegarowa” 60 minut To realny czas, którym posługują się platformy e‑learningowe w logach aktywności.",
+    "Gdy program lub polecenie szkolenia mówi o „8 godzinach” i nie doprecyzowuje, że chodzi o godziny lekcyjne, najbezpieczniej rozliczać czas zegarowo.",
+    "W asynchronicznym e‑learningu potwierdzeniem są raporty z platformy oraz zaliczenie modułów i testów.",
+    "Jeżeli planujesz liczbę godzin i okno realizacji, zobacz jak zbudować polecenie e‑learningu BHP z określoną liczbą godzin .",
+    "Skutki pomylenia obu pojęć Rozbieżności w dokumentacji: program szkolenia, umowa i rejestry wskażą inną liczbę godzin niż raporty z platformy.",
+    "Niedoszacowanie czasu: rozliczanie 45‑minutowych „lekcji” przy poleceniu na godziny zegarowe może skrócić kurs o 25% względem założenia.",
+    "Problemy przy odbiorze usługi: wykonawca i zamawiający mogą inaczej policzyć zakres, co utrudni akceptację protokołów odbioru.",
+    "Niespójność w rejestrze szkoleń pracowników: utrudnia udowodnienie, że program został zrealizowany w pełnym wymiarze.",
+    "Test rozstrzygający: po czym poznasz, który czas masz liczyć Polecenie lub umowa szkoleniowa : poszukaj sformułowań „godzina lekcyjna/edukacyjna 45 min”.",
+    "Jeśli ich brak, przyjmij godzinę zegarową.",
+    "Program szkolenia : sprawdź, czy przy liczbie godzin jest dopisek „lekcyjnych”.",
+    "Jeśli nie ma, trzymaj się 60 minut.",
+    "Gdy program przelicza moduły na „lekcje”, ustal jasny przelicznik w załączniku do programu.",
+    "Raporty z platformy : weryfikuj realny czas spędzony w kursie oraz ukończenie modułów i testów.",
+    "To podstawa do rozliczenia asynchronicznego e‑learningu.",
+    "Rejestr szkoleń : wpisuj zarówno liczbę godzin, jak i przyjęty typ rozliczenia („45 min” lub „60 min”), aby uniknąć niejasności przy kontroli dokumentów.",
+    "Najczęstszy błąd firmy i jak go naprawić Najczęściej firmy bezrefleksyjnie stosują edukacyjną „45‑minutówkę” do kursów online, choć dokumenty wewnętrzne i raporty z platformy posługują się godzinami zegarowymi.",
+    "Rozwiąż to w trzech krokach: Wprowadź do wzoru polecenia i programu jednoznaczną formułę: „Czas rozliczany w godzinach zegarowych (60 min)” albo „Czas rozliczany w godzinach lekcyjnych (45 min)”.",
+    "W umowach z dostawcami e‑learningu dopisz przelicznik i źródło danych do odbioru: raporty z platformy + lista zaliczonych modułów.",
+    "Ujednolić rejestr szkoleń: osobna kolumna „typ godziny”.",
+    "FAQ Czy edukacyjna godzina 45 minut w rozliczeniu e‑learningu może być stosowana zawsze? Nie.",
+    "Stosuj 45 minut tylko wtedy, gdy wynika to wprost z polecenia, programu lub umowy szkoleniowej.",
+    "W przeciwnym razie rozliczaj godzinę zegarową.",
+    "Jak dokumentować czas w asynchronicznym e‑learningu BHP? Połącz dwa źródła: raport czasu i aktywności z platformy oraz potwierdzenie ukończenia modułów i testów zgodnie z programem.",
+    "Czy mogę przeliczyć krótkie moduły wideo na „lekcje” 45‑minutowe? Tylko jeśli program szkolenia przewiduje taki przelicznik.",
+    "W przeciwnym razie trzymaj się minut z raportów platformy i sumuj czas zegarowo.",
+    "Co z przerwami – wliczać je do czasu szkolenia online? W asynchronicznym e‑learningu przerwy z reguły nie są odrębnie ewidencjonowane, więc bazuj na czasie aktywności raportowanym przez platformę i na ukończeniu modułów."
+  ],
+  "contentHtml": "<p>Edukacyjna godzina 45 minut to dydaktyczna konwencja rozliczeń, a godzina zegarowa 60 minut to faktyczny czas – w e‑learningu BHP decyduje to, co wpiszesz w poleceniu i programie szkolenia.</p><h2>Co naprawdę oznacza 45 minut, a co 60 minut</h2><h3>„Godzina edukacyjna” 45 minut</h3><p>To przyjęty w edukacji i na rynku szkoleń sposób liczenia zajęć. Często trafia do opisów zamówień i umów szkoleniowych („1 godzina = 45 min”). Nie jest to jednak automatyczna reguła dla każdego kursu online. Jeśli zamawiacie lub zlecacie e‑learning, skrót 45 minut działa tylko wtedy, gdy wynika wprost z dokumentów szkolenia.</p><h3>„Godzina zegarowa” 60 minut</h3><p>To realny czas, którym posługują się platformy e‑learningowe w logach aktywności. Gdy program lub polecenie szkolenia mówi o „8 godzinach” i nie doprecyzowuje, że chodzi o godziny lekcyjne, najbezpieczniej rozliczać czas zegarowo. W asynchronicznym e‑learningu potwierdzeniem są raporty z platformy oraz zaliczenie modułów i testów.</p><p>Jeżeli planujesz liczbę godzin i okno realizacji, zobacz jak zbudować <a href=\"/blog/polecenie-e-learning-asynchroniczny-okno-realizacji-godziny\">polecenie e‑learningu BHP z określoną liczbą godzin</a>.</p><h2>Skutki pomylenia obu pojęć</h2><ul><li>Rozbieżności w dokumentacji: program szkolenia, umowa i rejestry wskażą inną liczbę godzin niż raporty z platformy.</li><li>Niedoszacowanie czasu: rozliczanie 45‑minutowych „lekcji” przy poleceniu na godziny zegarowe może skrócić kurs o 25% względem założenia.</li><li>Problemy przy odbiorze usługi: wykonawca i zamawiający mogą inaczej policzyć zakres, co utrudni akceptację protokołów odbioru.</li><li>Niespójność w rejestrze szkoleń pracowników: utrudnia udowodnienie, że program został zrealizowany w pełnym wymiarze.</li></ul><h2>Test rozstrzygający: po czym poznasz, który czas masz liczyć</h2><ol><li><strong>Polecenie lub umowa szkoleniowa</strong>: poszukaj sformułowań „godzina lekcyjna/edukacyjna 45 min”. Jeśli ich brak, przyjmij godzinę zegarową.</li><li><strong>Program szkolenia</strong>: sprawdź, czy przy liczbie godzin jest dopisek „lekcyjnych”. Jeśli nie ma, trzymaj się 60 minut. Gdy program przelicza moduły na „lekcje”, ustal jasny przelicznik w załączniku do programu.</li><li><strong>Raporty z platformy</strong>: weryfikuj realny czas spędzony w kursie oraz ukończenie modułów i testów. To podstawa do rozliczenia asynchronicznego e‑learningu.</li><li><strong>Rejestr szkoleń</strong>: wpisuj zarówno liczbę godzin, jak i przyjęty typ rozliczenia („45 min” lub „60 min”), aby uniknąć niejasności przy kontroli dokumentów.</li></ol><h2>Najczęstszy błąd firmy i jak go naprawić</h2><p>Najczęściej firmy bezrefleksyjnie stosują edukacyjną „45‑minutówkę” do kursów online, choć dokumenty wewnętrzne i raporty z platformy posługują się godzinami zegarowymi. Rozwiąż to w trzech krokach:</p><ul><li>Wprowadź do wzoru polecenia i programu jednoznaczną formułę: „Czas rozliczany w godzinach zegarowych (60 min)” albo „Czas rozliczany w godzinach lekcyjnych (45 min)”.</li><li>W umowach z dostawcami e‑learningu dopisz przelicznik i źródło danych do odbioru: raporty z platformy + lista zaliczonych modułów.</li><li>Ujednolić rejestr szkoleń: osobna kolumna „typ godziny”.</li></ul><h2>FAQ</h2><h3>Czy edukacyjna godzina 45 minut w rozliczeniu e‑learningu może być stosowana zawsze?</h3><p>Nie. Stosuj 45 minut tylko wtedy, gdy wynika to wprost z polecenia, programu lub umowy szkoleniowej. W przeciwnym razie rozliczaj godzinę zegarową.</p><h3>Jak dokumentować czas w asynchronicznym e‑learningu BHP?</h3><p>Połącz dwa źródła: raport czasu i aktywności z platformy oraz potwierdzenie ukończenia modułów i testów zgodnie z programem.</p><h3>Czy mogę przeliczyć krótkie moduły wideo na „lekcje” 45‑minutowe?</h3><p>Tylko jeśli program szkolenia przewiduje taki przelicznik. W przeciwnym razie trzymaj się minut z raportów platformy i sumuj czas zegarowo.</p><h3>Co z przerwami – wliczać je do czasu szkolenia online?</h3><p>W asynchronicznym e‑learningu przerwy z reguły nie są odrębnie ewidencjonowane, więc bazuj na czasie aktywności raportowanym przez platformę i na ukończeniu modułów.</p>"
+}
