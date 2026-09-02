@@ -70,8 +70,6 @@ export function renderSitemapIndex(entries: SitemapIndexEntry[]) {
 export const sitemapLocations = {
   pages: `${siteUrl}/sitemap-pages.xml`,
   blog: `${siteUrl}/sitemap-blog.xml`,
-  tools: `${siteUrl}/sitemap-tools.xml`,
-  templates: `${siteUrl}/sitemap-templates.xml`,
 };
 
 export const staticPageEntries: SitemapEntry[] = [

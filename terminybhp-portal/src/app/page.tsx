@@ -42,7 +42,7 @@ const audienceCards = [
     points: [
       "Instrukcje bez żargonu i straszenia paragrafami",
       "Każdy wpis prowadzi do konkretnego kroku",
-      "Narzędzia i szablony pod ręką",
+      "Baza wiedzy pod ręką",
       "A gdy terminów robi się za dużo — przejście do serwisu",
     ],
     note: "",

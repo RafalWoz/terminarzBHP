@@ -30,18 +30,6 @@ type RawPost = Partial<BlogPost> & {
 const postsDir = path.join(process.cwd(), "data", "posts");
 const postsOrderPath = path.join(process.cwd(), ".generated", "posts-order.json");
 
-export const tools = [
-  { title: "Kalkulator ryzyka zawodowego", description: "Szybka ocena poziomu ryzyka na stanowisku. Wpisujesz parametry, dostajesz wynik gotowy do wpięcia w dokumentację.", status: "W przygotowaniu" },
-  { title: "Generator listy kontrolnej", description: "Składasz checklistę pod firmę, stanowisko albo audyt — bez przepisywania tych samych punktów za każdym razem.", status: "W przygotowaniu" },
-  { title: "Przelicznik terminów", description: "Prosty pomocnik do liczenia dat szkoleń okresowych, badań i przypomnień.", status: "Planowane" },
-];
-
-export const templates = [
-  { title: "Lista kontrolna szkolenia wstępnego", description: "Gotowy szablon dla osoby przyjmowanej do pracy lub zmieniającej stanowisko. Odhaczasz punkt po punkcie, nic nie ginie.", status: "Wkrótce" },
-  { title: "Rejestr badań lekarskich", description: "Wzór tabeli na terminy badań wstępnych, okresowych i kontrolnych. Jedno miejsce zamiast notatek w kilku plikach.", status: "Wkrótce" },
-  { title: "Rejestr szkoleń okresowych", description: "Prosty układ danych, który później będzie można przenieść do serwisu.", status: "Do przygotowania" },
-];
-
 function estimateReadingTime(content: string[]) {
   const words = content.join(" ").trim().split(/\s+/).filter(Boolean).length;
   return `${Math.max(1, Math.ceil(words / 200))} min`;

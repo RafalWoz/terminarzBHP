@@ -6,8 +6,6 @@
 
 - [Strona główna](https://terminybhp.pl/)
 - [Blog BHP](https://terminybhp.pl/blog/)
-- [Narzędzia](https://terminybhp.pl/tools/)
-- [Szablony](https://terminybhp.pl/templates/)
 - [Mapa strony](https://terminybhp.pl/sitemap.xml)
 
 ## Informacje dla systemów AI

@@ -21,12 +21,6 @@ export function SiteFooter() {
           <Link href="/blog/" className="hover:text-white">
             Blog
           </Link>
-          <Link href="/tools/" className="hover:text-white">
-            Narzędzia
-          </Link>
-          <Link href="/templates/" className="hover:text-white">
-            Szablony
-          </Link>
           <Link href="/polityka-prywatnosci/" className="hover:text-white">
             Polityka prywatności
           </Link>

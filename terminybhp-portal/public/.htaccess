@@ -11,6 +11,9 @@
 <IfModule mod_rewrite.c>
   RewriteEngine On
 
+  RewriteRule ^(?:templates|tools)/?$ - [G,L]
+  RewriteRule ^sitemap-(?:templates|tools)\.xml$ - [G,L]
+
   RewriteCond %{THE_REQUEST} \s/+(.*/)?index\.html[\s?] [NC]
   RewriteRule ^(.*/)?index\.html$ https://terminybhp.pl/$1 [R=301,L]
 
