@@ -66,6 +66,7 @@ a {
   font-weight: 900;
   letter-spacing: -0.04em;
   line-height: 1.12;
+  scroll-margin-top: 6rem;
 }
 
 .article-content h3 {
@@ -75,6 +76,7 @@ a {
   font-weight: 900;
   letter-spacing: -0.025em;
   line-height: 1.2;
+  scroll-margin-top: 6rem;
 }
 
 .article-content p {

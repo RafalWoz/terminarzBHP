@@ -1,5 +1,6 @@
 import fs from "fs";
 import path from "path";
+import { slugifyText } from "@/lib/slug";
 
 export type BlogPost = {
   slug: string;
@@ -8,9 +9,14 @@ export type BlogPost = {
   category: string;
   date: string;
   publishedAt?: string;
+  updatedAt?: string;
   readingTime: string;
   content: string[];
   contentHtml?: string;
+  relatedPosts?: string[];
+  downloadFile?: string;
+  downloadLabel?: string;
+  downloadNote?: string;
   coverImage?: string;
   ogImage?: string;
   imageAlt?: string;
@@ -23,8 +29,14 @@ export type BlogPost = {
 
 type RawPost = Partial<BlogPost> & {
   createdAt?: string;
+  modifiedAt?: string;
+  lastModified?: string;
   excerpt?: string;
   content?: string | string[];
+  related_posts?: string[];
+  download_file?: string;
+  download_label?: string;
+  download_note?: string;
 };
 
 const postsDir = path.join(process.cwd(), "data", "posts");
@@ -58,6 +70,20 @@ function normalizeImagePath(imagePath: string | undefined) {
   return normalizedPath;
 }
 
+function normalizePublicPath(filePath: string | undefined) {
+  if (typeof filePath !== "string") return undefined;
+  const trimmedPath = filePath.trim();
+  if (!trimmedPath) return undefined;
+  if (/^https?:\/\//i.test(trimmedPath)) return trimmedPath;
+  return trimmedPath.startsWith("/") ? trimmedPath : `/${trimmedPath}`;
+}
+
+function normalizeRelatedPosts(value: string[] | undefined) {
+  if (!Array.isArray(value)) return undefined;
+  const slugs = [...new Set(value.map((slug) => slug.trim()).filter(Boolean))];
+  return slugs.length > 0 ? slugs : undefined;
+}
+
 function readPostsOrder() {
   if (!fs.existsSync(postsOrderPath)) return {} as Record<string, string>;
   try {
@@ -81,10 +107,15 @@ function normalizePost(rawPost: RawPost, fallbackSlug: string, publishedAt?: str
     category: rawPost.category || "BHP",
     date: rawPost.date || rawPost.createdAt || new Date().toISOString(),
     publishedAt: rawPost.publishedAt || rawPost.createdAt || publishedAt,
+    updatedAt: rawPost.updatedAt || rawPost.modifiedAt || rawPost.lastModified,
     readingTime: rawPost.readingTime || estimateReadingTime(content),
     status: rawPost.status === "draft" ? "draft" : "publish",
     content,
     contentHtml: normalizeContentHtml(rawPost.contentHtml),
+    relatedPosts: normalizeRelatedPosts(rawPost.relatedPosts || rawPost.related_posts),
+    downloadFile: normalizePublicPath(rawPost.downloadFile || rawPost.download_file),
+    downloadLabel: rawPost.downloadLabel || rawPost.download_label,
+    downloadNote: rawPost.downloadNote || rawPost.download_note,
     coverImage,
     ogImage,
     imageAlt: rawPost.imageAlt || title,
@@ -128,4 +159,75 @@ export function getAllPostSlugs() {
 
 export function getPost(slug: string) {
   return getAllPosts({ includeDrafts: false }).find((post) => post.slug === slug);
+}
+
+function normalizedDateKey(value: string | undefined) {
+  if (!value) return undefined;
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return value.slice(0, 10);
+  return date.toISOString().slice(0, 10);
+}
+
+export function getPostModifiedDate(post: BlogPost) {
+  const publishedDate = normalizedDateKey(post.date);
+  const updatedDate = normalizedDateKey(post.updatedAt);
+  return updatedDate && updatedDate !== publishedDate && post.updatedAt ? post.updatedAt : post.date;
+}
+
+export function hasVisiblePostUpdateDate(post: BlogPost) {
+  return getPostModifiedDate(post) !== post.date;
+}
+
+export function getCategorySlug(category: string) {
+  return slugifyText(category, "kategoria");
+}
+
+export function getAllCategories() {
+  const categories = new Map<string, { name: string; slug: string; count: number }>();
+
+  for (const post of getAllPosts()) {
+    const slug = getCategorySlug(post.category);
+    const category = categories.get(slug);
+    if (category) {
+      category.count += 1;
+    } else {
+      categories.set(slug, { name: post.category, slug, count: 1 });
+    }
+  }
+
+  return [...categories.values()].sort((a, b) => a.name.localeCompare(b.name, "pl"));
+}
+
+export function getCategoryBySlug(categorySlug: string) {
+  return getAllCategories().find((category) => category.slug === categorySlug);
+}
+
+export function getPostsByCategorySlug(categorySlug: string) {
+  return getAllPosts().filter((post) => getCategorySlug(post.category) === categorySlug);
+}
+
+export function getRelatedPosts(post: BlogPost, limit = 3) {
+  const allPosts = getAllPosts();
+  const postsBySlug = new Map(allPosts.map((item) => [item.slug, item]));
+  const selected = new Map<string, BlogPost>();
+
+  for (const relatedSlug of post.relatedPosts || []) {
+    const relatedPost = postsBySlug.get(relatedSlug);
+    if (relatedPost && relatedPost.slug !== post.slug) selected.set(relatedPost.slug, relatedPost);
+    if (selected.size >= limit) return [...selected.values()];
+  }
+
+  for (const relatedPost of allPosts) {
+    if (relatedPost.slug !== post.slug && relatedPost.category === post.category) {
+      selected.set(relatedPost.slug, relatedPost);
+    }
+    if (selected.size >= limit) return [...selected.values()];
+  }
+
+  for (const relatedPost of allPosts) {
+    if (relatedPost.slug !== post.slug) selected.set(relatedPost.slug, relatedPost);
+    if (selected.size >= limit) return [...selected.values()];
+  }
+
+  return [...selected.values()];
 }

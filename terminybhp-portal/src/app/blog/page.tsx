@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
-import { getAllPosts, type BlogPost } from "@/lib/content";
+import { getAllCategories, getAllPosts, type BlogPost } from "@/lib/content";
 import { canonicalUrl } from "@/lib/seo";
 
 export const metadata = {
@@ -8,8 +8,6 @@ export const metadata = {
   description: "Blog TerminyBHP: praktyczne instrukcje BHP bez żargonu. Szkolenia, badania, dokumentacja, ocena ryzyka, audyty i organizacja terminów.",
   alternates: { canonical: canonicalUrl("/blog/") },
 };
-
-const topicChips = ["Wszystko", "Szkolenia", "Badania", "Dokumentacja", "Ocena ryzyka", "Audyty", "Organizacja terminów"];
 
 const decisionRows = [
   { question: "Kiedy zrobić szkolenie okresowe?", answer: "licz od ostatniego szkolenia + cykl dla stanowiska" },
@@ -50,6 +48,10 @@ function postUrl(slug: string) {
   return `/blog/${slug}/`;
 }
 
+function categoryUrl(slug: string) {
+  return `/blog/kategoria/${slug}/`;
+}
+
 function Eyebrow({ children, dark = false }: { children: ReactNode; dark?: boolean }) {
   return (
     <span className={`inline-flex items-center gap-2 font-mono text-xs font-semibold uppercase tracking-[0.14em] ${dark ? "text-[#9FD8C2]" : "text-[var(--teal-700)]"}`}>
@@ -61,6 +63,7 @@ function Eyebrow({ children, dark = false }: { children: ReactNode; dark?: boole
 
 export default function BlogPage() {
   const posts = getAllPosts();
+  const categories = getAllCategories();
   const featuredPost = posts[0];
   const remainingPosts = posts.slice(1);
 
@@ -103,10 +106,13 @@ export default function BlogPage() {
 
       <section className="border-y border-[var(--slate-200)] bg-white px-5 sm:px-6">
         <div className="mx-auto flex max-w-[1160px] flex-wrap gap-2 py-5">
-          {topicChips.map((chip, index) => (
-            <span key={chip} className={`rounded-full border px-4 py-2 font-mono text-xs font-semibold ${index === 0 ? "border-[var(--teal-600)] bg-[var(--teal-600)] text-white" : "border-[var(--slate-200)] bg-[var(--paper)] text-[var(--slate-600)]"}`}>
-              {chip}
-            </span>
+          <Link href="/blog/" className="rounded-full border border-[var(--teal-600)] bg-[var(--teal-600)] px-4 py-2 font-mono text-xs font-semibold text-white">
+            Wszystko
+          </Link>
+          {categories.map((category) => (
+            <Link key={category.slug} href={categoryUrl(category.slug)} className="rounded-full border border-[var(--slate-200)] bg-[var(--paper)] px-4 py-2 font-mono text-xs font-semibold text-[var(--slate-600)] hover:border-[var(--teal-600)] hover:text-[var(--teal-700)]">
+              {category.name}
+            </Link>
           ))}
         </div>
       </section>
