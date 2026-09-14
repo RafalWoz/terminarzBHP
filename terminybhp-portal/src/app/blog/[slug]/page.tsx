@@ -20,6 +20,7 @@ type BlogPostPageProps = { params: Promise<{ slug: string }> };
 const editorialAuthor = "Redakcja TerminyBHP";
 const articleContentClassName = "article-content text-lg leading-8 text-[var(--slate-700)]";
 const inlineAffiliateParagraphCount = 3;
+const footerOnlyAffiliateSlugs = new Set(["drgania-mechaniczne-wibracje"]);
 
 export function generateStaticParams() {
   return getAllPostSlugs().map((slug) => ({ slug }));
@@ -48,9 +49,10 @@ function splitHtmlAfterParagraph(html: string, paragraphCount: number) {
 
 function ArticleContent({ content, preparedHtml, slug }: { content: string[]; preparedHtml?: string; slug: string }) {
   const hasAffiliate = Boolean(getAffiliateRecommendation(slug));
+  const showInlineAffiliate = hasAffiliate && !footerOnlyAffiliateSlugs.has(slug);
 
   if (preparedHtml) {
-    const splitArticle = hasAffiliate ? splitHtmlAfterParagraph(preparedHtml, inlineAffiliateParagraphCount) : null;
+    const splitArticle = showInlineAffiliate ? splitHtmlAfterParagraph(preparedHtml, inlineAffiliateParagraphCount) : null;
 
     if (splitArticle) {
       return (
@@ -65,7 +67,7 @@ function ArticleContent({ content, preparedHtml, slug }: { content: string[]; pr
     return <div className={articleContentClassName} dangerouslySetInnerHTML={{ __html: preparedHtml }} />;
   }
 
-  if (hasAffiliate && content.length > inlineAffiliateParagraphCount) {
+  if (showInlineAffiliate && content.length > inlineAffiliateParagraphCount) {
     const before = content.slice(0, inlineAffiliateParagraphCount);
     const after = content.slice(inlineAffiliateParagraphCount);
 
@@ -95,27 +97,18 @@ function TableOfContentsLinks({ items }: { items: TableOfContentsItem[] }) {
   );
 }
 
-function MobileTableOfContents({ items }: { items: TableOfContentsItem[] }) {
+function TableOfContents({ items }: { items: TableOfContentItem[] }) {
   if (items.length < 3) return null;
 
   return (
-    <details className="mt-6 rounded-[20px] border border-[var(--slate-200)] bg-white p-4 shadow-[0_8px_24px_rgba(7,24,38,0.05)] lg:hidden">
-      <summary className="cursor-pointer font-black text-[var(--navy-950)]">W tym artykule</summary>
-      <TableOfContentsLinks items={items} />
-    </details>
-  );
-}
-
-function DesktopTableOfContents({ items }: { items: TableOfContentsItem[] }) {
-  if (items.length < 3) return null;
-
-  return (
-    <nav aria-label="Spis treści" className="hidden rounded-[24px] border border-[var(--slate-200)] bg-white p-6 shadow-[0_8px_24px_rgba(7,24,38,0.05)] lg:block">
+    <nav aria-label="Spis treści" className="rounded-[24px] border border-[var(--slate-200)] bg-white p-6 shadow-[0_8px_24px_rgba(7,24,38,0.05)]">
       <p className="font-black text-[var(--navy-950)]">W tym artykule</p>
       <TableOfContentsLinks items={items} />
     </nav>
   );
 }
+
+type TableOfContentItem = TableOfContentsItem;
 
 function DownloadCta({ post }: { post: BlogPost }) {
   if (!post.downloadFile) return null;
@@ -256,12 +249,11 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
           <DownloadCta post={post} />
           <p className="mt-4 text-sm font-semibold text-[var(--slate-700)]">Autor: {editorialAuthor} · Publikacja: {publishedDate}{showUpdatedDate ? ` · Aktualizacja: ${modifiedDate}` : ""}</p>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-            <Link href="/serwis/" className="inline-flex justify-center rounded-[14px] border border-[var(--slate-200)] bg-white px-5 py-3 text-sm font-extrabold text-[var(--navy-900)] hover:border-[var(--slate-500)]">Zobacz terminy w serwisie</Link>
+            <a href="/serwis/" className="inline-flex justify-center rounded-[14px] border border-[var(--slate-200)] bg-white px-5 py-3 text-sm font-extrabold text-[var(--navy-900)] hover:border-[var(--slate-500)]">Zobacz terminy w serwisie</a>
           </div>
-          <MobileTableOfContents items={tableOfContents} />
           {post.coverImage ? <figure className="mt-8 max-w-4xl overflow-hidden rounded-[24px] border border-[var(--slate-200)] bg-white shadow-[0_8px_24px_rgba(7,24,38,0.05)]"><img src={post.coverImage} alt={post.imageAlt || post.title} title={post.imageTitle} width="1200" height="675" fetchPriority="high" decoding="async" className="aspect-[16/9] w-full object-cover" /></figure> : null}
         </article>
-        <DesktopTableOfContents items={tableOfContents} />
+        <TableOfContents items={tableOfContents} />
       </div>
     </section>
     <section className="mx-auto grid max-w-[1160px] gap-8 px-5 py-12 sm:px-6 lg:grid-cols-[minmax(0,1fr)_320px]">
@@ -272,7 +264,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
       <aside className="space-y-5">
         <div className="rounded-[20px] border border-[#f6d997] bg-[var(--amber-50)] p-5 text-[#77520b]"><p className="font-black">Kiedy to nie wystarczy?</p><p className="mt-2 text-sm leading-6">Jeśli sytuacja dotyczy wypadku, sporu, kontroli albo nietypowego stanowiska, potraktuj wpis jako punkt startu i sprawdź szczegóły w dokumentacji firmowej.</p></div>
         <RelatedArticles posts={relatedPosts} />
-        <div className="rounded-[24px] bg-[var(--navy-900)] p-6 text-white shadow-[var(--shadow-soft)]"><p className="font-black">Kolejny krok</p><p className="mt-2 text-sm leading-6 text-[#b9cad8]">Uporządkuj pracowników, daty i przypomnienia w jednym rejestrze, zanim termin stanie się problemem.</p><Link href="/serwis/" className="mt-5 inline-flex rounded-[14px] bg-[var(--teal-600)] px-4 py-2.5 text-sm font-extrabold text-white hover:bg-[var(--teal-700)]">Przejdź do serwisu</Link></div>
+        <div className="rounded-[24px] bg-[var(--navy-900)] p-6 text-white shadow-[var(--shadow-soft)]"><p className="font-black">Kolejny krok</p><p className="mt-2 text-sm leading-6 text-[#b9cad8]">Uporządkuj pracowników, daty i przypomnienia w jednym rejestrze, zanim termin stanie się problemem.</p><a href="/serwis/" className="mt-5 inline-flex rounded-[14px] bg-[var(--teal-600)] px-4 py-2.5 text-sm font-extrabold text-white hover:bg-[var(--teal-700)]">Przejdź do serwisu</a></div>
       </aside>
     </section>
   </main>;
