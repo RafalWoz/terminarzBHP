@@ -175,7 +175,7 @@ export function getPostModifiedDate(post: BlogPost) {
 }
 
 export function hasVisiblePostUpdateDate(post: BlogPost) {
-  return getPostModifiedDate(post) !== post.date;
+  return Boolean(post.updatedAt) || getPostModifiedDate(post) !== post.date;
 }
 
 export function getCategorySlug(category: string) {
