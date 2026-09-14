@@ -19,7 +19,7 @@ export type PreparedArticleHtml = {
   faqItems: FaqItem[];
 };
 
-const allowedArticleTags = new Set(["a", "blockquote", "br", "em", "h2", "h3", "h4", "li", "ol", "p", "strong", "ul"]);
+const allowedArticleTags = new Set(["a", "blockquote", "br", "em", "h2", "h3", "h4", "li", "ol", "p", "strong", "table", "tbody", "td", "th", "thead", "tr", "ul"]);
 
 function escapeHtmlAttribute(value: string) {
   return value.replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;").replace(/>/g, "&gt;");

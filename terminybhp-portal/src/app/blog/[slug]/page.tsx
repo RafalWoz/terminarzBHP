@@ -18,6 +18,8 @@ import { canonicalUrl, siteUrl } from "@/lib/seo";
 type BlogPostPageProps = { params: Promise<{ slug: string }> };
 
 const editorialAuthor = "Redakcja TerminyBHP";
+const articleContentClassName = "article-content text-lg leading-8 text-[var(--slate-700)]";
+const inlineAffiliateParagraphCount = 3;
 
 export function generateStaticParams() {
   return getAllPostSlugs().map((slug) => ({ slug }));
@@ -31,11 +33,52 @@ function categoryUrl(category: string) {
   return `/blog/kategoria/${getCategorySlug(category)}/`;
 }
 
-function ArticleContent({ content, preparedHtml }: { content: string[]; preparedHtml?: string }) {
+function splitHtmlAfterParagraph(html: string, paragraphCount: number) {
+  const paragraphEndMatches = [...html.matchAll(/<\/p>/gi)];
+  const splitMatch = paragraphEndMatches[paragraphCount - 1];
+  if (!splitMatch?.[0] || splitMatch.index === undefined) return null;
+
+  const splitAt = splitMatch.index + splitMatch[0].length;
+  const before = html.slice(0, splitAt).trim();
+  const after = html.slice(splitAt).trim();
+  if (!before || !after) return null;
+
+  return { before, after };
+}
+
+function ArticleContent({ content, preparedHtml, slug }: { content: string[]; preparedHtml?: string; slug: string }) {
+  const hasAffiliate = Boolean(getAffiliateRecommendation(slug));
+
   if (preparedHtml) {
-    return <div className="article-content text-lg leading-8 text-[var(--slate-700)]" dangerouslySetInnerHTML={{ __html: preparedHtml }} />;
+    const splitArticle = hasAffiliate ? splitHtmlAfterParagraph(preparedHtml, inlineAffiliateParagraphCount) : null;
+
+    if (splitArticle) {
+      return (
+        <>
+          <div className={articleContentClassName} dangerouslySetInnerHTML={{ __html: splitArticle.before }} />
+          <AffiliateRecommendation slug={slug} placement="inline" />
+          <div className={articleContentClassName} dangerouslySetInnerHTML={{ __html: splitArticle.after }} />
+        </>
+      );
+    }
+
+    return <div className={articleContentClassName} dangerouslySetInnerHTML={{ __html: preparedHtml }} />;
   }
-  return <div className="article-content text-lg leading-8 text-[var(--slate-700)]">{content.map((paragraph, index) => <p key={index}>{paragraph}</p>)}</div>;
+
+  if (hasAffiliate && content.length > inlineAffiliateParagraphCount) {
+    const before = content.slice(0, inlineAffiliateParagraphCount);
+    const after = content.slice(inlineAffiliateParagraphCount);
+
+    return (
+      <>
+        <div className={articleContentClassName}>{before.map((paragraph, index) => <p key={index}>{paragraph}</p>)}</div>
+        <AffiliateRecommendation slug={slug} placement="inline" />
+        <div className={articleContentClassName}>{after.map((paragraph, index) => <p key={index}>{paragraph}</p>)}</div>
+      </>
+    );
+  }
+
+  return <div className={articleContentClassName}>{content.map((paragraph, index) => <p key={index}>{paragraph}</p>)}</div>;
 }
 
 function TableOfContentsLinks({ items }: { items: TableOfContentsItem[] }) {
@@ -90,12 +133,15 @@ function DownloadCta({ post }: { post: BlogPost }) {
   );
 }
 
-function AffiliateRecommendation({ slug }: { slug: string }) {
+function AffiliateRecommendation({ slug, placement = "footer" }: { slug: string; placement?: "inline" | "footer" }) {
   const affiliate = getAffiliateRecommendation(slug);
   if (!affiliate) return null;
 
-  return <aside aria-label="Polecany materiał" className="mt-8 rounded-[24px] border border-[#bfe0d0] bg-[#F1F8F3] p-5 shadow-[0_8px_24px_rgba(7,24,38,0.04)] sm:p-6">
-    <p className="font-mono text-xs font-bold uppercase tracking-[0.08em] text-[var(--teal-700)]">Polecane po lekturze · link afiliacyjny</p>
+  const spacingClassName = placement === "inline" ? "my-8" : "mt-8";
+  const eyebrow = placement === "inline" ? "Polecane w trakcie lektury · link afiliacyjny" : "Polecane po lekturze · link afiliacyjny";
+
+  return <aside aria-label="Polecany materiał" className={`${spacingClassName} rounded-[24px] border border-[#bfe0d0] bg-[#F1F8F3] p-5 shadow-[0_8px_24px_rgba(7,24,38,0.04)] sm:p-6`}>
+    <p className="font-mono text-xs font-bold uppercase tracking-[0.08em] text-[var(--teal-700)]">{eyebrow}</p>
     <h2 className="mt-3 text-2xl font-black leading-tight tracking-[-0.03em] text-[var(--navy-950)]">{affiliate.title}</h2>
     <p className="mt-3 text-base leading-7 text-[var(--slate-700)]">{affiliate.description}</p>
     <a href={affiliate.href} target="_blank" rel="sponsored nofollow noopener noreferrer" className="mt-5 inline-flex rounded-[14px] bg-[var(--teal-600)] px-5 py-3 text-sm font-extrabold text-white hover:bg-[var(--teal-700)]">{affiliate.cta}</a>
@@ -220,7 +266,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
     </section>
     <section className="mx-auto grid max-w-[1160px] gap-8 px-5 py-12 sm:px-6 lg:grid-cols-[minmax(0,1fr)_320px]">
       <article className="rounded-[28px] border border-[var(--slate-200)] bg-white p-6 shadow-[0_8px_24px_rgba(7,24,38,0.05)] sm:p-9">
-        <ArticleContent content={post.content} preparedHtml={preparedArticle?.html} />
+        <ArticleContent content={post.content} preparedHtml={preparedArticle?.html} slug={post.slug} />
         <AffiliateRecommendation slug={post.slug} />
       </article>
       <aside className="space-y-5">
